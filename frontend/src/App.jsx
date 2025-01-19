@@ -5,6 +5,7 @@ import Assignment from './Components/Assignment/Assignment'
 import TimeTable from './Components/TimeTable/TimeTable'
 import Attendance from './Components/Attendance_student/Attendance'
 import CourseEnrolled from './Components/CourseEnrolled/CourseEnrolled'
+import CourseAllocated from './Components/Teacher/course_allocated/CourseAllocated'
 function App() {
 
   return (
@@ -12,7 +13,8 @@ function App() {
       {/* <Assignment/> */}
       {/* <TimeTable/> */}
       {/* <Attendance /> */}
-      <CourseEnrolled />
+      {/* <CourseEnrolled /> */}
+      <CourseAllocated/>
     </div>
   )
 }
