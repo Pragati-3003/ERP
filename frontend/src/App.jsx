@@ -14,7 +14,8 @@ function App() {
       {/* <TimeTable/> */}
       {/* <Attendance /> */}
       {/* <CourseEnrolled /> */}
-      <CourseAllocated/>
+      {/*<CourseAllocated/>*/}
+      <Login/>
     </div>
   )
 }
