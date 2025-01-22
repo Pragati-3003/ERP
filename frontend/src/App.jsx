@@ -18,6 +18,7 @@ function App() {
       {/* <CourseEnrolled /> */}
       {/* <CourseAllocated/> */}
       {/* <Login/> */}
+      {/* <FeeStructure/> */}
       <AttendancePage/>
     </div>
   )
