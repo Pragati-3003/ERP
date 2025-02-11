@@ -8,6 +8,7 @@ import CourseEnrolled from './Components/CourseEnrolled/CourseEnrolled'
 import CourseAllocated from './Components/Teacher/course_allocated/CourseAllocated'
 import Login from './Components/Login/Login'
 import AttendancePage from './Components/Teacher/AttendancePage'
+import FeeStructure from './Components/FeeStructure/FeeStructure'
 function App() {
 
   return (
@@ -18,8 +19,8 @@ function App() {
       {/* <CourseEnrolled /> */}
       {/* <CourseAllocated/> */}
       {/* <Login/> */}
-      {/* <FeeStructure/> */}
-      <AttendancePage/>
+      <FeeStructure/>
+      {/* <AttendancePage/> */}
     </div>
   )
 }
