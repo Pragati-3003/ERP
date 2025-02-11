@@ -1,0 +1,23 @@
+const mongoose = require("mongoose");
+
+const StudentSchema = new mongoose.Schema({
+  StudentID: { type: String, required: true, unique: true },
+  UserID: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  EnrollmentNumber: { type: String, required: true },
+  DeptID: { type: Number },
+  YearOfStudy: { type: String },
+  RollNo: { type: String },
+  CourseID: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+  CourseFees: { type: Number },
+  DOB: { type: Date },
+  Gender: { type: String, enum: ["Male", "Female", "Other"] },
+  FatherName: { type: String },
+  MotherName: { type: String },
+  Address: { type: String },
+  HostelName: { type: String },
+  GuardianEmail: { type: String },
+  Scholarship: { type: String },
+  AttendanceStatus: { type: String },
+});
+
+module.exports = mongoose.model("Student", StudentSchema);
