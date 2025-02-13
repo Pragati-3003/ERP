@@ -27,3 +27,6 @@ timetables
 public/timetables 
 mca_sem2_timetable.jpeg
 /frontend/public/timetables/
+../.vscode/
+/.vscode/
+.vscode/
