@@ -1,0 +1,43 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap");
+html,
+body,
+#root,
+.dboard,
+.content {
+  height: 100%;
+  width: 100%;
+  font-family: "Source Sans Pro", sans-serif;
+}
+.dboard {
+  display: flex;
+  position: relative;
+  background-color: rgb(4, 4, 47);
+}
+::-webkit-scrollbar {
+  width: 10px;
+}
+/*Track*/
+::-webkit-scrollbar-track {
+  background: #e0e0e0;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+/* Handle on Hover */
+::-webkit-scrollbar-track:hover {
+  background: #555;
+}
+
+/* Apply only in Student Dashboard */
+.student-dashboard .chart-card {
+  max-width: 450px; /* Reduce width slightly */
+  height: 280px; /* Adjust height to fit chart */
+  padding: 5px; /* Reduce padding inside card */
+  overflow: hidden; /* Prevent overflow */
+}
+
+.student-dashboard .chart-container {
+  height: 220px; /* Reduce chart height */
+  width: 100%; /* Ensure full width inside the card */
+}

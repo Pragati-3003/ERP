@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import './App.css'
 import './index.css'
@@ -9,20 +10,25 @@ import CourseAllocated from './Components/Teacher/course_allocated/CourseAllocat
 import Login from './Components/Login/Login'
 import AttendancePage from './Components/Teacher/AttendancePage'
 import FeeStructure from './Components/FeeStructure/FeeStructure'
+import { BrowserRouter } from "react-router-dom";
 function App() {
 
+import StudentDb from "./scenes/dashboard/StudentDb";
+function App() {
   return (
-    <div className='h-auto '>
-      {/* <Assignment/> */}
-      {/* <TimeTable/> */}
+    <div className="h-auto ">
+      {/* <Assignment /> */}
+      {/* <TimeTable />   */}
       {/* <Attendance /> */}
       {/* <CourseEnrolled /> */}
-      {/* <CourseAllocated/> */}
+   {/* <CourseAllocated/> */}
       {/* <Login/> */}
       <FeeStructure/>
       {/* <AttendancePage/> */}
+      <StudentDb />
+      {/* <ResultChart /> */}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
