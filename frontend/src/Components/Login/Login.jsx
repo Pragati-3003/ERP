@@ -28,7 +28,7 @@ const Login = () => {
     }, []);
 
     return (
-        <div className="container">
+        <div id="login-page" className="container">
             <div className="map">
                 <img
                     src="/*https://in.pinterest.com/pin/588775351313572933//600x400"
