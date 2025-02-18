@@ -4,6 +4,7 @@ app.use(express.json());
 const mongoose = require('mongoose')
 const authRoutes = require('./routes/authRoutes.js')
 const userRoutes = require('./routes/userRoutes.js')
+const adminRoutes = require('./routes/adminRoutes.js')
 require("dotenv").config();
 
 const PORT = process.env.PORT || 5000;
@@ -25,4 +26,5 @@ mongoose.connect(MONGO_URL, {})
     .catch(err => console.log("MongoDB connection error", err))
 
 app.use('/api/auth', authRoutes)  
+app.use('/api/admin', adminRoutes)  
 app.use('/api/user', userRoutes) 
