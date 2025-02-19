@@ -5,12 +5,12 @@ const CurriculumSchema = new mongoose.Schema({
   specialization:{type:String},
   semesters: [
     {
-      semester: { type: Number, required: true }, 
+      semester: { type: Number }, 
       courses: [
         {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Course",
-          required: true
+          // required: true
         }
       ]
     }
