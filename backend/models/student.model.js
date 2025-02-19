@@ -7,6 +7,7 @@ const StudentSchema = new mongoose.Schema({
   YearOfStudy: { type: String },
   RollNo: { type: String },
   CourseID: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+  CurriculumID: { type: mongoose.Schema.Types.ObjectId, ref: "Curriculum" },  // 🔗 Linking Curriculum
   CourseFees: { type: Number },
   DOB: { type: Date },
   Gender: { type: String, enum: ["Male", "Female", "Other"] },
