@@ -4,6 +4,7 @@ const CourseSchema = new mongoose.Schema({
   CourseCode :{type :String,required :true},
   CourseName: { type: String, required: true },
   DeptID: { type: Number },
+  Type: { type: String, enum: ["Theory", "Lab"] },
   CreditPoints: { type: Number },
   // Semester: { type: String },
   // Programs:[{ type: String }],
