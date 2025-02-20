@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const CurriculumSchema = new mongoose.Schema({
   program: { type: String, required: true}, 
   specialization:{type:String},
+  deptId: { type: Number},
   semesters: [
     {
       semester: { type: Number }, 

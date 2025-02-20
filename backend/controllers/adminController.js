@@ -10,47 +10,41 @@ const addStudent = async (req, res) => {
   try {
     const {
       FirstName, LastName, EnrollmentNumber, DeptID, YearOfStudy, DOB, Gender,
-      FatherName, MotherName, GuardianEmail, PhoneNumber, Email, CourseID
+      FatherName, MotherName,Semester, GuardianEmail, PhoneNumber, Email, CurriculumID
     } = req.body;
 
-    // 🔹 Ensure required fields are present
     if (!Email || !FirstName || !LastName) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // 🔹 Check if Student already exists
     const existingStudent = await Student.findOne({ Email });
     if (existingStudent) {
       return res.status(400).json({ message: "Student already exists" });
     }
 
-    // 🔹 Check if Course exists
-    const course = await Course.findById(CourseID);
-    if (!course) {
-      return res.status(400).json({ message: "Invalid CourseID: Course does not exist" });
+    const curriculum = await Curriculum.findById(CurriculumID);
+    if (!curriculum) {
+      return res.status(400).json({ message: "Invalid CurriculumID: Curriculum does not exist" });
     }
-
-    // 🔹 Check if User already exists
     let user = await User.findOne({ email: Email });
 
     if (!user) {
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash("banasthali", saltRounds);
       user = new User({
-         Email,
-        Role: "Student", 
+        Email,
+        Role: "Student",
         Password: hashedPassword,
       });
 
       await user.save();
     }
 
-    // 🔹 Create Student Entry
     const newStudent = new Student({
-      UserID: user._id,
+      UserID: user._id,Semester,
       FirstName, LastName, EnrollmentNumber, DeptID, YearOfStudy, DOB, Gender,
       FatherName, MotherName, GuardianEmail, PhoneNumber, Email,
-      CourseID: course._id,
+      CurriculumID: curriculum._id,
     });
 
     await newStudent.save();
@@ -72,36 +66,27 @@ const addTeacher = async (req, res) => {
       DOB, Gender, EmploymentType, Qualification, ExperienceYears
     } = req.body;
 
-    // 🔹 Ensure required fields are present
     if (!Email || !FirstName || !LastName) {
       return res.status(400).json({ message: "Missing required fields: Email, FirstName, or LastName" });
     }
 
-    // 🔹 Check if Teacher already exists
     const existingTeacher = await Teacher.findOne({ Email });
     if (existingTeacher) {
       return res.status(400).json({ message: "Teacher already exists" });
     }
 
-    // 🔹 Check if User already exists
     let user = await User.findOne({ email: Email });
-
     if (!user) {
-      // 🔹 Generate a hashed password
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash("banasthali", saltRounds);
-
-      // 🔹 Create new user with hashed password
       user = new User({
-         Email,
+        Email,
         Role: "Teacher",
-        Password: hashedPassword, // ✅ Save hashed password
+        Password: hashedPassword,
       });
-
       await user.save();
     }
 
-    // 🔹 Create Teacher Entry
     const newTeacher = new Teacher({
       UserID: user._id,
       FirstName, LastName, PhoneNumber, Email, DeptID, Designation, Specialization,
@@ -123,14 +108,14 @@ const addTeacher = async (req, res) => {
 const addCourse = async (req, res) => {
   try {
     const { DeptID, CourseName, CreditPoints, CourseCode
-      , Programs, Prerequisites, Syllabus, TotalLectures
+      , Programs, Prerequisites, Syllabus, TotalLectures,Type
     } = req.body
     const isExist = await Course.findOne({ CourseCode });
     if (isExist)
       return res.status(404).json({ message: "Course Already Exist" });
     const newCourse = new Course({
       DeptID, CourseCode, CourseName, CreditPoints
-      , Programs, Prerequisites, Syllabus, TotalLectures
+      , Programs, Prerequisites, Syllabus, TotalLectures,Type
     })
     await newCourse.save();
     res.status(201).json({ message: "Course added successfully", course: newCourse });
@@ -143,13 +128,13 @@ const addCourse = async (req, res) => {
 // @desc Add Curriculum 
 // route api/admin/add-curriculum
 
-const addCurriculum = async(req,res)=>{
-  try{
-        const {semesters,program,specialization}=req.body;
-        const newCurriculum = new Curriculum({semesters,program,specialization})
-        await newCurriculum.save();
-        res.status(201).json({ message: "Curriculum added successfully", curriculum: newCurriculum });
-  }catch (err) {
+const addCurriculum = async (req, res) => {
+  try {
+    const { semesters, deptId,program, specialization } = req.body;
+    const newCurriculum = new Curriculum({ semesters, deptId,program, specialization })
+    await newCurriculum.save();
+    res.status(201).json({ message: "Curriculum added successfully", curriculum: newCurriculum });
+  } catch (err) {
     console.error("Error adding student:", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
@@ -158,4 +143,4 @@ const addCurriculum = async(req,res)=>{
 
 
 
-module.exports = { addStudent, addTeacher, addCourse ,addCurriculum} 
+module.exports = { addStudent, addTeacher, addCourse, addCurriculum } 
