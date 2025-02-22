@@ -1,7 +1,7 @@
 const express = require('express')
 const verifyToken = require('../middlewares/authMiddleware.js')
 const authorizeRoles = require('../middlewares/roleMiddleware.js')
-const { getCourseById } = require("../controllers/userController.js")
+const {getStudentAttendanceOfParticularCourse, getCourseById,getStudentsByCurriculum ,getStudentByCourse} = require("../controllers/userController.js")
 const router = express.Router();
 
 router.post('/admin', verifyToken, authorizeRoles("Admin"), (req, res) => {
@@ -15,6 +15,7 @@ router.post('/student', verifyToken, authorizeRoles("Student"), (req, res) => {
     res.json({ message: "STudent" })
 })
 router.get('/course/:courseId', verifyToken, authorizeRoles("Student", "Admin", "Teacher"), getCourseById);
-
-
+router.get('/curriculum/:curriculumId', verifyToken, authorizeRoles( "Admin", "Teacher"), getStudentsByCurriculum);
+router.get('/students/course/:courseId', verifyToken, authorizeRoles( "Admin", "Teacher"), getStudentByCourse);
+router.get('/getattendance', verifyToken, authorizeRoles( "Admin", "Student","Teacher"), getStudentAttendanceOfParticularCourse);
 module.exports = router;

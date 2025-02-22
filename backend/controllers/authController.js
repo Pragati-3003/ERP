@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 const createUser = async (req, res) => {
     try {
         const { email, password, role } = req.body;
-        // const hashedPassword = await bcrypt.hash(password, 12);
+        const hashedPassword = await bcrypt.hash(password, 12);
         const newUser = new User({    UserID: uuidv4(),Email: email, Password: hashedPassword, Role: role });
         await newUser.save();
         res.status(201).json({ message: "User created successfully!" });
