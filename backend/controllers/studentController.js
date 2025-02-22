@@ -33,7 +33,7 @@ const getCourse = async (req, res) => {
     const { CurriculumID, Semester } = student;
     if (!CurriculumID)
       return res.status(400).json({ message: "Curriculum not assigned to the student" });
-    const curriculum = await Curriculum.findById(CurriculumID).populate("semesters.courses");;
+    const curriculum = await Curriculum.findById(CurriculumID).populate("semesters.courses");
     if (!curriculum)
       return res.status(400).json({ message: "Curriculum does not exist" });
     const semesterData = curriculum.semesters.find(sem => sem.semester === Semester)

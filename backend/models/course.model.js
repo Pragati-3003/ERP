@@ -6,6 +6,7 @@ const CourseSchema = new mongoose.Schema({
   DeptID: { type: Number },
   Type: { type: String, enum: ["Theory", "Lab"] },
   CreditPoints: { type: Number },
+  // CurriculumID: { type: mongoose.Schema.Types.ObjectId, ref: "Curriculum" },
   // Semester: { type: String },
   // Programs:[{ type: String }],
   Programs: [
