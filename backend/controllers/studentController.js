@@ -37,7 +37,7 @@ const getCourse = async (req, res) => {
     if (!curriculum)
       return res.status(400).json({ message: "Curriculum does not exist" });
     const semesterData = curriculum.semesters.find(sem => sem.semester === Semester)
-    // console.log(curriculum);
+    console.log(curriculum);
     if (!semesterData)
       return res.status(400).json({ message: "No courses found for this semester" });
     res.status(200).json(semesterData.courses);
@@ -46,13 +46,18 @@ const getCourse = async (req, res) => {
   }
 }
 
-//@desc Get curriculum 
+//@desc Get curriculum  
 //@route GET /api/student/curriculum
 
 const getCurriculum = async (req, res) => {
   try {
     const userId = req.user.id;
+    // console.log(userId);
+    // console.log(req.user)
+    
     const curriculum = await Student.findOne({ UserID: userId }).populate("CurriculumID");
+  // console.log(curriculum);
+  
     res.status(200).json(curriculum.CurriculumID);
   } catch (err) {
     res.status(500).json({ message: "Internal Server Error" });
