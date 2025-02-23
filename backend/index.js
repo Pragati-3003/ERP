@@ -1,6 +1,14 @@
 const express = require('express')
 const app = express();
+const cors = require('cors')
+
+app.use(cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"], 
+    credentials: true
+}));
 app.use(express.json());
+
 const mongoose = require('mongoose')
 const authRoutes = require('./routes/authRoutes.js')
 const userRoutes = require('./routes/userRoutes.js')

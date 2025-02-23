@@ -22,6 +22,7 @@ const loginUser = async (req, res) => {
         if (!user) {
             return res.status(400).json({ message: "User does not exist" });
         }
+        
         const ismatch = await bcrypt.compare(password, user.Password);
         if (!ismatch) {
             return res.status(400).json({ message: "Invalid credentials" });
@@ -32,7 +33,13 @@ const loginUser = async (req, res) => {
             role: user.Role,
         }, process.env.JWT_SECRET, { expiresIn: "1h" })
         console.log("User logged in");
-        return res.status(200).json({ token });
+        return res.status(200).json({ token ,user: {
+            id: user._id,
+            LastName: user.LastName,
+            firstName:user.FirstName,
+            email: user.Email,
+            role:user.Role
+        } });
     } catch (error) {
         res.status(500).json({ message: "Server Error" });
     }
