@@ -9,7 +9,12 @@ const TeacherSchema = new mongoose.Schema({
   DeptID: { type: Number },
   Designation: { type: String },
   Specialization: { type: String },
-  CoursesTaught: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
+  CoursesTaught: [
+    {
+      course: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+      curriculum: { type: mongoose.Schema.Types.ObjectId, ref: "Curriculum" } // Store Curriculum ID instead of Program
+    }
+  ],
   DOB: { type: Date },
   Gender: { type: String, enum: ["Male", "Female", "Other"] },
   EmploymentType: { type: String },
