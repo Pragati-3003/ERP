@@ -63,7 +63,7 @@ const addTeacher = async (req, res) => {
   try {
     const {
       FirstName, LastName, PhoneNumber, Email, DeptID, Designation, Specialization,
-      DOB, Gender, EmploymentType, Qualification, ExperienceYears
+      DOB, Gender, EmploymentType, Qualification, ExperienceYears,CoursesTaught
     } = req.body;
 
     if (!Email || !FirstName || !LastName) {
@@ -90,7 +90,7 @@ const addTeacher = async (req, res) => {
     const newTeacher = new Teacher({
       UserID: user._id,
       FirstName, LastName, PhoneNumber, Email, DeptID, Designation, Specialization,
-      DOB, Gender, EmploymentType, ExperienceYears, Qualification
+      DOB, Gender, EmploymentType, ExperienceYears, Qualification,CoursesTaught
     });
 
     await newTeacher.save();
