@@ -11,7 +11,7 @@ import Login from './Components/Login/Login'
 import AttendancePage from './Components/Teacher/AttendancePage'
 import FeeStructure from './Components/FeeStructure/FeeStructure'
 import { BrowserRouter } from "react-router-dom";
-function App() {
+// function App() {
 
 import StudentDb from "./scenes/dashboard/StudentDb";
 function App() {
@@ -20,12 +20,12 @@ function App() {
       {/* <Assignment /> */}
       {/* <TimeTable />   */}
       {/* <Attendance /> */}
-      {/* <CourseEnrolled /> */}
+      <CourseEnrolled />
    {/* <CourseAllocated/> */}
       {/* <Login/> */}
-      <FeeStructure/>
+      {/* <FeeStructure/> */}
       {/* <AttendancePage/> */}
-      <StudentDb />
+      {/* <StudentDb /> */}
       {/* <ResultChart /> */}
     </div>
   );

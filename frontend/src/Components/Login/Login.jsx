@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './Login.css';
-
+import { useDispatch } from 'react-redux';
+import { login } from '../../../store/authSlice.js';
+import axios from 'axios';
 const Login = () => {
     const [captcha, setCaptcha] = useState('');
+    const dispatch = useDispatch();
+    const [enteredCaptcha, setEnteredCaptcha] = useState('');
     const [role, setRole] = useState('');
-
+    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
     const generateCaptcha = () => {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         let captcha = '';
@@ -18,9 +23,29 @@ const Login = () => {
         setCaptcha(generateCaptcha());
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        alert(`Login as ${role} functionality not implemented yet!`);
+        if(enteredCaptcha !== captcha)
+        {
+            alert("Invalid Captcha");
+            return;
+        }   
+        try {
+               const response = await axios.post('http://localhost:5000/api/auth/login',{
+                    email,
+                    password
+                })
+                console.log(response);
+                 dispatch(login({
+                    user:response.data.user,
+                    token:response.data.token,
+                    isAuthenticated:true
+                 }))
+                 localStorage.setItem('token',response.data.token);
+        } catch (error) {
+            console.error("Login failed:", error);
+        }
+
     };
 
     useEffect(() => {
@@ -59,16 +84,35 @@ const Login = () => {
                             />
                             Faculty
                         </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="role"
+                                value="teacher"
+                                onChange={(e) => setRole(e.target.value)}
+                                required
+                            />
+                            Admin
+                        </label>
                     </div>
-                    <input type="text" placeholder="Enter username" required />
-                    <input type="password" placeholder="Enter password" required />
+                    <input
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        type="email" placeholder="Enter Email" required />
+                    <input
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        type="password" placeholder="Enter Password" required />
                     <div className="captcha">
                         <span>{captcha}</span>
                         <button type="button" onClick={refreshCaptcha}>
                             Refresh
                         </button>
                     </div>
-                    <input type="text" placeholder="Enter CAPTCHA" required />
+                    <input 
+                    value={enteredCaptcha}
+                    onChange={(e) => setEnteredCaptcha(e.target.value)}
+                    type="text" placeholder="Enter CAPTCHA" required />
                     <div className="remember">
                         <input type="checkbox" id="remember" />
                         <label htmlFor="remember">Remember me</label>
