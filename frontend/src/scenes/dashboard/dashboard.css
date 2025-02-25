@@ -4,9 +4,10 @@ body,
 #root,
 .dboard,
 .content {
-  height: 100%;
   width: 100%;
   font-family: "Source Sans Pro", sans-serif;
+  margin: 0 auto;
+  padding-left: 0px;
 }
 .dboard {
   display: flex;
@@ -28,16 +29,10 @@ body,
 ::-webkit-scrollbar-track:hover {
   background: #555;
 }
-
-/* Apply only in Student Dashboard */
-.student-dashboard .chart-card {
-  max-width: 450px; /* Reduce width slightly */
-  height: 280px; /* Adjust height to fit chart */
-  padding: 5px; /* Reduce padding inside card */
-  overflow: hidden; /* Prevent overflow */
-}
-
-.student-dashboard .chart-container {
-  height: 220px; /* Reduce chart height */
-  width: 100%; /* Ensure full width inside the card */
+.topbar {
+  /* padding-left: 150px; */
+  position: fixed;
+  top: 0;
+  width: 80%;
+  z-index: 1000;
 }
