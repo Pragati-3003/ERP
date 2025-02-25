@@ -57,7 +57,15 @@ const Attendence1 = () => {
       </Box>
 
       {/* Attendance Data Table */}
-      <Box m="20px 0 0 0" height="45vh">
+      <Box
+        m="20px 0 0 0"
+        height="45vh"
+        sx={{
+          "&.MuiDataGrid-root": {
+            border: "none",
+          },
+        }}
+      >
         <DataGrid
           rows={filteredData}
           columns={columns}
