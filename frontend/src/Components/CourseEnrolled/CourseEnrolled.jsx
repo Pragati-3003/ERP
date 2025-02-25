@@ -4,10 +4,10 @@ import { useSelector } from "react-redux";
 
 const CourseEnrolled = () => {
   const [semester, setSemester] = React.useState(1);
-
+  const token = useSelector((state) => state.auth.token)
   const [data, setData] = useState([]);
   const fetchData = async () => {
-    const token = localStorage.getItem("token");
+    // const token = localStorage.getItem("token");
     if (!token) {
       console.log("Provide Token")
       return;

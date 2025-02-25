@@ -3,14 +3,19 @@ import React, { useState, useEffect } from 'react';
 import './Login.css';
 import { useDispatch } from 'react-redux';
 import { login } from '../../../store/authSlice.js';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+
 const Login = () => {
     const [captcha, setCaptcha] = useState('');
-    const dispatch = useDispatch();
     const [enteredCaptcha, setEnteredCaptcha] = useState('');
     const [role, setRole] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate()
+
     const generateCaptcha = () => {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         let captcha = '';
@@ -19,30 +24,30 @@ const Login = () => {
         }
         return captcha;
     };
-  const refreshCaptcha = () => {
-    setCaptcha(generateCaptcha());
-  };
+    const refreshCaptcha = () => {
+        setCaptcha(generateCaptcha());
+    };
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if(enteredCaptcha !== captcha)
-        {
+        if (enteredCaptcha !== captcha) {
             alert("Invalid Captcha");
             return;
-        }   
+        }
         try {
-               const response = await axios.post('http://localhost:5000/api/auth/login',{
-                    email,
-                    password
-                })
-                console.log(response);
-                 dispatch(login({
-                    user:response.data.user,
-                    token:response.data.token,
-                    isAuthenticated:true
-                 }))
-                 localStorage.setItem('token',response.data.token);
+            const response = await axios.post('http://localhost:5000/api/auth/login', {
+                email,
+                password
+            })
+            console.log(response);
+            dispatch(login({
+                user: response.data.user,
+                token: response.data.token,
+                isAuthenticated: true
+            }))
+            localStorage.setItem('token', response.data.token);
+            navigate('/dashboard');
         } catch (error) {
             console.error("Login failed:", error);
         }
@@ -50,9 +55,9 @@ const Login = () => {
     };
 
 
-  useEffect(() => {
-    refreshCaptcha();
-  }, []);
+    useEffect(() => {
+        refreshCaptcha();
+    }, []);
 
 
     return (
@@ -112,10 +117,10 @@ const Login = () => {
                             Refresh
                         </button>
                     </div>
-                    <input 
-                    value={enteredCaptcha}
-                    onChange={(e) => setEnteredCaptcha(e.target.value)}
-                    type="text" placeholder="Enter CAPTCHA" required />
+                    <input
+                        value={enteredCaptcha}
+                        onChange={(e) => setEnteredCaptcha(e.target.value)}
+                        type="text" placeholder="Enter CAPTCHA" required />
                     <div className="remember">
                         <input type="checkbox" id="remember" />
                         <label htmlFor="remember">Remember me</label>
