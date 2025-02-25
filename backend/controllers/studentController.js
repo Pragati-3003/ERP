@@ -1,0 +1,144 @@
+const Student = require("../models/student.model.js")
+const Course = require("../models/course.model.js")
+const Curriculum = require("../models/curriculum.model.js")
+const Teacher = require("../models/teacher.model.js")
+
+//@desc Get student by id
+//@route GET /api/student/profile
+
+const getStudentById = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    // console.log(userId);
+    const student = await Student.findOne({ UserID: userId })
+    // console.log(student);
+    if (!student)
+      return res.status(400).json({ message: "Student does not exist" });
+    res.status(200).json(student);
+  }
+  catch (err) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+//@desc Get course 
+//@route GET /api/student/course
+
+const getCourse = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const student = await Student.findOne({ UserID: userId }).populate("CurriculumID");
+    // console.log(student);
+    if (!student)
+      return res.status(400).json({ message: "Student does not exist" });
+    const { CurriculumID, Semester } = student;
+    if (!CurriculumID)
+      return res.status(400).json({ message: "Curriculum not assigned to the student" });
+    const curriculum = await Curriculum.findById(CurriculumID).populate("semesters.courses");
+    if (!curriculum)
+      return res.status(400).json({ message: "Curriculum does not exist" });
+    const semesterData = curriculum.semesters.find(sem => sem.semester === Semester)
+    console.log(curriculum);
+    if (!semesterData)
+      return res.status(400).json({ message: "No courses found for this semester" });
+    res.status(200).json(semesterData.courses);
+  } catch (err) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+//@desc Get curriculum  
+//@route GET /api/student/curriculum
+
+const getCurriculum = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    // console.log(userId);
+    // console.log(req.user)
+    
+    const curriculum = await Student.findOne({ UserID: userId }).populate("CurriculumID");
+  // console.log(curriculum);
+    const details = await Curriculum.findById(curriculum.CurriculumID).populate("semesters.courses");
+    console.log(details);
+       
+    // res.status(200).json(curriculum.CurriculumID);
+     res.status(200).json(details);
+  } catch (err) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+//@desc Get all the courses semester wise including faulty details
+//@route GET /api/student/course-enrolled
+
+const courseEnrolled = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    // Find student's curriculum
+    const student = await Student.findOne({ UserID: userId }).populate("CurriculumID");
+    if (!student) {
+      return res.status(400).json({ message: "Student not found" });
+    }
+
+    const curriculumDetails = await Curriculum.findById(student.CurriculumID)
+      .populate("semesters.courses");
+
+    if (!curriculumDetails) {
+      return res.status(400).json({ message: "Courses not found" });
+    }
+
+    const studentCurriculum = student.CurriculumID;
+    const courseIds = curriculumDetails.semesters.flatMap(semester =>
+      semester.courses.map(course => course._id)
+    );
+
+    // Fetch only teachers who teach in the student's curriculum
+    const teachers = await Teacher.find({
+      "CoursesTaught.course": { $in: courseIds },
+      "CoursesTaught.curriculum": studentCurriculum // Filter by student's curriculum
+    }).populate("CoursesTaught.course");
+
+    // Map courses to teachers
+    const courseTeacherMap = {};
+    teachers.forEach(teacher => {
+      teacher.CoursesTaught.forEach(courseEntry => {
+        const course = courseEntry.course;
+        if (!courseTeacherMap[course._id]) {
+          courseTeacherMap[course._id] = [];
+        }
+        courseTeacherMap[course._id].push({
+          Name: `${teacher.FirstName} ${teacher.LastName}`,
+          Email: teacher.Email,
+          Designation: teacher.Designation
+        });
+      });
+    });
+
+    // Structure response
+    const formattedData = curriculumDetails.semesters.map(semester => ({
+      semester: semester.semester,
+      courses: semester.courses.map(course => ({
+        CourseCode: course.CourseCode,
+        CourseName: course.CourseName,
+        Type: course.Type,
+        CreditPoints: course.CreditPoints,
+        Teacher: courseTeacherMap[course._id] || "No teacher assigned"
+      }))
+    }));
+
+    res.status(200).json(formattedData);
+  } catch (err) {
+    console.error("Error in courseEnrolled:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+
+
+
+module.exports = { getStudentById, getCourse, getCurriculum, courseEnrolled};

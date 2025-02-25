@@ -14,7 +14,6 @@ import Attendance from "./Components/Attendance_student/Attendance";
 import CourseEnrolled from "./Components/CourseEnrolled/CourseEnrolled";
 import ResultChart from "./Components/Charts/ResultChart";
 import Attendence1 from "./scenes/Attendence1/Attendence1";
-
 function App() {
   const [theme, colorMode] = useMode();
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Track login state
@@ -68,6 +67,7 @@ function App() {
         </main>
       </ThemeProvider>
     </ColorModeContext.Provider>
+
   );
 }
 
