@@ -14,55 +14,57 @@ import Attendance from "./Components/Attendance_student/Attendance";
 import CourseEnrolled from "./Components/CourseEnrolled/CourseEnrolled";
 import ResultChart from "./Components/Charts/ResultChart";
 import Attendence1 from "./scenes/Attendence1/Attendence1";
+import { useSelector } from "react-redux";
+import ProtectedRoute from "./Components/ProtectedRoute";
+
 function App() {
   const [theme, colorMode] = useMode();
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Track login state
   const location = useLocation();
 
-  // Hide Sidebar & Topbar only on the login page
-  const isLoginPage = location.pathname === "/";
+  // Check if the user is authenticated
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  console.log(isAuthenticated);
 
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {!isLoginPage && <CustomSidebar />} {/* Sidebar hidden on login */}
+        {isAuthenticated && <CustomSidebar />} {/* Sidebar hidden if not authenticated */}
         <main className="content">
-          {!isLoginPage && (
+          {isAuthenticated && (
             <div className="topbar">
               <Topbar />
             </div>
           )}{" "}
-          {/* Topbar hidden on login */}
+          {/* Topbar hidden if not authenticated */}
           <Routes>
-            {/* Login Page (Excluded from Sidebar, Topbar, and ThemeProvider) */}
+            {/* Home Page: Redirect to Dashboard if authenticated, otherwise to Login */}
             <Route
               path="/"
-              element={<Login onLogin={() => setIsAuthenticated(true)} />}
+              element={
+                isAuthenticated ? (
+                  <Navigate to="/dashboard" />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
             />
 
-            {/* All other routes (Sidebar & Topbar visible) */}
-            {/* {isAuthenticated ? ( */}
-            <>
-              {/* <Assignment /> */}
-              {/* <TimeTable />   */}
-              {/* <Attendance /> */}
-              {/* <CourseEnrolled /> */}
+            {/* Login Page */}
+            <Route path="/login" element={<Login />} />
 
-              {/* <CourseAllocated/> */}
-              {/* <Login/> */}
-              {/* <FeeStructure /> */}
-              {/* <AttendancePage/> */}
+            {/* Protected Routes */}
+            <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<StudentDb />} />
               <Route path="/assignment" element={<Assignment />} />
               <Route path="/timetable" element={<TimeTable />} />
               <Route path="/attendance" element={<Attendence1 />} />
               <Route path="/course-enrolled" element={<CourseEnrolled />} />
               <Route path="/resultChart" element={<ResultChart />} />
-            </>
-            {/* // ) : (
-            //   <Route path="*" element={<Navigate to="/" />} /> // Redirect to login if unauthenticated
-            // )} */}
+            </Route>
+
+            {/* Fallback route for invalid paths */}
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>
       </ThemeProvider>
