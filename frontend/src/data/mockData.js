@@ -1387,7 +1387,50 @@ export const attendanceData = {
     },
   ],
 };
-
+export const dummyAttendanceData = [
+  {
+    subject_name: "Mathematics",
+    subject_code: "MATH101",
+    total_classes: 20,
+    classes_attended: 1,
+    month: "July",
+  },
+  {
+    subject_name: "Physics",
+    subject_code: "PHYS101",
+    total_classes: 15,
+    classes_attended: 12,
+    month: "July",
+  },
+  {
+    subject_name: "Chemistry",
+    subject_code: "CHEM101",
+    total_classes: 20,
+    classes_attended: 15,
+    month: "July",
+  },
+  {
+    subject_name: "Chemistry",
+    subject_code: "CHEM101",
+    total_classes: 10,
+    classes_attended: 8,
+    month: "August",
+  },
+  {
+    subject_name: "Mathematics",
+    subject_code: "MATH101",
+    total_classes: 10,
+    classes_attended: 7,
+    month: "August",
+  },
+  {
+    subject_name: "Physics",
+    subject_code: "PHYS101",
+    total_classes: 10,
+    classes_attended: 6,
+    month: "August",
+  },
+];
 export const resultData = {
   semester1: [
     {

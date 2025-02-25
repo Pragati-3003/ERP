@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import './Login.css';
 import { useDispatch } from 'react-redux';
@@ -18,10 +19,10 @@ const Login = () => {
         }
         return captcha;
     };
+  const refreshCaptcha = () => {
+    setCaptcha(generateCaptcha());
+  };
 
-    const refreshCaptcha = () => {
-        setCaptcha(generateCaptcha());
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -48,9 +49,11 @@ const Login = () => {
 
     };
 
-    useEffect(() => {
-        refreshCaptcha();
-    }, []);
+
+  useEffect(() => {
+    refreshCaptcha();
+  }, []);
+
 
     return (
         <div id="login-page" className="container">
@@ -122,6 +125,7 @@ const Login = () => {
             </div>
         </div>
     );
+
 };
 
 export default Login;
