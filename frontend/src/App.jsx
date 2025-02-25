@@ -67,7 +67,6 @@ function App() {
         </main>
       </ThemeProvider>
     </ColorModeContext.Provider>
-
   );
 }
 
