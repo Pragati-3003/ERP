@@ -82,6 +82,7 @@ const CustomSidebar = () => {
       </IconButton>
 
       {/* Drawer Sidebar */}
+
       <Drawer
         variant="permanent"
         open={isOpen}
@@ -90,7 +91,8 @@ const CustomSidebar = () => {
           flexShrink: 0,
           "& .MuiDrawer-paper": {
             width: isOpen ? 250 : 80,
-            transition: "width 0.01ms ease-in-out",
+            transition: "width 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
+            willChange: "width",
             background:
               theme.palette.mode === "light" ? "#fff" : colors.primary[400],
             color: theme.palette.mode === "light" ? "black" : "white",
