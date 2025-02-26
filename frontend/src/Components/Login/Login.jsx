@@ -2,14 +2,19 @@ import React, { useState, useEffect } from "react";
 import "./Login.css";
 import { useDispatch } from "react-redux";
 import { login } from "../../../store/authSlice.js";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 const Login = () => {
   const [captcha, setCaptcha] = useState("");
-  const dispatch = useDispatch();
   const [enteredCaptcha, setEnteredCaptcha] = useState("");
   const [role, setRole] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const generateCaptcha = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let captcha = "";
@@ -45,6 +50,7 @@ const Login = () => {
         })
       );
       localStorage.setItem("token", response.data.token);
+      navigate("/dashboard");
     } catch (error) {
       console.error("Login failed:", error);
     }
