@@ -10,12 +10,48 @@ const AttendanceReport = () => {
 
   // Dummy attendance data
   const dummyAttendanceData = [
-    { subject_name: "Mathematics", subject_code: "MATH101", total_classes: 20, classes_attended: 1, month: "July" },
-    { subject_name: "Physics", subject_code: "PHYS101", total_classes: 15, classes_attended: 12, month: "July" },
-    { subject_name: "Chemistry", subject_code: "CHEM101", total_classes: 20, classes_attended: 15, month: "July" },
-    { subject_name: "Chemistry", subject_code: "CHEM101", total_classes: 10, classes_attended: 8, month: "August" },
-    { subject_name: "Mathematics", subject_code: "MATH101", total_classes: 10, classes_attended: 7, month: "August" },
-    { subject_name: "Physics", subject_code: "PHYS101", total_classes: 10, classes_attended: 6, month: "August" },
+    {
+      subject_name: "Mathematics",
+      subject_code: "MATH101",
+      total_classes: 20,
+      classes_attended: 1,
+      month: "July",
+    },
+    {
+      subject_name: "Physics",
+      subject_code: "PHYS101",
+      total_classes: 15,
+      classes_attended: 12,
+      month: "July",
+    },
+    {
+      subject_name: "Chemistry",
+      subject_code: "CHEM101",
+      total_classes: 20,
+      classes_attended: 15,
+      month: "July",
+    },
+    {
+      subject_name: "Chemistry",
+      subject_code: "CHEM101",
+      total_classes: 10,
+      classes_attended: 8,
+      month: "August",
+    },
+    {
+      subject_name: "Mathematics",
+      subject_code: "MATH101",
+      total_classes: 10,
+      classes_attended: 7,
+      month: "August",
+    },
+    {
+      subject_name: "Physics",
+      subject_code: "PHYS101",
+      total_classes: 10,
+      classes_attended: 6,
+      month: "August",
+    },
   ];
 
   // State for selected month
@@ -24,7 +60,9 @@ const AttendanceReport = () => {
   // Aggregation logic for "Overall"
   const getAggregatedAttendance = () => {
     return dummyAttendanceData.reduce((acc, curr) => {
-      const existingSubject = acc.find((data) => data.subject_code === curr.subject_code);
+      const existingSubject = acc.find(
+        (data) => data.subject_code === curr.subject_code
+      );
       if (existingSubject) {
         existingSubject.total_classes += curr.total_classes;
         existingSubject.classes_attended += curr.classes_attended;
@@ -43,7 +81,14 @@ const AttendanceReport = () => {
 
   // Function to get months based on semester
   const getMonthsForSemester = (semester) => {
-    const monthsOdd = ["July", "August", "September", "October", "November", "December"];
+    const monthsOdd = [
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
     const monthsEven = ["January", "February", "March", "April"];
     return semester % 2 === 0 ? monthsEven : monthsOdd;
   };
@@ -82,22 +127,44 @@ const AttendanceReport = () => {
         <table className="w-full border-collapse bg-white rounded-lg shadow-md overflow-hidden">
           <thead className="bg-blue-100">
             <tr>
-              <th className="text-left px-6 py-3 text-blue-900 font-semibold">Subject Name</th>
-              <th className="text-left px-6 py-3 text-blue-900 font-semibold">Subject Code</th>
-              <th className="text-left px-6 py-3 text-blue-900 font-semibold">Total Classes</th>
-              <th className="text-left px-6 py-3 text-blue-900 font-semibold">Classes Attended</th>
-              <th className="text-left px-6 py-3 text-blue-900 font-semibold">Attendance %</th>
-              <th className="text-left px-6 py-3 text-blue-900 font-semibold">Required Classes for 70%</th>
+              <th className="text-left px-6 py-3 text-blue-900 font-semibold">
+                Subject Name
+              </th>
+              <th className="text-left px-6 py-3 text-blue-900 font-semibold">
+                Subject Code
+              </th>
+              <th className="text-left px-6 py-3 text-blue-900 font-semibold">
+                Total Classes
+              </th>
+              <th className="text-left px-6 py-3 text-blue-900 font-semibold">
+                Classes Attended
+              </th>
+              <th className="text-left px-6 py-3 text-blue-900 font-semibold">
+                Attendance %
+              </th>
+              <th className="text-left px-6 py-3 text-blue-900 font-semibold">
+                Required Classes for 70%
+              </th>
             </tr>
           </thead>
           <tbody>
             {filteredAttendanceData.map((subject, index) => {
-              const { subject_name, subject_code, total_classes, classes_attended } = subject;
-              const percentage = ((classes_attended / total_classes) * 100).toFixed(2);
+              const {
+                subject_name,
+                subject_code,
+                total_classes,
+                classes_attended,
+              } = subject;
+              const percentage = (
+                (classes_attended / total_classes) *
+                100
+              ).toFixed(2);
               const requiredClasses =
                 percentage >= 70
                   ? 0
-                  : Math.ceil((0.7 * total_classes - classes_attended) / (1 - 0.7));
+                  : Math.ceil(
+                      (0.7 * total_classes - classes_attended) / (1 - 0.7)
+                    );
 
               return (
                 <tr
@@ -111,7 +178,9 @@ const AttendanceReport = () => {
                   <td className="px-6 py-3">{total_classes}</td>
                   <td className="px-6 py-3">{classes_attended}</td>
                   <td className="px-6 py-3">{percentage}%</td>
-                  <td className="px-6 py-3">{requiredClasses > 0 ? requiredClasses : "NA"}</td>
+                  <td className="px-6 py-3">
+                    {requiredClasses > 0 ? requiredClasses : "NA"}
+                  </td>
                 </tr>
               );
             })}
@@ -122,7 +191,8 @@ const AttendanceReport = () => {
       {/* Footer Section */}
       <div className="footer mt-8 text-gray-600 text-sm">
         <p>
-          Ensure your attendance percentage meets the minimum requirement of 70% for each subject.
+          Ensure your attendance percentage meets the minimum requirement of 70%
+          for each subject.
         </p>
       </div>
     </div>

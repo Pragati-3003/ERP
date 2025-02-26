@@ -9,6 +9,7 @@ import { ColorModeContext, useMode } from "../src/scenes/theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Login from "./Components/Login/Login";
 import Assignment from "./Components/Assignment/Assignment";
+import Attendence from "./Components/Attendance_student/Attendance";
 import TimeTable from "./Components/TimeTable/TimeTable";
 import Attendance from "./Components/Attendance_student/Attendance";
 import CourseEnrolled from "./Components/CourseEnrolled/CourseEnrolled";
