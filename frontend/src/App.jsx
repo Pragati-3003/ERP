@@ -74,7 +74,7 @@ function App() {
   );
 }
 
-// export default App;
+export default App;
 // import { useState } from "react";
 // import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 // import "./App.css";
