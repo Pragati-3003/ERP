@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { ResponsiveBar } from "@nivo/bar";
 import { attendanceData } from "../../data/mockData";
-
-const AttendanceChart = () => {
+import { useTheme } from "@mui/material";
+import { tokens } from "../../scenes/theme";
+const AttendanceChart = ({ isDashboard = false }) => {
   const [selectedSemester, setSelectedSemester] = useState("semester1");
   const data = attendanceData[selectedSemester] || [];
   const subjects = Object.keys(data[0] || {}).filter((key) => key !== "month");
-
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   // Define unique colors for each subject
   const subjectColors = [
     "#E63946",
@@ -34,29 +36,44 @@ const AttendanceChart = () => {
       style={{
         width: "100%",
         maxWidth: "600px",
-        margin: "40px",
+        margin: "40px auto", // Center horizontally
         padding: "10px",
         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
         borderRadius: "12px",
-        background: "white",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center", // Center content vertically
+        justifyContent: "center", // Center content vertically
       }}
     >
-      <h2
+      {/* <h2
         style={{ textAlign: "center", marginBottom: "5px", fontSize: "14px" }}
       >
         Attendance Report
-      </h2>
+      </h2> */}
 
       <select
         onChange={(e) => setSelectedSemester(e.target.value)}
         value={selectedSemester}
-        style={{ marginBottom: "5px", padding: "5px", fontSize: "12px" }}
+        style={{
+          marginBottom: "5px",
+          padding: "5px",
+          fontSize: "12px",
+          color: "black",
+        }}
       >
         <option value="semester1">Semester 1</option>
         <option value="semester2">Semester 2</option>
       </select>
 
-      <div style={{ height: "250px", width: "100%", position: "relative" }}>
+      <div
+        style={{
+          height: "250px",
+          width: "100%",
+          position: "relative",
+          color: "black",
+        }}
+      >
         <ResponsiveBar
           data={normalizedData}
           keys={subjects}
@@ -64,22 +81,50 @@ const AttendanceChart = () => {
           margin={{ top: 20, right: 20, bottom: 60, left: 50 }}
           padding={0.2} // Adjusted padding for better visual appeal
           colors={subjectColors}
+          theme={{
+            axis: {
+              domain: {
+                line: {
+                  stroke: colors.grey[100],
+                },
+              },
+              legend: {
+                text: {
+                  fill: colors.grey[100],
+                },
+              },
+              ticks: {
+                line: {
+                  stroke: colors.grey[100],
+                  strokeWidth: 1,
+                },
+                text: {
+                  fill: colors.grey[100],
+                },
+              },
+            },
+            legends: {
+              text: {
+                fill: colors.grey[100],
+              },
+            },
+          }}
           axisLeft={{
             tickSize: 4,
-            tickPadding: -10,
+            tickPadding: -1,
             tickRotation: 0,
-            legend: "Attendance (%)",
+            legend: isDashboard ? undefined : "Attendance (%)",
             legendPosition: "middle",
-            legendOffset: -45,
+            legendOffset: -42,
             tickValues: 5,
-            format: (value) => `${value.toFixed(2)}%`,
+            format: (value) => `${value.toFixed(2)}`,
             style: { fontSize: "10px" },
           }}
           axisBottom={{
             tickSize: 4,
             tickPadding: 4,
             tickRotation: -20,
-            legend: "Months",
+            legend: isDashboard ? undefined : "Months",
             legendPosition: "middle",
             legendOffset: 45,
             tickValues: normalizedData.length > 5 ? 5 : normalizedData.length,
@@ -109,7 +154,6 @@ const AttendanceChart = () => {
           )}
         />
       </div>
-
       <div
         style={{
           display: "flex",

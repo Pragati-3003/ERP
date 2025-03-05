@@ -1,5 +1,5 @@
 import { useState } from "react";
-import FullCalendar, { formatDate } from "@fullcalendar/react";
+// import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -15,10 +15,14 @@ import {
 import Header from "../../Components/Header";
 import { tokens } from "../theme";
 
-const Calender = () => {
+const Calendar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [currentEvents, setCurrentEvents] = useState([]);
+
+  useEffect(() => {
+    console.log("Current events updated:", currentEvents);
+  }, [currentEvents]);
 
   const handleDateClick = (selected) => {
     const title = prompt("Please enter a new title for your event");
@@ -26,13 +30,15 @@ const Calender = () => {
     calendarApi.unselect();
 
     if (title) {
-      calendarApi.addEvent({
+      const newEvent = {
         id: `${selected.dateStr}-${title}`,
         title,
-        start: selected.start,
-        end: selected.end,
+        start: selected.startStr,
+        end: selected.endStr,
         allDay: selected.allDay,
-      });
+      };
+      calendarApi.addEvent(newEvent);
+      setCurrentEvents((prevEvents) => [...prevEvents, newEvent]);
     }
   };
 
@@ -43,6 +49,9 @@ const Calender = () => {
       )
     ) {
       selected.event.remove();
+      setCurrentEvents((prevEvents) =>
+        prevEvents.filter((event) => event.id !== selected.event.id)
+      );
     }
   };
 
@@ -64,7 +73,7 @@ const Calender = () => {
               <ListItem
                 key={event.id}
                 sx={{
-                  backgroundColor: colors.greenAccent[500],
+                  backgroundColor: colors.greenAccent[400],
                   margin: "10px 0",
                   borderRadius: "2px",
                 }}
@@ -88,7 +97,7 @@ const Calender = () => {
 
         {/* CALENDAR */}
         <Box flex="1 1 100%" ml="15px">
-          <FullCalendar
+          {/* <FullCalendar
             height="75vh"
             plugins={[
               dayGridPlugin,
@@ -108,24 +117,22 @@ const Calender = () => {
             dayMaxEvents={true}
             select={handleDateClick}
             eventClick={handleEventClick}
-            eventsSet={(events) => setCurrentEvents(events)}
+            eventsSet={(events) => {
+              console.log("Events set:", events);
+              setCurrentEvents(events);
+            }}
             initialEvents={[
               {
-                id: "12315",
-                title: "All-day event",
-                date: "2022-09-14",
-              },
-              {
-                id: "5123",
-                title: "Timed event",
-                date: "2022-09-28",
+                id: "1",
+                title: "Test Event",
+                start: new Date().toISOString(),
               },
             ]}
-          />
+          /> */}
         </Box>
       </Box>
     </Box>
   );
 };
 
-export default Calender;
+export default Calendar;

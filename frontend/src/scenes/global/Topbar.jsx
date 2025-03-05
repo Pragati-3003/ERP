@@ -19,7 +19,12 @@ const Topbar = () => {
   const colorMode = useContext(ColorModeContext); // Fixed case typo
 
   return (
-    <Box display="flex" justifyContent="space-between" p={2}>
+    <Box
+      display="flex"
+      justifyContent="space-between"
+      p={2}
+      position={"relative"}
+    >
       {/* Search Bar */}
       <Typography variant="h5" sx={{ ml: 0, fontWeight: "bold" }}>
         Campus Diary
@@ -29,6 +34,8 @@ const Topbar = () => {
         backgroundColor={colors.primary[400]}
         borderRadius="3px"
         justifyContent={"space-around"}
+        position={"absolute"}
+        left={"180px"}
       >
         <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search" />
         <IconButton type="button" sx={{ p: 1 }}>

@@ -1,20 +1,23 @@
 import React, { useState } from "react";
 import { ResponsiveBar } from "@nivo/bar";
 import { resultData } from "../../data/mockData";
-
-const ResultChart = () => {
+import { useTheme } from "@mui/material";
+import { tokens } from "../../scenes/theme";
+const ResultChart = ({ isDashboard = false }) => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   const [selectedSemester, setSelectedSemester] = useState("semester2");
 
   const results = resultData[selectedSemester] || [];
 
-  const colors = [
-    "#003f5c",
-    "#2f4b7c",
-    "#665191",
-    "#a05195",
-    "#d45087",
-    "#f95d6a",
-    "#ff7c43",
+  const colours = [
+    "#e8c1a0",
+    "#f47560",
+    "#f1e15b",
+    "#e8a838",
+    "#61cdbb",
+    "#97e3d5",
+    "#e8c1a0",
   ];
 
   const keys = [
@@ -40,37 +43,64 @@ const ResultChart = () => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        background: "white",
+
         marginTop: "100px",
       }}
     >
-      <h2
-        style={{ textAlign: "center", marginBottom: "5px", fontSize: "14px" }}
-      >
-        Results Breakdown Chart
-      </h2>
       <select
         onChange={(e) => setSelectedSemester(e.target.value)}
         value={selectedSemester}
-        style={{ marginBottom: "5px", padding: "5px", fontSize: "12px" }}
+        style={{
+          marginBottom: "5px",
+          padding: "5px",
+          fontSize: "12px",
+          color: "black",
+        }}
       >
         <option value="semester1">Semester 1</option>
         <option value="semester2">Semester 2</option>
       </select>
 
-      <div style={{ height: "220px", width: "100%" }}>
+      <div style={{ height: "250px", width: "100%" }}>
         <ResponsiveBar
           data={results}
+          theme={{
+            axis: {
+              domain: {
+                line: {
+                  stroke: colors.grey[100],
+                },
+              },
+              legend: {
+                text: {
+                  fill: colors.grey[100],
+                },
+              },
+              ticks: {
+                line: {
+                  stroke: colors.grey[100],
+                  strokeWidth: 1,
+                },
+                text: {
+                  fill: colors.grey[100],
+                },
+              },
+            },
+            legends: {
+              text: {
+                fill: colors.grey[100],
+              },
+            },
+          }}
           keys={keys}
           indexBy="subject"
           margin={{ top: 20, right: 20, bottom: 60, left: 40 }}
-          colors={colors}
-          padding={0.15}
+          padding={0.2}
           axisLeft={{
             tickSize: 4,
             tickPadding: 4,
             tickRotation: 0,
-            legend: "Marks Scored",
+            legend: isDashboard ? undefined : "Marks Scored",
             legendPosition: "middle",
             legendOffset: -30,
             tickValues: 5,
@@ -78,8 +108,8 @@ const ResultChart = () => {
           axisBottom={{
             tickSize: 4,
             tickPadding: 10,
-            tickRotation: -15,
-            legend: "Subjects",
+            tickRotation: -20,
+            legend: isDashboard ? undefined : "Subjects",
             legendPosition: "middle",
             legendOffset: 50,
             tickValues: results.length > 5 ? 5 : results.length,
@@ -90,24 +120,21 @@ const ResultChart = () => {
           labelSkipWidth={6}
           labelSkipHeight={6}
           labelTextColor="#ffffff"
-          tooltip={({ id, value, data }) => {
-            const totalMarks = Object.keys(data)
-              .filter((key) => key !== "subject")
-              .reduce((sum, key) => sum + (data[key] || 0), 0);
-            return (
-              <div
-                style={{
-                  padding: "5px",
-                  background: "white",
-                  border: "1px solid black",
-                }}
-              >
-                <strong>{id}</strong>: {value}
-                <br />
-                <strong>Total Marks</strong>: {totalMarks}
-              </div>
-            );
-          }}
+          tooltip={({ id, value, data }) => (
+            <div
+              style={{
+                padding: "8px",
+                background: "white",
+                color: "black",
+                border: "1px solid black",
+              }}
+            >
+              <strong>{id}:</strong> {value} marks
+              <br />
+              <strong>Total:</strong>{" "}
+              {Object.values(data).reduce((sum, val) => sum + (val || 0), 0)}
+            </div>
+          )}
         />
       </div>
       <div
@@ -131,7 +158,7 @@ const ResultChart = () => {
               style={{
                 width: "12px",
                 height: "12px",
-                backgroundColor: colors[index],
+                backgroundColor: colours[index],
                 marginRight: "5px",
               }}
             ></div>

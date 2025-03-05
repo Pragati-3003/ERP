@@ -15,10 +15,12 @@ import Attendance from "./Components/Attendance_student/Attendance";
 import CourseEnrolled from "./Components/CourseEnrolled/CourseEnrolled";
 import ResultChart from "./Components/Charts/ResultChart";
 import Attendence1 from "./scenes/Attendence1/Attendence1";
-// import Calender from "./scenes/calender/Calender";
+import Calender from "./scenes/calender/Calender";
 
 import { useSelector } from "react-redux";
 import ProtectedRoute from "./Components/ProtectedRoute";
+import ResultBar from "./scenes/bar/Resultbar";
+import AttendenceBar from "./scenes/bar/AttendenceBar";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -32,10 +34,10 @@ function App() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {isAuthenticated && <CustomSidebar />}{" "}
+        {!isAuthenticated && <CustomSidebar />}{" "}
         {/* Sidebar hidden if not authenticated */}
         <main className="content">
-          {isAuthenticated && (
+          {!isAuthenticated && (
             <div className="topbar">
               <Topbar />
             </div>
@@ -43,7 +45,7 @@ function App() {
           {/* Topbar hidden if not authenticated */}
           <Routes>
             {/* Home Page: Redirect to Dashboard if authenticated, otherwise to Login */}
-            <Route
+            {/* <Route
               path="/"
               element={
                 isAuthenticated ? (
@@ -52,24 +54,25 @@ function App() {
                   <Navigate to="/login" />
                 )
               }
-            />
+            /> */}
 
             {/* Login Page */}
             <Route path="/login" element={<Login />} />
 
             {/* Protected Routes */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<StudentDb />} />
-              <Route path="/assignment" element={<Assignment />} />
-              <Route path="/timetable" element={<TimeTable />} />
-              <Route path="/attendance" element={<Attendence1 />} />
-              {/* <Route path="/calendar" element={<Calender />} /> */}
-              <Route path="/course-enrolled" element={<CourseEnrolled />} />
-              <Route path="/resultChart" element={<ResultChart />} />
-            </Route>
+            {/* <Route element={<ProtectedRoute />}> */}
+            <Route path="/dashboard" element={<StudentDb />} />
+            <Route path="/assignment" element={<Assignment />} />
+            <Route path="/timetable" element={<TimeTable />} />
+            <Route path="/attendance" element={<Attendence1 />} />
+            {/* <Route path="/calendar" element={<Calender />} /> */}
+            <Route path="/course-enrolled" element={<CourseEnrolled />} />
+            <Route path="/resultChart" element={<ResultBar />} />
+            <Route path="/attendenceChart" element={<AttendenceBar />} />
+            {/* </Route> */}
 
             {/* Fallback route for invalid paths */}
-            <Route path="*" element={<Navigate to="/" />} />
+            {/* <Route path="*" element={<Navigate to="/" />} /> */}
           </Routes>
         </main>
       </ThemeProvider>
