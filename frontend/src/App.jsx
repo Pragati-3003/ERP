@@ -15,8 +15,12 @@ import Attendance from "./Components/Attendance_student/Attendance";
 import CourseEnrolled from "./Components/CourseEnrolled/CourseEnrolled";
 import ResultChart from "./Components/Charts/ResultChart";
 import Attendence1 from "./scenes/Attendence1/Attendence1";
+import Calender from "./scenes/calender/Calender";
+
 import { useSelector } from "react-redux";
 import ProtectedRoute from "./Components/ProtectedRoute";
+import ResultBar from "./scenes/bar/Resultbar";
+import AttendenceBar from "./scenes/bar/AttendenceBar";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -61,12 +65,17 @@ function App() {
             <Route path="/assignment" element={<Assignment />} />
             <Route path="/timetable" element={<TimeTable />} />
             <Route path="/attendance" element={<Attendence1 />} />
+
+            {/* <Route path="/calendar" element={<Calender />} /> */}
             <Route path="/course-enrolled" element={<CourseEnrolled />} />
-            <Route path="/resultChart" element={<ResultChart />} />
+            <Route path="/resultChart" element={<ResultBar />} />
+            <Route path="/attendenceChart" element={<AttendenceBar />} />
+
+            
             {/* </Route> */}
 
             {/* Fallback route for invalid paths */}
-            <Route path="*" element={<Navigate to="/" />} />
+            {/* <Route path="*" element={<Navigate to="/" />} /> */}
           </Routes>
         </main>
       </ThemeProvider>
@@ -75,3 +84,4 @@ function App() {
 }
 
 export default App;
+

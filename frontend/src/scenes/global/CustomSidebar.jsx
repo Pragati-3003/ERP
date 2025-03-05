@@ -70,7 +70,6 @@ const CustomSidebar = () => {
       to: "/resultChart",
       icon: <BarChartOutlinedIcon />,
     },
-
   ];
 
   return (
