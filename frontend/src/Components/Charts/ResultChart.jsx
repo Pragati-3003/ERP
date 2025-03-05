@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { ResponsiveBar } from "@nivo/bar";
 import { resultData } from "../../data/mockData";
-import { useTheme } from "@mui/material";
+import { useTheme, Box } from "@mui/material";
 import { tokens } from "../../scenes/theme";
+
 const ResultChart = ({ isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -31,66 +32,45 @@ const ResultChart = ({ isDashboard = false }) => {
   ];
 
   return (
-    <div
-      style={{
-        width: "100%",
-        maxWidth: "450px",
-        margin: "20px auto",
-        padding: "5px",
-        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-        borderRadius: "12px",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-
-        marginTop: "100px",
-      }}
+    <Box
+      overflow="hidden"
+      display="flex"
+      flexDirection="row" // Ensures legend appears on the side
+      alignItems="center"
+      justifyContent="center"
+      width="100%"
+      maxWidth="600px"
+      margin="20px auto"
+      padding="5px"
     >
-      <select
-        onChange={(e) => setSelectedSemester(e.target.value)}
-        value={selectedSemester}
-        style={{
-          marginBottom: "5px",
-          padding: "5px",
-          fontSize: "12px",
-          color: "black",
-        }}
-      >
-        <option value="semester1">Semester 1</option>
-        <option value="semester2">Semester 2</option>
-      </select>
+      {/* Chart Container */}
+      <div style={{ height: "250px", width: "75%" }}>
+        <select
+          onChange={(e) => setSelectedSemester(e.target.value)}
+          value={selectedSemester}
+          style={{
+            marginBottom: "5px",
+            padding: "5px",
+            fontSize: "12px",
+            color: "black",
+          }}
+        >
+          <option value="semester1">Semester 1</option>
+          <option value="semester2">Semester 2</option>
+        </select>
 
-      <div style={{ height: "250px", width: "100%" }}>
         <ResponsiveBar
           data={results}
           theme={{
             axis: {
-              domain: {
-                line: {
-                  stroke: colors.grey[100],
-                },
-              },
-              legend: {
-                text: {
-                  fill: colors.grey[100],
-                },
-              },
+              domain: { line: { stroke: colors.grey[100] } },
+              legend: { text: { fill: colors.grey[100] } },
               ticks: {
-                line: {
-                  stroke: colors.grey[100],
-                  strokeWidth: 1,
-                },
-                text: {
-                  fill: colors.grey[100],
-                },
+                line: { stroke: colors.grey[100], strokeWidth: 1 },
+                text: { fill: colors.grey[100] },
               },
             },
-            legends: {
-              text: {
-                fill: colors.grey[100],
-              },
-            },
+            legends: { text: { fill: colors.grey[100] } },
           }}
           keys={keys}
           indexBy="subject"
@@ -107,8 +87,8 @@ const ResultChart = ({ isDashboard = false }) => {
           }}
           axisBottom={{
             tickSize: 4,
-            tickPadding: 10,
-            tickRotation: -20,
+            tickPadding: 5,
+            tickRotation: -15,
             legend: isDashboard ? undefined : "Subjects",
             legendPosition: "middle",
             legendOffset: 50,
@@ -137,12 +117,14 @@ const ResultChart = ({ isDashboard = false }) => {
           )}
         />
       </div>
+
+      {/* Legend Container */}
       <div
         style={{
           display: "flex",
-          justifyContent: "center",
-          flexWrap: "wrap",
-          marginTop: "20px",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          marginLeft: "20px", // Creates space between the chart and legend
         }}
       >
         {keys.map((key, index) => (
@@ -151,7 +133,7 @@ const ResultChart = ({ isDashboard = false }) => {
             style={{
               display: "flex",
               alignItems: "center",
-              margin: "5px 10px",
+              margin: "5px 0",
             }}
           >
             <div
@@ -166,7 +148,7 @@ const ResultChart = ({ isDashboard = false }) => {
           </div>
         ))}
       </div>
-    </div>
+    </Box>
   );
 };
 
