@@ -9,7 +9,6 @@ import { ColorModeContext, useMode } from "../src/scenes/theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Login from "./Components/Login/Login";
 import Assignment from "./Components/Assignment/Assignment";
-import Attendence from "./Components/Attendance_student/Attendance";
 import TimeTable from "./Components/TimeTable/TimeTable";
 import Attendance from "./Components/Attendance_student/Attendance";
 import CourseEnrolled from "./Components/CourseEnrolled/CourseEnrolled";
@@ -30,10 +29,10 @@ function App() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {!isAuthenticated && <CustomSidebar />}{" "}
+        {isAuthenticated && <CustomSidebar />}{" "}
         {/* Sidebar hidden if not authenticated */}
         <main className="content">
-          {!isAuthenticated && (
+          {isAuthenticated && (
             <div className="topbar">
               <Topbar />
             </div>
@@ -41,7 +40,7 @@ function App() {
           {/* Topbar hidden if not authenticated */}
           <Routes>
             {/* Home Page: Redirect to Dashboard if authenticated, otherwise to Login */}
-            {/* <Route
+            <Route
               path="/"
               element={
                 isAuthenticated ? (
@@ -50,20 +49,20 @@ function App() {
                   <Navigate to="/login" />
                 )
               }
-            /> */}
+            />
 
             {/* Login Page */}
             <Route path="/login" element={<Login />} />
 
             {/* Protected Routes */}
-            {/* <Route element={<ProtectedRoute />}> */}
+            <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<StudentDb />} />
             <Route path="/assignment" element={<Assignment />} />
             <Route path="/timetable" element={<TimeTable />} />
-            <Route path="/attendance" element={<Attendence1 />} />
+            <Route path="/attendance" element={<Attendance />} />
             <Route path="/course-enrolled" element={<CourseEnrolled />} />
             <Route path="/resultChart" element={<ResultChart />} />
-            {/* </Route> */}
+            </Route>
 
             {/* Fallback route for invalid paths */}
             <Route path="*" element={<Navigate to="/" />} />
