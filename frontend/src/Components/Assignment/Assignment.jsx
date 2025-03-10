@@ -1,245 +1,265 @@
-import React, { useState } from "react";
-import {
-  Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Button,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
-import { tokens } from "../../scenes/theme";
-
+import React, { useState, useEffect } from 'react';
+import axios from "axios";
+import { useSelector } from "react-redux";
 const Assignment = () => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  const [selectedSubject, setSelectedSubject] = useState("");
-  const [selectedFiles, setSelectedFiles] = useState({}); // Track selected files
-  const [assignments, setAssignments] = useState({
-    OOPS: [
-      {
-        id: 1,
-        subject: "OOPS Assignment 1",
-        createdDate: "01-Dec-2024",
-        dueDateTime: "10/12/2024 20:00:00",
-        cutoffDateTime: "10-Dec-2024 - 08:00:00 PM",
-        status: "Pending",
-        marks: null,
-      },
-    ],
-    C: [],
-    DS: [],
-    DBMS: [],
-  });
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedCourseName, setSelectedCourseName] = useState("");
+  const [uploadedPdf, setUploadedPdf] = useState(null);
+  const [selectedCourseCode, setSelectedCourseCode] = useState("");
+  const [assignments, setAssignments] = useState([]);
+  const [selectedAssignmentId, setSelectedAssignmentId] = useState(null)
 
-  const subjects = ["OOPS", "C", "DS", "DBMS"];
+  const curriculumId = useSelector((state) => state.auth.user.userInfo.CurriculumID);
+  const semester = useSelector((state) => state.auth.user.userInfo.Semester);
+  const studentId = useSelector((state) => state.auth.user.userInfo._id);
 
-  // Handle file selection
-  const handleFileUpload = (event, rowId) => {
-    const file = event.target.files[0];
-    if (file) {
-      setSelectedFiles((prev) => ({ ...prev, [rowId]: file }));
+  const fetchCourses = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("Provide Token");
+      return;
+    }
+    try {
+      const response = await axios.get("http://localhost:5000/api/user/getAllCoursesByCurriculumId", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          curriculumId,
+          semester,
+        },
+      });
+      setCourses(response.data)
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setError("Failed to fetch attendance data. Please try again.");
+      setLoading(false);
+    }
+  }
+  useEffect(() => {
+    fetchCourses()
+  }, [])
+
+  // fetch course wise  assignments 
+  const fetchAssignments = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("Provide Token");
+      return;
+    }
+    try {
+      const response = await axios.get("http://localhost:5000/api/student/viewAssignments", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          CurriculumID: curriculumId,
+          CourseCode: selectedCourseCode,
+          CourseName: selectedCourseName,
+          StudentID: studentId, // Include StudentID in the query
+        },
+      });
+      setAssignments(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setError("Failed to fetch attendance data. Please try again.");
+      setLoading(false);
     }
   };
 
-  // Handle submission
-  const handleSubmitAnswer = (id) => {
-    if (!selectedFiles[id]) return;
+  useEffect(() => {
+    if (selectedCourseCode && selectedCourseName) {
+      fetchAssignments();
+    }
+  }, [selectedCourseName, selectedCourseCode])
 
-    setAssignments((prev) => {
-      const updatedAssignments = {
-        ...prev,
-        [selectedSubject]: prev[selectedSubject].map((assignment) =>
-          assignment.id === id
-            ? { ...assignment, status: "Submitted" }
+
+
+  const handleFileUpload = (event) => {
+    setUploadedPdf(event.target.files[0]);
+  };
+  const handleSubmitAnswer = async (assignmentId) => {
+    if (!uploadedPdf) {
+      alert("Please upload a PDF before submitting.");
+      return;
+    }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("Provide Token");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("AssignmentID", assignmentId);
+    formData.append("StudentID", studentId);
+    formData.append("pdfFile", uploadedPdf);
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/student/uploadAssignmentSubmissions", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // Update the assignments state
+      setAssignments((prevAssignments) =>
+        prevAssignments.map((assignment) =>
+          assignment._id === assignmentId
+            ? {
+              ...assignment,
+              status: "Submitted",
+              submissionPDF: response.data.SubmissionPDF,
+            }
             : assignment
-        ),
-      };
-      return updatedAssignments;
-    });
+        )
+      );
 
-    setSelectedFiles((prev) => ({ ...prev, [id]: null })); // Clear selected file
+      alert("Assignment Submitted");
+      setUploadedPdf(null);
+    } catch (error) {
+      console.error("Error submitting assignment:", error);
+      setError("Failed to submit assignment. Please try again.");
+    }
   };
 
-  const columns = [
-    {
-      field: "subject",
-      headerName: "Subject",
-      flex: 1,
-      editable: false,
-      sortable: false,
-      disableColumnMenu: true,
-    },
-    {
-      field: "createdDate",
-      headerName: "Created Date",
-      flex: 1,
-      editable: false,
-      sortable: false,
-      disableColumnMenu: true,
-    },
-    {
-      field: "dueDateTime",
-      headerName: "Due Date Time",
-      flex: 1,
-      editable: false,
-      sortable: false,
-      disableColumnMenu: true,
-    },
-    {
-      field: "cutoffDateTime",
-      headerName: "Cut-Off Date Time",
-      flex: 1,
-      editable: false,
-      sortable: false,
-      disableColumnMenu: true,
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      flex: 1,
-      editable: false,
-      sortable: false,
-      disableColumnMenu: true,
-      renderCell: (params) => (
-        <Typography
-          color={params.value === "Pending" ? "green" : "red"}
-          padding={"15px 0 0 0"}
-        >
-          {params.value}
-        </Typography>
-      ),
-    },
-    {
-      field: "actions",
-      headerName: "Upload Assignment",
-      flex: 1.5,
-      editable: false,
-      sortable: false,
-      disableColumnMenu: true,
-      renderCell: (params) => (
-        <Box display="flex" alignItems="center" gap={1}>
-          {/* Hidden File Input */}
-          <input
-            type="file"
-            accept=".pdf"
-            id={`file-upload-${params.row.id}`}
-            style={{ display: "none" }}
-            onChange={(e) => handleFileUpload(e, params.row.id)}
-          />
+  const handleViewAssignment = (pdfUrl) => {
+    if (!pdfUrl) {
+      alert("No PDF available for this assignment.");
+      return;
+    }
+    window.open(`http://localhost:5000/${pdfUrl}`, "_blank");
+  };
 
-          {/* Custom File Upload Button */}
-          <label htmlFor={`file-upload-${params.row.id}`}>
-            <Button
-              variant="contained"
-              component="span"
-              sx={{
-                padding: "4px 8px",
-                fontSize: "12px",
-                minWidth: "80px",
-                backgroundColor: "#1976d2",
-                "&:hover": { backgroundColor: "#1565c0" },
-                textTransform: "capitalize",
-              }}
-            >
-              Choose File
-            </Button>
-          </label>
-
-          {/* Show file name and Submit button if a file is selected */}
-          {selectedFiles[params.row.id] && (
-            <>
-              <Typography variant="body2" sx={{ fontSize: "12px" }}>
-                {selectedFiles[params.row.id].name}
-              </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{
-                  padding: "4px 10px",
-                  fontSize: "12px",
-                  textTransform: "capitalize",
-                }}
-                onClick={() => handleSubmitAnswer(params.row.id)}
-              >
-                Submit
-              </Button>
-            </>
-          )}
-        </Box>
-      ),
-    },
-  ];
 
   return (
-    <Box p={3}>
-      <Typography variant="h5" fontWeight="bold" mb={2}>
-        Session: July-Dec 2024-2025
-      </Typography>
-
-      {/* Subject Selection */}
-      <FormControl fullWidth variant="outlined" sx={{ mb: 3, width: "85vw" }}>
-        <InputLabel>Select Subject</InputLabel>
-        <Select
-          value={selectedSubject}
-          onChange={(e) => setSelectedSubject(e.target.value)}
-          label="Select Subject"
-          sx={{ border: "1px solid rgba(0, 0, 0, 0.23)" }}
-        >
-          <MenuItem value="" disabled>
-            -- Select Subject --
-          </MenuItem>
-          {subjects.map((subject, index) => (
-            <MenuItem key={index} value={subject}>
-              {subject}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      {/* Data Grid */}
-      <Box
-        height="45vh"
-        width="85vw"
-        sx={{
-          "& .MuiDataGrid-root": { border: "none" },
-          "& .MuiDataGrid-cell": { borderBottom: "none" },
-          "& .MuiDataGrid-columnHeader": {
-            backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-columnSeparator": { display: "none" },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: colors.primary[400],
-          },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
-          },
-        }}
-      >
-        <DataGrid
-          rows={
-            selectedSubject && assignments[selectedSubject].length > 0
-              ? assignments[selectedSubject]
-              : []
-          }
-          columns={columns}
-          disableSelectionOnClick
-          hideFooterPagination
-          hideFooter
-          components={{
-            NoRowsOverlay: () => (
-              <Typography variant="h6" sx={{ textAlign: "center", mt: 2 }}>
-                No assignment yet
-              </Typography>
-            ),
-          }}
-        />
-      </Box>
-    </Box>
+    <div className="container mx-auto mt-8">
+      {/* Header Section */}
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-lg font-semibold">
+          Session: <span className="font-bold">July-Dec 2024-2025</span>
+        </h1>
+        {/* Subject Dropdown */}
+        <div className="relative  rounded-md border border-gray-300 px-3 py-2">
+          <label htmlFor="subject" className="mr-2 font-medium">
+            Select Subject:
+          </label>
+          <select
+            id="subject"
+            className="border  border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={selectedCourseCode + " " + selectedCourseName}
+            onChange={(e) => (setSelectedCourseCode(e.target.value.substring(0, 5)), setSelectedCourseName(e.target.value.substring(6)))}
+          >
+            <option value="" disabled>
+              -- Select Subject --
+            </option>
+            {courses.map((course, index) => (
+              <option key={index} value={course.CourseCode + " " + course.CourseName}>
+                {course.CourseCode} {course.CourseName}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      {/* Table Section */}
+      <div className=" p-4 rounded-lg shadow-lg">
+        <table className="min-w-full border-collapse  rounded-lg shadow-md">
+          <thead>
+            <tr className="bg-blue-500 text-white">
+              <th className="py-2 px-4 text-left">Action</th>
+              <th className="py-2 px-4 text-left">Assignment Title </th>
+              <th className="py-2 px-4 text-left">Course Name</th>
+              <th className="py-2 px-4 text-left">Due Date Time</th>
+              <th className="py-2 px-4 text-left">Status</th>
+              <th className="py-2 px-4 text-left">Score</th>
+              <th className="py-2 px-4 text-left">Upload Assignment</th>
+            </tr>
+          </thead>
+          <tbody>
+            {selectedCourseName ? (
+              assignments.length > 0 ? (
+                assignments.map((assignment, index) => (
+                  <tr
+                    key={index}
+                    className={`${index % 2 === 0 ? "bg-gray-50" : "bg-white"} text-black hover:bg-gray-200`}
+                  >
+                    <td className="py-2 px-4 text-black">
+                      {/* View Button */}
+                      <button
+                        onClick={() => handleViewAssignment(assignment.AssignmentPDF)}
+                        className="text-white bg-blue-500 hover:underline hover:bg-blue-600 px-2 py-1 rounded-md"
+                      >
+                        View
+                      </button>
+                    </td>
+                    <td className="py-2 px-4">{assignment.Title + " " + assignment.AssignmentNumber}</td>
+                    <td className="py-2 px-4">{selectedCourseCode + " " + selectedCourseName}</td>
+                    <td className="py-2 px-4">{assignment.DueDate}</td>
+                    <td
+                      className={`py-2 px-4 font-bold ${assignment.status === "Pending" ? "text-red-500" : "text-green-500"}`}
+                    >
+                      {assignment.status}
+                    </td>
+                    <td
+                      className={`py-2 px-4 font-bold ${assignment.status === "Pending" ? "text-red-500" : "text-green-500"}`}
+                    >
+                      {assignment.grades || "-"}
+                    </td>
+                    <td className="py-2 px-4 flex items-center">
+                      {/* File Input and Submit Button */}
+                      {assignment.status === "Submitted" ? (<button
+                        onClick={() => handleViewAssignment(assignment.submissionPDF)}
+                        className="text-white bg-red-500 hover:underline hover:bg-gray-600 px-2 py-1 rounded-md"
+                      >
+                        View Submission
+                      </button>
+                      ) : (<>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileUpload}
+                        // disabled={assignment.status === "Submitted"} // Disable if already submitted
+                        />
+                        <button
+                          className="ml-2 bg-gray-500 text-white hover:underline hover:bg-slate-600 px-2 py-1 rounded-md"
+                          onClick={() => handleSubmitAnswer(assignment._id)}
+                        // disabled={assignment.status === "Submitted"} // Disable if already submitted
+                        >
+                          Submit
+                        </button>
+                      </>)
+                      }
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="7"
+                    className="py-4 px-4 text-center text-gray-500 font-medium"
+                  >
+                    No assignments available for this subject.
+                  </td>
+                </tr>
+              )
+            ) : (
+              <tr>
+                <td
+                  colSpan="7"
+                  className="py-4 px-4 text-center text-gray-500 font-medium"
+                >
+                  Please select a subject to view assignments.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 };
 
