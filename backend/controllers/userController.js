@@ -197,4 +197,24 @@ const getAttendance = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error", error: err.message });
     }
 };
-module.exports = { getAttendance, getStudentAttendanceOfParticularCourse, getCourseById, getStudentsByCurriculum, getStudentByCourse }
+
+//@desc Get all the courses of the particular Curriculum  ---> Example Get all  the courses of MCA according to their current Semester
+//@route GET /api/users/getAllCoursesByCurriculumId
+const getAllCoursesByCurriculumID = async (req, res) => {
+    try {
+            const {curriculumId,semester}=req.query;
+            const curriculum = await Curriculum.findById(curriculumId).populate("semesters.courses")
+            if (!curriculum) {
+                return res.status(404).json({ message: "Curriculum not found" });
+            }
+            // console.log(curriculum.semesters)
+            const  semestersDetail = curriculum.semesters.find(sem => sem.semester === parseInt(semester))
+         
+            res.status(200).json(semestersDetail.courses);
+    } catch (err) {
+        console.error("Error fetching students:", err);
+        res.status(500).json({ message: "Internal Server Error", error: err.message });
+    }
+}
+
+module.exports = { getAllCoursesByCurriculumID, getAttendance, getStudentAttendanceOfParticularCourse, getCourseById, getStudentsByCurriculum, getStudentByCourse }
