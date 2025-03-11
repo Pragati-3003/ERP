@@ -5,6 +5,7 @@ const TeacherSchema = new mongoose.Schema({
   LastName: { type: String },
   PhoneNumber: { type: String },
   Email:{ type: String },
+  smartID:{type:String ,required:true},
   UserID: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   DeptID: { type: Number },
   Designation: { type: String },

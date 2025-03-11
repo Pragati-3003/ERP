@@ -3,6 +3,9 @@ const Assignment = require("../models/assignment.model.js");
 const AssignmentSubmission = require("../models/assignmentSubmission.model.js");
 const Course = require("../models/course.model.js")
 const Curriculum = require("../models/curriculum.model.js")
+const Student = require("../models/student.model.js")
+const MidTermResult = require("../models/midTermExamsResult.model.js")
+const Teacher = require("../models/teacher.model.js")
 //@desc Mark Attendace
 //@route POST /api/teacher/markAttendance
 const markAttendance = async (req, res) => {
@@ -90,4 +93,96 @@ const uploadAssignment = async (req, res) => {
     }
 };
 
-module.exports = { markAttendance, updateAttendance, uploadAssignment }
+//@desc Upload/Update Mid term Marks
+//@route PATCH /api/teacher/uploadMidtermResult
+const uploadMidtermResult = async (req, res) => {
+    try {
+        const {
+            program,
+            teacherEmail,
+            specialization,
+            StudentSmartID,
+            Periodical1,
+            Periodical2,
+            Assignment1,
+            Assignment2,
+            Internals,
+            CourseCode,
+            CourseName,
+            Remarks
+        } = req.body;
+
+        // Check Curriculum
+        const curriculum = await Curriculum.findOne({ program, specialization });
+        if (!curriculum)
+            return res.status(404).json({ message: "Curriculum not found" });
+
+        const CurriculumID = curriculum._id;
+
+        // Check Student
+        const student = await Student.findOne({ smartID: StudentSmartID })
+        if (!student)
+            return res.status(404).json({ message: "Student not found" });
+
+        const StudentID = student._id;
+
+        // Check Course
+        const course = await Course.findOne({ CourseCode, CourseName });
+        if (!course)
+            return res.status(404).json({ message: "Course not found" });
+
+        const CourseID = course._id;
+
+        // Check Teacher
+        const teacher = await Teacher.findOne({ Email: teacherEmail });
+        if (!teacher)
+            return res.status(404).json({ message: "Teacher not found" });
+
+        const TeacherID = teacher._id;
+
+        // Check if Mid Term Result already exists for that student
+        let midtermresult = await MidTermResult.findOne({
+            StudentID, CourseID, TeacherID
+        });
+
+        // ✅ If result already exists, update it (without overriding other fields)
+        if (midtermresult) {
+            if (Periodical1 !== undefined) midtermresult.Periodical1 = Periodical1;
+            if (Periodical2 !== undefined) midtermresult.Periodical2 = Periodical2;
+            if (Assignment1 !== undefined) midtermresult.Assignment1 = Assignment1;
+            if (Assignment2 !== undefined) midtermresult.Assignment2 = Assignment2;
+            if (Internals !== undefined) midtermresult.Internals = Internals;
+            if (Remarks !== undefined)midtermresult.Remarks = Remarks;
+            midtermresult.IssuedDate = new Date();
+
+            await midtermresult.save();
+            return res.status(200).json({ message: "Result updated successfully.", midtermresult });
+        }
+
+        // ✅ If no result exists, create a new one
+        midtermresult = new MidTermResult({
+            CurriculumID,
+            CourseID,
+            TeacherID,
+            StudentID,
+            StudentSmartID,
+            Periodical1,
+            Periodical2,
+            Assignment1,
+            Assignment2,
+            Internals,
+            Remarks,
+            IssuedDate: new Date()
+        });
+
+        await midtermresult.save();
+        res.status(201).json({ message: "Result uploaded successfully.", midtermresult });
+
+    } catch (err) {
+        console.error("Error uploading result:", err);
+        res.status(500).json({ message: "Internal Server Error", error: err.message });
+    }
+}
+
+
+module.exports = { uploadMidtermResult, markAttendance, updateAttendance, uploadAssignment }

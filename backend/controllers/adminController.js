@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const Teacher = require("../models/teacher.model.js")
 const Course = require("../models/course.model.js")
 const Curriculum = require("../models/curriculum.model.js")
+const EndSemesterResult = require("../models/endSemesterResult.model.js")
 // @desc Add Student 
 // route api/admin/add-student
 const addStudent = async (req, res) => {
@@ -140,7 +141,44 @@ const addCurriculum = async (req, res) => {
   }
 }
 
+// @desc Add End Semester Result of the student by the smart ID 
+// route api/admin/addEndSemResBySmartId
+
+const addEndSemResultBySmartID = async (req, res) => {
+  try {
+    const { CourseCode,CourseName,program,specialization,Semester,StudentSmartID } = req.body;
+    if (!req.file) {
+      return res.status(400).json({ message: "PDF file is required" });
+    }
+    const pdfPath = req.file.path;
+    // console.log(pdfPath); 
+    const curriculum = await Curriculum.findOne({program,specialization});
+    if(!curriculum)
+      return res.status(404).json({message:"Curriculum not found"});
+    const CurriculumID = curriculum._id;
+    const student = await Student.findOne({smartID:StudentSmartID})
+    if(!student)
+      return res.status(404).json({message:"Student not found"});
+    // console.log(student)
+    const StudentID = student._id;
+    
+    const result = new EndSemesterResult({
+      CurriculumID,
+      ResultPDF:pdfPath,
+      StudentID,
+      StudentSmartID,
+      IssuedDate:new Date(),
+      Remarks:"Upload",
+      Semester:Semester,
+    
+    }) 
+    await result.save();
+    res.status(201).json({ message: "Result  added successfully", result});
+  } catch (err) {
+    console.error("Error adding student:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
 
 
-
-module.exports = { addStudent, addTeacher, addCourse, addCurriculum } 
+module.exports = { addEndSemResultBySmartID,addStudent, addTeacher, addCourse, addCurriculum } 

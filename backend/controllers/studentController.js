@@ -4,6 +4,7 @@ const Curriculum = require("../models/curriculum.model.js")
 const Teacher = require("../models/teacher.model.js")
 const Assignment = require("../models/assignment.model.js")
 const AssignmentSubmission = require("../models/assignmentSubmission.model.js")
+const MidTermResult = require("../models/midTermExamsResult.model.js")
 
 //@desc Get student by id
 //@route GET /api/student/profile
@@ -214,4 +215,62 @@ const uploadAssignmentSubmissions = async (req, res) => {
   }
 };
 
-module.exports = { uploadAssignmentSubmissions, viewAssignments, getStudentById, getCourse, getCurriculum, courseEnrolled };
+//@desc GET get mid term exam result of all the courses
+//@route GET  /api/student/getMidtermResults
+const getMidtermResults = async (req,res) => {
+  try {
+    const { StudentSmartID, CurriculumID, semester } = req.query;
+
+    if (!StudentSmartID || !CurriculumID || !semester) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
+
+    const curriculum = await Curriculum.findOne({
+     _id: CurriculumID,
+      "semesters.semester": semester
+    }).populate("semesters.courses");
+
+    if (!curriculum) {
+      return res.status(404).json({ message: "No curriculum found for this semester." });
+    }
+
+    const currentSemester = curriculum.semesters.find(s => s.semester === Number(semester));
+    if (!currentSemester || currentSemester.courses.length === 0) {
+      return res.status(404).json({ message: "No courses found for this semester." });
+    }
+
+    const courseIDs = currentSemester.courses.map(course => course._id);
+
+    const results = await MidTermResult.find({
+      StudentSmartID,
+      CurriculumID,
+      CourseID: { $in: courseIDs }
+    }).populate('CourseID').populate('TeacherID');
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "No midterm results found for this semester." });
+    }
+
+    const midtermResults = results.map(result => ({
+      teacherName: result.TeacherID.FirstName+ " " + result.TeacherID.LastName,
+      courseCode: result.CourseID.CourseCode,
+      courseName: result.CourseID.CourseName,
+      periodical1: result.Periodical1,
+      assignment1: result.Assignment1,
+      periodical2: result.Periodical2,
+      assignment2: result.Assignment2,
+      internals: result.Internals,
+      remarks: result.Remarks
+    }));
+    res.status(200).json({
+      message: "Results fetched successfully.",
+      midtermResults
+    });
+
+  } catch (error) {
+    console.error("Error fetching midterm results:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+module.exports = { getMidtermResults, uploadAssignmentSubmissions, viewAssignments, getStudentById, getCourse, getCurriculum, courseEnrolled };
