@@ -5,7 +5,7 @@ const Teacher = require("../models/teacher.model.js")
 const Assignment = require("../models/assignment.model.js")
 const AssignmentSubmission = require("../models/assignmentSubmission.model.js")
 const MidTermResult = require("../models/midTermExamsResult.model.js")
-
+const Event = require("../models/events.model.js")
 //@desc Get student by id
 //@route GET /api/student/profile
 
@@ -305,4 +305,29 @@ const getMidtermResults = async (req, res) => {
   }
 }
 
-module.exports = { updateProfile, getMidtermResults, uploadAssignmentSubmissions, viewAssignments, getStudentById, getCourse, getCurriculum, courseEnrolled };
+//@desc GET get all the events
+//@route GET  /api/student/getEvents
+const getEvents =async(req,res)=>{
+  try {
+    const role  = req.user.role; 
+    // Validate role
+    if (!role) {
+      return res.status(400).json({ message: "Role is required" });
+    }
+
+    // Find events where the user's role is included in the roles array or the event is for ALL
+    const events = await Event.find({
+      $or: [
+        { roles: role }, // Events specific to the user's role
+        { roles: "ALL" }, // Events accessible to all roles
+      ],
+    }).sort({ startDate: 1 }); // Sort by start date
+
+    res.status(200).json(events);
+  } catch (err) {
+    console.error("Error fetching events:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+module.exports = { getEvents,updateProfile, getMidtermResults, uploadAssignmentSubmissions, viewAssignments, getStudentById, getCourse, getCurriculum, courseEnrolled };
