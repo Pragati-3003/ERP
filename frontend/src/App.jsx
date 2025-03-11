@@ -4,6 +4,7 @@ import "./App.css";
 import "./index.css";
 import StudentDb from "./scenes/dashboard/StudentDb";
 import CustomSidebar from "./scenes/global/CustomSidebar";
+import EventPage from "./Components/EventPage/EventPage";
 import Topbar from "./scenes/global/Topbar";
 import { ColorModeContext, useMode } from "../src/scenes/theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -64,6 +65,7 @@ function App() {
               <Route path="/assignment" element={<Assignment />} />
               <Route path="/timetable" element={<TimeTable />} />
               <Route path="/attendance" element={<Attendance />} />
+              <Route path="/events" element={<EventPage />} />
               <Route path="/course-enrolled" element={<CourseEnrolled />} />
               <Route path="/resultChart" element={<ResultChart />} />
               <Route path="/feesStructure" element={<FeeStructure />} />

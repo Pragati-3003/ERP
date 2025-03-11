@@ -39,7 +39,7 @@ const CustomSidebar = () => {
 
   const menuItems = [
     { title: "Dashboard", to: "/dashboard", icon: <HomeOutlinedIcon /> },
-    { title: "Results", to: "/result", icon: <SaveAsOutlinedIcon /> },
+    // { title: "Results", to: "/result", icon: <SaveAsOutlinedIcon /> },
     { title: "Events", to: "/events", icon: <EventOutlinedIcon /> },
     {
       title: "Attendance",
@@ -80,16 +80,16 @@ const CustomSidebar = () => {
     { title: "Profile", to: "/profile", icon: <PersonOutlinedIcon /> },
     { title: "Calendar", to: "/calendar", icon: <CalendarTodayOutlinedIcon /> },
     { title: "FAQ", to: "/faq", icon: <HelpOutlineOutlinedIcon /> },
-    {
-      title: "Attendance Chart",
-      to: "/attendenceChart",
-      icon: <AssessmentOutlinedIcon />,
-    },
-    {
-      title: "Result Chart",
-      to: "/resultChart",
-      icon: <BarChartOutlinedIcon />,
-    },
+    // {
+    //   title: "Attendance Chart",
+    //   to: "/attendenceChart",
+    //   icon: <AssessmentOutlinedIcon />,
+    // },
+    // {
+    //   title: "Result Chart",
+    //   to: "/resultChart",
+    //   icon: <BarChartOutlinedIcon />,
+    // },
   ];
 
   return (
