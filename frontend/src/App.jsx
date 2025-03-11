@@ -19,6 +19,7 @@ import ProtectedRoute from "./Components/ProtectedRoute";
 import FeeStructure from "./Components/FeeStructure/FeeStructure"
 import EndSemResult from "./Components/EndSemResult/EndSemResult"
 import MidTermResult from "./Components/MidTermResult/MidTermResult";
+import StudentProfile from "./Components/StudentProfile/StudentProfile";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -27,7 +28,7 @@ function App() {
   // Check if the user is authenticated
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   console.log(isAuthenticated);
-
+  const token = localStorage.getItem('token')
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
@@ -68,6 +69,7 @@ function App() {
               <Route path="/feesStructure" element={<FeeStructure />} />
               <Route path="/semresult" element={<EndSemResult />} />
               <Route path="/midTermResult" element={<MidTermResult />} />
+              <Route path="/profile" element={<StudentProfile />} />
             </Route>
 
             {/* Fallback route for invalid paths */}

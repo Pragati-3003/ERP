@@ -77,7 +77,7 @@ const CustomSidebar = () => {
       to: "/midTermResult",
       icon: <AssignmentOutlinedIcon />,
     },
-    { title: "Profile", to: "/form", icon: <PersonOutlinedIcon /> },
+    { title: "Profile", to: "/profile", icon: <PersonOutlinedIcon /> },
     { title: "Calendar", to: "/calendar", icon: <CalendarTodayOutlinedIcon /> },
     { title: "FAQ", to: "/faq", icon: <HelpOutlineOutlinedIcon /> },
     {

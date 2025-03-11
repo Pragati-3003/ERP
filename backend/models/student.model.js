@@ -23,6 +23,7 @@ const StudentSchema = new mongoose.Schema({
   PhoneNumber: { type: String },
   Scholarship: { type: String },
   AttendanceStatus: { type: String },
+  ProfilePic :{type:String},
   Email: { type: String },
 });
 
