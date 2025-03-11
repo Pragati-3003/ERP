@@ -69,13 +69,12 @@ const uploadResult = multer({
     }
 });
 
-// storage to store the profile photo of the user
-// Define storage location and filename structure
 const storage3 = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "uploads/profilePictures");  // Folder to store PDFs
+        cb(null, "uploads/profilePictures");  // Folder to store profile pictures
     },
     filename: (req, file, cb) => {
+        // Rename the file to avoid conflicts
         cb(null, `${Date.now()}-${file.originalname}`);
     }
 });
@@ -83,13 +82,17 @@ const storage3 = multer.diskStorage({
 const uploadProfilePictures = multer({
     storage: storage3,
     fileFilter: (req, file, cb) => {
-        const allowedMimeTypes = ["application/pdf"];
+        // Allow only image files
+        const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
         if (allowedMimeTypes.includes(file.mimetype)) {
-            cb(null, true);
+            cb(null, true); // Accept the file
         } else {
-            cb(new Error("Only PDF files are allowed"));
+            cb(new Error("Only image files (JPEG, PNG, JPG, GIF) are allowed")); // Reject the file
         }
-    }
+    },
+    limits: {
+        fileSize: 5 * 1024 * 1024, // Limit file size to 5MB
+    },
 });
 
 module.exports = { upload, uploadSubmission ,uploadResult,uploadProfilePictures};
