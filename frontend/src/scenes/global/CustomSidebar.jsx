@@ -25,7 +25,6 @@ import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 import { ColorModeContext, tokens } from "../theme";
-import CourseEnrolled from "../../Components/CourseEnrolled/CourseEnrolled";
 import userImage from "../../assets/user1.jpg"; // Importing profile image
 
 const CustomSidebar = () => {
@@ -43,7 +42,7 @@ const CustomSidebar = () => {
     { title: "Results", to: "/result", icon: <SaveAsOutlinedIcon /> },
     { title: "Events", to: "/events", icon: <EventOutlinedIcon /> },
     {
-      title: "Assessment",
+      title: "Attendance",
       to: "/attendance",
       icon: <AssessmentOutlinedIcon />,
     },
@@ -52,9 +51,30 @@ const CustomSidebar = () => {
       to: "/assignment",
       icon: <AssignmentOutlinedIcon />,
     },
+
     {
       title: "Course Enrolled",
       to: "/course-enrolled",
+      icon: <AssignmentOutlinedIcon />,
+    },
+    {
+      title: "Fees Structure",
+      to: "/feesStructure",
+      icon: <AssignmentOutlinedIcon />,
+    },
+    {
+      title: "TimeTable",
+      to: "/timetable",
+      icon: <AssignmentOutlinedIcon />,
+    },
+    {
+      title: "Semeter Result",
+      to: "/semresult",
+      icon: <AssignmentOutlinedIcon />,
+    },
+    {
+      title: "Mid Term Result",
+      to: "/midTermResult",
       icon: <AssignmentOutlinedIcon />,
     },
     { title: "Profile", to: "/form", icon: <PersonOutlinedIcon /> },

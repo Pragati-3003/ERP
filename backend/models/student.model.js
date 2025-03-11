@@ -4,6 +4,7 @@ const StudentSchema = new mongoose.Schema({
   UserID: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   EnrollmentNumber: { type: String },
   DeptID: { type: Number },
+  smartID:{type:String ,required:true},
   YearOfStudy: { type: String },
   Semester:{type:Number},
   RollNo: { type: String },

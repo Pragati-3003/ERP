@@ -16,6 +16,9 @@ import ResultChart from "./Components/Charts/ResultChart";
 import Attendence1 from "./scenes/Attendence1/Attendence1";
 import { useSelector } from "react-redux";
 import ProtectedRoute from "./Components/ProtectedRoute";
+import FeeStructure from "./Components/FeeStructure/FeeStructure"
+import EndSemResult from "./Components/EndSemResult/EndSemResult"
+import MidTermResult from "./Components/MidTermResult/MidTermResult";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -56,12 +59,15 @@ function App() {
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<StudentDb />} />
-            <Route path="/assignment" element={<Assignment />} />
-            <Route path="/timetable" element={<TimeTable />} />
-            <Route path="/attendance" element={<Attendance />} />
-            <Route path="/course-enrolled" element={<CourseEnrolled />} />
-            <Route path="/resultChart" element={<ResultChart />} />
+              <Route path="/dashboard" element={<StudentDb />} />
+              <Route path="/assignment" element={<Assignment />} />
+              <Route path="/timetable" element={<TimeTable />} />
+              <Route path="/attendance" element={<Attendance />} />
+              <Route path="/course-enrolled" element={<CourseEnrolled />} />
+              <Route path="/resultChart" element={<ResultChart />} />
+              <Route path="/feesStructure" element={<FeeStructure />} />
+              <Route path="/semresult" element={<EndSemResult />} />
+              <Route path="/midTermResult" element={<MidTermResult />} />
             </Route>
 
             {/* Fallback route for invalid paths */}

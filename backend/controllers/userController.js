@@ -2,6 +2,7 @@ const Course = require("../models/course.model.js")
 const Student = require("../models/student.model.js")
 const Curriculum = require("../models/curriculum.model.js")
 const Attendance = require("../models/attendance.model.js")
+const EndSemesterResult = require("../models/endSemesterResult.model.js")
 //@desc Get course  bycourse id
 //@route GET /api/users/course/:courseId
 
@@ -202,19 +203,41 @@ const getAttendance = async (req, res) => {
 //@route GET /api/users/getAllCoursesByCurriculumId
 const getAllCoursesByCurriculumID = async (req, res) => {
     try {
-            const {curriculumId,semester}=req.query;
-            const curriculum = await Curriculum.findById(curriculumId).populate("semesters.courses")
-            if (!curriculum) {
-                return res.status(404).json({ message: "Curriculum not found" });
-            }
-            // console.log(curriculum.semesters)
-            const  semestersDetail = curriculum.semesters.find(sem => sem.semester === parseInt(semester))
-         
-            res.status(200).json(semestersDetail.courses);
+        const { curriculumId, semester } = req.query;
+        const curriculum = await Curriculum.findById(curriculumId).populate("semesters.courses")
+        if (!curriculum) {
+            return res.status(404).json({ message: "Curriculum not found" });
+        }
+        // console.log(curriculum.semesters)
+        const semestersDetail = curriculum.semesters.find(sem => sem.semester === parseInt(semester))
+
+        res.status(200).json(semestersDetail.courses);
     } catch (err) {
         console.error("Error fetching students:", err);
         res.status(500).json({ message: "Internal Server Error", error: err.message });
     }
 }
 
-module.exports = { getAllCoursesByCurriculumID, getAttendance, getStudentAttendanceOfParticularCourse, getCourseById, getStudentsByCurriculum, getStudentByCourse }
+//@desc Get end semester result for student by studentID
+//@route GET /api/users/getEndSemRes
+const getSemesterResultByStudentId = async (req, res) => {
+    try {
+        const { smartCardId } = req.query;
+        const student = await Student.findOne({ smartID: smartCardId });
+        if (!student)
+            return res.status(404).json({ message: "Student doesn't exist" })
+        const studentId = student._id;
+        // console.log(studentId)
+        const result = await EndSemesterResult.findOne({ StudentID: studentId })
+        // console.log(result);
+        if (!result)
+            return res.status(404).json({ message: "Result doesn't exist" })
+     
+        res.status(200).json(result);
+    }
+    catch (err) {
+        console.error("Error fetching students:", err);
+        res.status(500).json({ message: "Internal Server Error", error: err.message });
+    }
+}
+module.exports = { getSemesterResultByStudentId, getAllCoursesByCurriculumID, getAttendance, getStudentAttendanceOfParticularCourse, getCourseById, getStudentsByCurriculum, getStudentByCourse }

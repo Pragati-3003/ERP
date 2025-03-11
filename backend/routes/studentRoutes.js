@@ -1,7 +1,7 @@
 const express = require('express')
 const verifyToken = require('../middlewares/authMiddleware.js')
 const authorizeRoles = require('../middlewares/roleMiddleware.js')
-const {uploadAssignmentSubmissions,viewAssignments,courseEnrolled,getStudentById,getCourse,getCurriculum} =require("../controllers/studentController.js")
+const {getMidtermResults,uploadAssignmentSubmissions,viewAssignments,courseEnrolled,getStudentById,getCourse,getCurriculum} =require("../controllers/studentController.js")
 const {uploadSubmission} = require("../middlewares/uploadMiddleware.js")
 const router = express.Router();
 
@@ -11,5 +11,5 @@ router.get('/curriculum', verifyToken, authorizeRoles('Student'), getCurriculum)
 router.get('/course-enrolled', verifyToken, authorizeRoles('Student'), courseEnrolled)
 router.get('/viewAssignments', verifyToken, authorizeRoles('Student'), viewAssignments)
 router.post('/uploadAssignmentSubmissions', verifyToken,  authorizeRoles("Student"), uploadSubmission.single("pdfFile"), uploadAssignmentSubmissions)
-
+router.get('/getMidtermResults', verifyToken, authorizeRoles('Student'), getMidtermResults)
 module.exports = router;

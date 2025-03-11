@@ -139,6 +139,12 @@ const Assignment = () => {
   return (
     <div className="container mx-auto mt-8">
       {/* Header Section */}
+      <div>
+          <h1 className="text-2xl font-bold">Assignment Report</h1>
+          <p className="text-sm mt-1 mb-10">
+            Semester {semester}
+          </p>
+        </div>
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-lg font-semibold">
           Session: <span className="font-bold">July-Dec 2024-2025</span>

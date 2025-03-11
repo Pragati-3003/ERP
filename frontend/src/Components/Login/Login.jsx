@@ -123,13 +123,13 @@ const Login = () => {
               Refresh
             </button>
           </div>
-          <input
+          {/* <input
             value={enteredCaptcha}
             onChange={(e) => setEnteredCaptcha(e.target.value)}
             type="text"
             placeholder="Enter CAPTCHA"
             required
-          />
+          /> */}
           <div className="remember">
             <input type="checkbox" id="remember" />
             <label htmlFor="remember">Remember me</label>

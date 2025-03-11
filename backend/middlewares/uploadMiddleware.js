@@ -46,5 +46,50 @@ const uploadSubmission = multer({
     }
 });
 
+// storage to store the the end sem result of the student
+// Define storage location and filename structure
+const storage2 = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/endSemResults");  // Folder to store PDFs
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
 
-module.exports = { upload, uploadSubmission };
+const uploadResult = multer({
+    storage: storage2,
+    fileFilter: (req, file, cb) => {
+        const allowedMimeTypes = ["application/pdf"];
+        if (allowedMimeTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error("Only PDF files are allowed"));
+        }
+    }
+});
+
+// storage to store the profile photo of the user
+// Define storage location and filename structure
+const storage3 = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/profilePictures");  // Folder to store PDFs
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+
+const uploadProfilePictures = multer({
+    storage: storage3,
+    fileFilter: (req, file, cb) => {
+        const allowedMimeTypes = ["application/pdf"];
+        if (allowedMimeTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error("Only PDF files are allowed"));
+        }
+    }
+});
+
+module.exports = { upload, uploadSubmission ,uploadResult,uploadProfilePictures};
