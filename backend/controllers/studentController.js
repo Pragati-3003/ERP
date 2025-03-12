@@ -6,6 +6,7 @@ const Assignment = require("../models/assignment.model.js")
 const AssignmentSubmission = require("../models/assignmentSubmission.model.js")
 const MidTermResult = require("../models/midTermExamsResult.model.js")
 const Event = require("../models/events.model.js")
+const StudentTimetable = require("../models/student_timetables.model.js")
 //@desc Get student by id
 //@route GET /api/student/profile
 
@@ -330,4 +331,18 @@ const getEvents =async(req,res)=>{
   }
 }
 
-module.exports = { getEvents,updateProfile, getMidtermResults, uploadAssignmentSubmissions, viewAssignments, getStudentById, getCourse, getCurriculum, courseEnrolled };
+//@desc GET  TImeTable for the current Semester
+//@route GET  /api/student/getTimeTable
+const getTimeTable =async(req,res)=>{
+  try{
+        const {curriculumID,semester } = req.query;
+        const timeTable = await StudentTimetable.findOne({curriculumID,semester})
+        if (!timeTable) return res.status(400).json({ message: "timeTable not found" });
+        res.status(200).json(timeTable)
+  } catch (err) {
+    console.error("Error fetching events:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+module.exports = {getTimeTable, getEvents,updateProfile, getMidtermResults, uploadAssignmentSubmissions, viewAssignments, getStudentById, getCourse, getCurriculum, courseEnrolled };

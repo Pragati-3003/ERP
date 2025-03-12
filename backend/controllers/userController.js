@@ -2,6 +2,7 @@ const Course = require("../models/course.model.js")
 const Student = require("../models/student.model.js")
 const Curriculum = require("../models/curriculum.model.js")
 const Attendance = require("../models/attendance.model.js")
+const User = require("../models/user.model.js")
 const EndSemesterResult = require("../models/endSemesterResult.model.js")
 //@desc Get course  bycourse id
 //@route GET /api/users/course/:courseId
@@ -240,4 +241,8 @@ const getSemesterResultByStudentId = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error", error: err.message });
     }
 }
+
+
+
+
 module.exports = { getSemesterResultByStudentId, getAllCoursesByCurriculumID, getAttendance, getStudentAttendanceOfParticularCourse, getCourseById, getStudentsByCurriculum, getStudentByCourse }

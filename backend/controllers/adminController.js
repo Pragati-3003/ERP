@@ -6,6 +6,8 @@ const Teacher = require("../models/teacher.model.js")
 const Course = require("../models/course.model.js")
 const Curriculum = require("../models/curriculum.model.js")
 const EndSemesterResult = require("../models/endSemesterResult.model.js")
+const StudentTimetable = require("../models/student_timetables.model.js")
+const TeacherTimetable = require("../models/teacher_timetables.model.js")
 // @desc Add Student 
 // route api/admin/add-student
 const addStudent = async (req, res) => {
@@ -226,4 +228,54 @@ const addEvents = async (req, res) => {
   }
 }
 
-module.exports = { addEvents, addEndSemResultBySmartID, addStudent, addTeacher, addCourse, addCurriculum } 
+// @desc Add Timetable by curriculum Id and the Semester
+// route  POST api/admin/addStudentTimeTable
+const addStudentTimeTable = async (req, res) => {
+  try {
+    const { program, specialization ,semester } = req.body;
+    // console.log(req.body)
+    if (!req.file) return res.status(400).json({ message: "PDF file is required" });
+    const pdfPath = req.file.path;
+    if (!semester) return res.status(400).json({ message: "Semester is required" });
+
+    const curriculum = await Curriculum.findOne({ program, specialization });
+    if (!curriculum)
+      return res.status(404).json({ message: "curriculum ot found" });
+    const curriculumID = curriculum._id;
+    const timetable = new StudentTimetable({
+      curriculumID,
+      semester,
+      pdfURL: pdfPath
+    })
+    await timetable.save();
+    res.status(201).json({ timetable })
+  } catch (err) {
+    console.error("Error creating event:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+// @desc Add Timetable by curriculum Id and the Semester
+// route  PUT api/admin/addTeacherTimeTable
+const addTeacherTimeTable = async (req, res) => {
+  try {
+    const { teacherEmail } = req.body;
+    if (!req.file) return res.status(400).json({ message: "PDF file is required" });
+    const pdfPath = req.file.path;
+    const teacher = await Teacher.findOne({ Email: teacherEmail })
+    if (!teacher)
+      return res.status(404).json({ message: "Teacher ot found" });
+    const teacherID = teacher._id;
+    const timetable = new TeacherTimetable({
+      teacherID,
+      pdfURL: pdfPath
+    })
+    await timetable.save();
+    res.status(201).json({ timetable })
+  } catch (err) {
+    console.error("Error creating event:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+module.exports = { addTeacherTimeTable, addEvents, addStudentTimeTable, addEndSemResultBySmartID, addStudent, addTeacher, addCourse, addCurriculum } 
