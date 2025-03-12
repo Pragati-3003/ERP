@@ -60,4 +60,34 @@ const loginUser = async (req, res) => {
     }
 }
 
-module.exports = { loginUser, createUser };
+// @desc Update password
+// @route PATCH /api/auth/update-password
+// @access Private (Only logged-in user)
+const updatePassword = async (req, res) => {
+    try {
+        const { email, oldPassword, newPassword } = req.body;
+
+        // 🟢 Fetch user by email
+        const user = await User.findOne({ Email:email }).select("+password");
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        // 🟢 Verify old password
+        const isMatch = await bcrypt.compare(oldPassword, user.Password); // ✅ Fix: lowercase 'password'
+        if (!isMatch) return res.status(400).json({ message: "Old password is incorrect" });
+
+        // 🟢 Hash new password
+        const salt = await bcrypt.genSalt(10);
+        user.Password = await bcrypt.hash(newPassword, salt);
+
+        // 🟢 Save updated password
+        await user.save();
+
+        res.status(200).json({ message: "Password updated successfully" });
+    } catch (error) {
+        console.error("Error updating password:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+  
+
+module.exports = {updatePassword, loginUser, createUser };

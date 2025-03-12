@@ -7,7 +7,6 @@ const TeacherSchema = new mongoose.Schema({
   Email:{ type: String },
   smartID:{type:String ,required:true},
   UserID: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  DeptID: { type: Number },
   Designation: { type: String },
   Specialization: { type: String },
   CoursesTaught: [
@@ -24,7 +23,7 @@ const TeacherSchema = new mongoose.Schema({
   DutyPlace: { type: String },
   SalaryStatus: { type: String },
   AttendanceRecords: { type: String },
- 
+  DeptID: { type: mongoose.Schema.Types.ObjectId, ref: "Department" },
 });
 
 module.exports = mongoose.model("Teacher", TeacherSchema);

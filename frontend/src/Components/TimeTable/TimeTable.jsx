@@ -1,35 +1,38 @@
-import React, { useState } from 'react'
-
+import React, { useEffect, useState } from 'react'
+import { useSelector } from "react-redux";
+import axios from 'axios';
 const TimeTable = () => {
-    const timetableData = {
-        BCA: {
-            Semester1: "mca_sem1_timetable.jpeg",
-            Semester2: null,
-            Semester3: null,
-            Semester4: null,
-            Semester5: null,
-            Semester6: null,
-        },
-        MCA: {
-            Semester1: "mca_sem1_timetable.jpeg",
-            Semester2: "mca_sem2_timetable.jpeg",
-            Semester3: null,
-            Semester4: null,
-        },
-    }
-    const courses = ['BCA', 'MCA', 'BTECH', 'MTECH', 'MBA', 'BBA']
-    const semesters = ['Semester1', 'Semester2', 'Semester3', 'Semester4', 'Semester5', 'Semester6', 'Semester7', 'Semester8']
-    const [course, setCourse] = useState('');
-    const [semester, setSemester] = useState('');
-    const [timetable, setTimetable] = useState(null);
-
-    const handleSearch = () => {
-        if (timetableData[course]?.[semester]) {
-            setTimetable(timetableData[course][semester]);
-        } else {
-            setTimetable(null);
+    const curriculumID = useSelector((state) => state.auth.user.userInfo.CurriculumID);
+    const semester = useSelector((state) => state.auth.user.userInfo.Semester);
+    const [timetable, settimetable] = useState(null)
+    useEffect(() => {
+        const fetchData = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                console.log("Provide Token");
+                return;
+            }
+            try {
+                const response = await axios.get("http://localhost:5000/api/student/getTimeTable", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    params: {
+                        curriculumID,
+                        semester,
+                    },
+                });
+                // console.log(response.data.pdfURL);
+                settimetable(response.data.pdfURL)
+                // setLoading(false);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                // setError("Failed to fetch attendance data. Please try again.");
+                // setLoading(false);
+            }
         }
-    };
+        fetchData();
+    }, [])
     return (
         <div className='container mx-auto  p-5 '>
             <div >
@@ -37,43 +40,26 @@ const TimeTable = () => {
                     <h1 className='text-2xl font-bold mb-6'>
                         University TimeTables</h1>
                 </div>
-                <div className='filters flex justify-center space-x-4 mb-6 bg-white'>
-                    <select
-                        className='border-2 bg-white border-gray-300 p-2 rounded-lg'
-                        value={course}
-                        onChange={(e) => setCourse(e.target.value)} >
-                        <option value=" ">Select Course</option>
-                        {courses.map((course, index) => (
-                            <option key={index} value={course}>{course}</option>
-                        ))}
-                    </select>
-                    <select className='border-2 ml-9 bg-white border-gray-300 p-2 rounded-lg'
-                        value={semester}
-                        onChange={(e) => setSemester(e.target.value)} >
-                        <option value=" ">Select Semester</option>
-                        {semesters.map((semester, index) => (
-                            <option key={index} value={semester}>{semester}</option>
-                        ))}
-                    </select>
-                    <button
-                        onClick={handleSearch}
-                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                    >
-                        Search
-                    </button>
-                </div>
                 <div>
                     {timetable ? (
                         <div>
-                            <img
-                                src={`/timetables/${timetable}`}
-                                alt="Timetable"
-                                className="mx-auto max-w-full border-dashed rounded-lg "
+                            <embed
+                                src={`http://localhost:5000/${timetable}`}
+                                type="application/pdf"
+                                width="100%"
+                                height="600px"
                             />
+
                             <p className="mt-2 text-green-600">Timetable found!</p>
+                            <a
+                                href={`http://localhost:5000/${timetable}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-500 underline"
+                            >
+                                Open in New Tab
+                            </a>
                         </div>
-                    ) : course && semester ? (
-                        <p className="text-red-500">No timetable available for the selected course and semester.</p>
                     ) : (
                         <p className="text-gray-500">Please select a course and semester to view the timetable.</p>
                     )}

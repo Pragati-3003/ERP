@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import {
   Drawer,
   List,
@@ -25,13 +25,35 @@ import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 import { ColorModeContext, tokens } from "../theme";
-import userImage from "../../assets/user1.jpg"; // Importing profile image
+import image from "../../assets/user1.jpg"; // Importing profile image
+import axios from "axios";
+import { useSelector } from "react-redux";
 
 const CustomSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [userImage, setUserImage] = useState(image)
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
+  const [userInfo, setUserInfo] = useState(null);
+  const token = localStorage.getItem("token");
+  const role = useSelector((state) => state.auth.user.role);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/student/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUserInfo(response.data);
+        // console.log(response.data);
+        setUserImage(`http://localhost:5000/${response.data.ProfilePic}`)
+      } catch (error) {
+        console.error("Failed to fetch profile data", error);
+      }
+    };
+
+    fetchData();
+  }, [token]);
 
   const toggleDrawer = () => {
     setIsOpen((prev) => !prev);
@@ -79,7 +101,7 @@ const CustomSidebar = () => {
     },
     { title: "Profile", to: "/profile", icon: <PersonOutlinedIcon /> },
     { title: "Calendar", to: "/calendar", icon: <CalendarTodayOutlinedIcon /> },
-    { title: "FAQ", to: "/faq", icon: <HelpOutlineOutlinedIcon /> },
+    // { title: "FAQ", to: "/faq", icon: <HelpOutlineOutlinedIcon /> },
     // {
     //   title: "Attendance Chart",
     //   to: "/attendenceChart",
@@ -158,10 +180,10 @@ const CustomSidebar = () => {
               />
             </Box>
             <Typography variant="h6" sx={{ fontWeight: "bold", mt: 1 }}>
-              Samira
+              {userInfo.FirstName + " " + userInfo.LastName}
             </Typography>
             <Typography variant="body2" sx={{ color: colors.greenAccent[500] }}>
-              Student
+              {role}
             </Typography>
           </Box>
         )}

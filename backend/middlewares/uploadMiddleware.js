@@ -95,4 +95,51 @@ const uploadProfilePictures = multer({
     },
 });
 
-module.exports = { upload, uploadSubmission ,uploadResult,uploadProfilePictures};
+
+// storage to store the student Time table
+// Define storage location and filename structure
+const storage4 = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/studentTimeTable");  // Folder to store PDFs
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+
+const uploadTimeTable = multer({
+    storage: storage4,
+    fileFilter: (req, file, cb) => {
+        const allowedMimeTypes = ["application/pdf"];
+        if (allowedMimeTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error("Only PDF files are allowed"));
+        }
+    }
+});
+
+// storage to store the student Time table
+// Define storage location and filename structure
+const storage5 = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/teacherTimeTable");  // Folder to store PDFs
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+
+const uploadTeacherTimeTable = multer({
+    storage: storage5,
+    fileFilter: (req, file, cb) => {
+        const allowedMimeTypes = ["application/pdf"];
+        if (allowedMimeTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error("Only PDF files are allowed"));
+        }
+    }
+});
+
+module.exports = { upload, uploadTeacherTimeTable,uploadSubmission ,uploadResult,uploadProfilePictures,uploadTimeTable};

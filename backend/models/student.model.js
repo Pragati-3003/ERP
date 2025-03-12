@@ -3,13 +3,12 @@ const mongoose = require("mongoose");
 const StudentSchema = new mongoose.Schema({
   UserID: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   EnrollmentNumber: { type: String },
-  DeptID: { type: Number },
-  smartID:{type:String ,required:true},
+  smartID: { type: String, required: true },
   YearOfStudy: { type: String },
-  Semester:{type:Number},
+  Semester: { type: Number },
   RollNo: { type: String },
   CourseID: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
-  CurriculumID: { type: mongoose.Schema.Types.ObjectId, ref: "Curriculum" },  
+  CurriculumID: { type: mongoose.Schema.Types.ObjectId, ref: "Curriculum" },
   CourseFees: { type: Number },
   DOB: { type: Date },
   Gender: { type: String, enum: ["Male", "Female", "Other"] },
@@ -23,8 +22,9 @@ const StudentSchema = new mongoose.Schema({
   PhoneNumber: { type: String },
   Scholarship: { type: String },
   AttendanceStatus: { type: String },
-  ProfilePic :{type:String},
+  ProfilePic: { type: String },
   Email: { type: String },
+  DeptID: { type: mongoose.Schema.Types.ObjectId, ref: "Department" },
 });
 
 module.exports = mongoose.model("Student", StudentSchema);

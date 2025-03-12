@@ -21,6 +21,7 @@ import FeeStructure from "./Components/FeeStructure/FeeStructure"
 import EndSemResult from "./Components/EndSemResult/EndSemResult"
 import MidTermResult from "./Components/MidTermResult/MidTermResult";
 import StudentProfile from "./Components/StudentProfile/StudentProfile";
+import Calender from "./scenes/calender/Calender"
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -72,6 +73,7 @@ function App() {
               <Route path="/semresult" element={<EndSemResult />} />
               <Route path="/midTermResult" element={<MidTermResult />} />
               <Route path="/profile" element={<StudentProfile />} />
+              {/* <Route path="/calendar" element={<Calender />} /> */}
             </Route>
 
             {/* Fallback route for invalid paths */}
