@@ -1,9 +1,9 @@
 import React from "react";
 import { ColorModeContext, useMode } from "../theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import Topbar from "../../scenes/global/Topbar";
+import Topbar from "../global/Topbar";
 // import { dummyAttendanceData } from "../../data/mockData";
-
+import CustomSidebar from "../global/StCustomSidebar";
 import { Routes, Route, Navigate } from "react-router-dom";
 import "./dashboard.css"; // Import the Student Dashboard CSS file
 import ResultChart from "../../Components/Charts/ResultChart";
@@ -18,7 +18,7 @@ import { tokens } from "../theme";
 import StatBox from "../../Components/StatBox";
 import Calendar from "../calender/Calendar";
 import ProgressCircle from "../../Components/ProgressCircle";
-const StudentDb = () => {
+const TeacherDb = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   // const [theme, colorMode] = useMode();
@@ -26,7 +26,7 @@ const StudentDb = () => {
     // <ColorModeContext.Provider value={colorMode}>
     //   <ThemeProvider theme={theme}>
     //     <CssBaseline />
-    <div className="student-dashboard">
+    <div className="admin-dashboard">
       {/* <CustomSidebar /> */}
       <main className="content">
         {/* <div className="topbar">
@@ -251,4 +251,4 @@ const StudentDb = () => {
   );
 };
 
-export default StudentDb;
+export default TeacherDb;

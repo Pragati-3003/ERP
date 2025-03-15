@@ -29,9 +29,11 @@ import image from "../../assets/user1.jpg"; // Importing profile image
 import axios from "axios";
 import { useSelector } from "react-redux";
 
-const CustomSidebar = () => {
+const StCustomSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [userImage, setUserImage] = useState(image)
+
+  const [userImage, setUserImage] = useState(image);
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
@@ -41,12 +43,15 @@ const CustomSidebar = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/student/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get(
+          "http://localhost:5000/api/student/profile",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setUserInfo(response.data);
         // console.log(response.data);
-        setUserImage(`http://localhost:5000/${response.data.ProfilePic}`)
+        setUserImage(`http://localhost:5000/${response.data.ProfilePic}`);
       } catch (error) {
         console.error("Failed to fetch profile data", error);
       }
@@ -60,7 +65,12 @@ const CustomSidebar = () => {
   };
 
   const menuItems = [
-    { title: "Dashboard", to: "/dashboard", icon: <HomeOutlinedIcon /> },
+    {
+      title: "Dashboard",
+      to: "/student-dashboard",
+      icon: <HomeOutlinedIcon />,
+    },
+
     // { title: "Results", to: "/result", icon: <SaveAsOutlinedIcon /> },
     { title: "Events", to: "/events", icon: <EventOutlinedIcon /> },
     {
@@ -205,4 +215,4 @@ const CustomSidebar = () => {
   );
 };
 
-export default CustomSidebar;
+export default StCustomSidebar;

@@ -2,9 +2,12 @@ import { useState } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import "./App.css";
 import "./index.css";
-//import StudentDb from "./scenes/dashboard/StudentDb";
+
+import StudentDb from "./scenes/dashboard/StudentDb";
 import AdminDb from "./scenes/dashboard/AdminDb";
-import CustomSidebar from "./scenes/global/CustomSidebar";
+import TeacherDb from "./scenes/dashboard/TeacherDb";
+import StCustomSidebar from "./scenes/global/StCustomSidebar";
+
 import EventPage from "./Components/EventPage/EventPage";
 import Topbar from "./scenes/global/Topbar";
 import { ColorModeContext, useMode } from "../src/scenes/theme";
@@ -41,7 +44,7 @@ function App() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {isAuthenticated && <CustomSidebar />}{" "}
+        {isAuthenticated && <StCustomSidebar />}{" "}
         {/* Sidebar hidden if not authenticated */}
         <main className="content">
           {isAuthenticated && (
@@ -56,18 +59,19 @@ function App() {
               path="/"
               element={
                 isAuthenticated ? (
-                  <Navigate to="/dashboard" />
+                  <Navigate to="/student-dashboard" />
                 ) : (
                   <Navigate to="/login" />
                 )
               }
             />
+
             {/* Login Page */}
             <Route path="/login" element={<Login />} />
             {/* Protected Routes */}
-            <Route element={<ProtectedRoute />}>
+            {/* <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<StudentDb />} />
-              {/* <Route path="/dashboard" element={<AdminDb />} /> */}
+              <Route path="/dashboard" element={<AdminDb />} />
               <Route path="/assignment" element={<Assignment />} />
               <Route path="/timetable" element={<TimeTable />} />
               <Route path="/attendance" element={<Attendance />} />
@@ -80,7 +84,7 @@ function App() {
               <Route path="/midTermResult" element={<MidTermResult />} />
               <Route path="/profile" element={<StudentProfile />} />
               <Route path="/calendar" element={<Calendar />} />
-            </Route>
+            </Route> */}
 
             {/* <Route element={<ProtectedRoute />}> */}
             {/* <Route path="/dashboard" element={<StudentDb />} />
@@ -93,6 +97,7 @@ function App() {
             <Route path="/resultChart" element={<ResultBar />} />
             <Route path="/attendenceChart" element={<AttendenceBar />} /> */}
             {/* </Route> */}
+
             {/* <Route element={<ProtectedRoute />}> */}
             {/* <Route path="/dashboard" element={<StudentDb />} /> */}
             {/* <Route path="/dashboard" element={<AdminDb />} />
@@ -107,6 +112,39 @@ function App() {
             <Route path="/resultChart" element={<ResultBar />} />
             <Route path="/attendenceChart" element={<AttendenceBar />} /> */}
             {/* </Route> */}
+
+            {/* <Route element={<ProtectedRoute />}>
+              {/* <Route path="/dashboard" element={<StudentDb />} /> */}
+            {/* <Route path="/dashboard" element={<AdminDb />} /> */}
+            {/* <Route path="/assignment" element={<Assignment />} />
+              <Route path="/timetable" element={<TimeTable />} />
+              <Route path="/attendance" element={<AttendanceReport />} />
+              <Route path="/course-enrolled" element={<CourseEnrolled />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/feesStructure" element={<FeeStructure />} />
+              <Route path="/semresult" element={<EndSemResult />} />
+              <Route path="/midTermResult" element={<MidTermResult />} />
+              <Route path="/resultChart" element={<ResultBar />} />
+              <Route path="/attendenceChart" element={<AttendenceBar />} />
+            </Route> */}
+
+            <Route element={<ProtectedRoute />}>
+              <Route path="/admin-dashboard" element={<AdminDb />} />
+              <Route path="/teacher-dashboard" element={<TeacherDb />} />
+              <Route path="/student-dashboard" element={<StudentDb />} />
+              <Route path="/assignment" element={<Assignment />} />
+              <Route path="/timetable" element={<TimeTable />} />
+              <Route path="/attendance" element={<Attendance />} />
+              <Route path="/events" element={<EventPage />} />
+              <Route path="/course-enrolled" element={<CourseEnrolled />} />
+              <Route path="/resultChart" element={<ResultBar />} />
+              <Route path="/attendenceChart" element={<AttendenceBar />} />
+              <Route path="/feesStructure" element={<FeeStructure />} />
+              <Route path="/semresult" element={<EndSemResult />} />
+              <Route path="/midTermResult" element={<MidTermResult />} />
+              <Route path="/profile" element={<StudentProfile />} />
+              <Route path="/calendar" element={<Calendar />} />
+            </Route>
 
             {/* Fallback route for invalid paths */}
             <Route path="*" element={<Navigate to="/" />} />

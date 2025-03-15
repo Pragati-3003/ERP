@@ -46,11 +46,14 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", {
-        email,
-        password,
-        role,
-      });
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        {
+          email,
+          password,
+          role,
+        }
+      );
 
       dispatch(
         login({
@@ -60,9 +63,13 @@ const Login = () => {
         })
       );
       localStorage.setItem("token", response.data.token);
-      navigate("/dashboard");
+      navigate("/student-dashboard");
     } catch (error) {
-      console.error("Login failed:", error.response?.data?.message || error.message);
+      console.error(
+        "Login failed:",
+        error.response?.data?.message || error.message
+      );
+
       alert(error.response?.data?.message || "Login failed. Please try again.");
     }
   };
@@ -70,10 +77,9 @@ const Login = () => {
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
     try {
-    
       const response = await axios.patch(
         "http://localhost:5000/api/auth/update-password",
-        { email, oldPassword, newPassword },
+        { email, oldPassword, newPassword }
       );
 
       alert(response.data.message);
@@ -81,8 +87,14 @@ const Login = () => {
       setOldPassword("");
       setNewPassword("");
     } catch (error) {
-      console.error("Error updating password:", error.response?.data?.message || error.message);
-      alert(error.response?.data?.message || "Failed to update password. Check old password.");
+      console.error(
+        "Error updating password:",
+        error.response?.data?.message || error.message
+      );
+      alert(
+        error.response?.data?.message ||
+          "Failed to update password. Check old password."
+      );
     }
   };
 
@@ -93,32 +105,75 @@ const Login = () => {
   return (
     <div id="login-page" className="container">
       <div className="map">
-        <img src="https://in.pinterest.com/pin/588775351313572933/" alt="3D Map Placeholder" />
+        <img
+          src="https://in.pinterest.com/pin/588775351313572933/"
+          alt="3D Map Placeholder"
+        />
       </div>
       <div className="form-container">
         <h2>BANASTHALI'S - ERP</h2>
         <form onSubmit={handleSubmit}>
           <div className="role-selector">
             <label>
-              <input type="radio" name="role" value="student" onChange={(e) => setRole(e.target.value)} required />
+              <input
+                type="radio"
+                name="role"
+                value="student"
+                onChange={(e) => setRole(e.target.value)}
+                required
+              />
               Student
             </label>
             <label>
-              <input type="radio" name="role" value="teacher" onChange={(e) => setRole(e.target.value)} required />
+              <input
+                type="radio"
+                name="role"
+                value="teacher"
+                onChange={(e) => setRole(e.target.value)}
+                required
+              />
               Faculty
             </label>
             <label>
-              <input type="radio" name="role" value="admin" onChange={(e) => setRole(e.target.value)} required />
+              <input
+                type="radio"
+                name="role"
+                value="admin"
+                onChange={(e) => setRole(e.target.value)}
+                required
+              />
               Admin
             </label>
           </div>
-          <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Enter Email" required />
-          <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Enter Password" required />
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            placeholder="Enter Email"
+            required
+          />
+          <input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            placeholder="Enter Password"
+            required
+          />
           <div className="captcha">
             <span>{captcha}</span>
-            <button type="button" onClick={refreshCaptcha}>Refresh</button>
+            <button type="button" onClick={refreshCaptcha}>
+              Refresh
+            </button>
           </div>
-          <input value={enteredCaptcha} onChange={(e) => setEnteredCaptcha(e.target.value)} type="text" placeholder="Enter CAPTCHA" required />
+
+          <input
+            value={enteredCaptcha}
+            onChange={(e) => setEnteredCaptcha(e.target.value)}
+            type="text"
+            placeholder="Enter CAPTCHA"
+            required
+          />
+
           <div className="remember">
             <input type="checkbox" id="remember" />
             <label htmlFor="remember">Remember me</label>
@@ -129,7 +184,13 @@ const Login = () => {
         {/* 🔥 Forgot Password & Update Password Buttons */}
         <div className="extra-options">
           <button className="forgot-password">Forgot Password?</button>
-          <button className="update-password" onClick={() => setShowUpdateModal(true)}>Update Password</button>
+
+          <button
+            className="update-password"
+            onClick={() => setShowUpdateModal(true)}
+          >
+            Update Password
+          </button>
         </div>
       </div>
 
@@ -140,11 +201,31 @@ const Login = () => {
             <div className="modal-content">
               <h3>Update Password</h3>
               <form onSubmit={handleUpdatePassword}>
-                <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Enter Email" required />
-                <input value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} type="password" placeholder="Old Password" required />
-                <input value={newPassword} onChange={(e) => setNewPassword(e.target.value)} type="password" placeholder="New Password" required />
+                <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                  placeholder="Enter Email"
+                  required
+                />
+                <input
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  type="password"
+                  placeholder="Old Password"
+                  required
+                />
+                <input
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  type="password"
+                  placeholder="New Password"
+                  required
+                />
                 <button type="submit">Update</button>
-                <button type="button" onClick={() => setShowUpdateModal(false)}>Cancel</button>
+                <button type="button" onClick={() => setShowUpdateModal(false)}>
+                  Cancel
+                </button>
               </form>
             </div>
           </div>
