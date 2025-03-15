@@ -49,6 +49,7 @@ const Topbar = () => {
       boxShadow={scrolling ? "0px 4px 10px rgba(0,0,0,0.1)" : "none"}
       transition="all 0.3s ease-in-out"
       height="65px"
+      overflow="hidden"
     >
       {/* Logo / Title */}
       <Typography variant="h5" sx={{ ml: 12, fontWeight: "bold" }}>

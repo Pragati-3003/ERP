@@ -55,7 +55,7 @@ const FeeStructure = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen ">
       {/* Main Content */}
       <div className="flex-1 p-8">
         {!showDetails && (
@@ -73,13 +73,27 @@ const FeeStructure = () => {
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-blue-100">
-                    <th className="text-left px-6 py-3 text-blue-900 font-semibold">Sr No</th>
-                    <th className="text-left px-6 py-3 text-blue-900 font-semibold">Particular</th>
-                    <th className="text-left px-6 py-3 text-blue-900 font-semibold">Amount</th>
-                    <th className="text-left px-6 py-3 text-blue-900 font-semibold">Mess Charges</th>
-                    <th className="text-left px-6 py-3 text-blue-900 font-semibold">Electricity and Water</th>
-                    <th className="text-left px-6 py-3 text-blue-900 font-semibold">Room Rent</th>
-                    <th className="text-left px-6 py-3 text-blue-900 font-semibold">Campus Fee</th>
+                    <th className="text-left px-6 py-3 text-blue-900 font-semibold">
+                      Sr No
+                    </th>
+                    <th className="text-left px-6 py-3 text-blue-900 font-semibold">
+                      Particular
+                    </th>
+                    <th className="text-left px-6 py-3 text-blue-900 font-semibold">
+                      Amount
+                    </th>
+                    <th className="text-left px-6 py-3 text-blue-900 font-semibold">
+                      Mess Charges
+                    </th>
+                    <th className="text-left px-6 py-3 text-blue-900 font-semibold">
+                      Electricity and Water
+                    </th>
+                    <th className="text-left px-6 py-3 text-blue-900 font-semibold">
+                      Room Rent
+                    </th>
+                    <th className="text-left px-6 py-3 text-blue-900 font-semibold">
+                      Campus Fee
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -94,7 +108,9 @@ const FeeStructure = () => {
                       <td className="px-6 py-3">{fee.particular}</td>
                       <td className="px-6 py-3">{fee.amount || ""}</td>
                       <td className="px-6 py-3">{fee.messCharges || ""}</td>
-                      <td className="px-6 py-3">{fee.electricityWater || ""}</td>
+                      <td className="px-6 py-3">
+                        {fee.electricityWater || ""}
+                      </td>
                       <td className="px-6 py-3">{fee.roomRent || ""}</td>
                       <td className="px-6 py-3">{fee.campusFee || ""}</td>
                     </tr>
@@ -114,17 +130,27 @@ const FeeStructure = () => {
 
         {/* Details Section */}
         {showDetails && (
-          <div className="bg-gray-50 p-6 rounded-lg shadow-md mx-auto w-3/4">
-            <h2 className="text-xl font-bold text-blue-900 mb-4">Payment Details</h2>
-            <table className="w-full text-left border-collapse">
+          <div className="bg-gray-50 p-6 color-black rounded-lg shadow-md mx-auto w-3/4">
+            <h2 className="text-xl font-bold text-blue-900 mb-4">
+              Payment Details
+            </h2>
+            <table className="w-full text-left border-collapse  text-gray-800">
               <tbody>
                 <tr className="border-b">
-                  <td className="px-4 py-2 font-semibold">First Installment:</td>
-                  <td className="px-4 py-2">{paymentDetails.firstInstallment}</td>
+                  <td className="px-4 py-2 font-semibold">
+                    First Installment:
+                  </td>
+                  <td className="px-4 py-2">
+                    {paymentDetails.firstInstallment}
+                  </td>
                 </tr>
                 <tr className="border-b">
-                  <td className="px-4 py-2 font-semibold">Second Installment:</td>
-                  <td className="px-4 py-2">{paymentDetails.secondInstallment}</td>
+                  <td className="px-4 py-2 font-semibold">
+                    Second Installment:
+                  </td>
+                  <td className="px-4 py-2">
+                    {paymentDetails.secondInstallment}
+                  </td>
                 </tr>
                 <tr className="border-b">
                   <td className="px-4 py-2 font-semibold">Total Amount:</td>
@@ -135,11 +161,17 @@ const FeeStructure = () => {
                   <td className="px-4 py-2">{paymentDetails.alreadyPaid}</td>
                 </tr>
                 <tr className="border-b">
-                  <td className="px-4 py-2 font-semibold">Last Payment Date:</td>
-                  <td className="px-4 py-2">{paymentDetails.lastPaymentDate}</td>
+                  <td className="px-4 py-2 font-semibold">
+                    Last Payment Date:
+                  </td>
+                  <td className="px-4 py-2">
+                    {paymentDetails.lastPaymentDate}
+                  </td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-2 font-semibold">Amount Left to Pay:</td>
+                  <td className="px-4 py-2 font-semibold">
+                    Amount Left to Pay:
+                  </td>
                   <td className="px-4 py-2">{paymentDetails.amountLeft}</td>
                 </tr>
               </tbody>
@@ -155,7 +187,10 @@ const FeeStructure = () => {
 
         {/* Footer Section */}
         <div className="mt-8 text-gray-600 text-sm">
-          <p>Please contact the administration for any fee-related queries or updates.</p>
+          <p>
+            Please contact the administration for any fee-related queries or
+            updates.
+          </p>
         </div>
       </div>
     </div>
