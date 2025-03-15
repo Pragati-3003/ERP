@@ -1,73 +1,79 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useSelector } from "react-redux";
 
 const AttendanceReport = () => {
-  // Dummy student data
-  const student = {
-    name: "John Doe",
-    course: "B.Tech Computer Science",
-    semester: 3,
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState("Overall");
+
+  // Get student details from Redux store
+  const studentId = useSelector((state) => state.auth.user.userInfo._id);
+  const curriculumId = useSelector((state) => state.auth.user.userInfo.CurriculumID);
+  const semester = useSelector((state) => state.auth.user.userInfo.Semester);
+
+  // Fetch attendance data from the API
+  const fetchData = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("Provide Token");
+      return;
+    }
+
+    try {
+      const response = await axios.get("http://localhost:5000/api/user/getattendance", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          studentId,
+          curriculumId,
+          semester,
+        },
+      });
+
+      setData(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setError("Failed to fetch attendance data. Please try again.");
+      setLoading(false);
+    }
   };
 
-  // Dummy attendance data
-  const dummyAttendanceData = [
-    {
-      subject_name: "Mathematics",
-      subject_code: "MATH101",
-      total_classes: 20,
-      classes_attended: 1,
-      month: "July",
-    },
-    {
-      subject_name: "Physics",
-      subject_code: "PHYS101",
-      total_classes: 15,
-      classes_attended: 12,
-      month: "July",
-    },
-    {
-      subject_name: "Chemistry",
-      subject_code: "CHEM101",
-      total_classes: 20,
-      classes_attended: 15,
-      month: "July",
-    },
-    {
-      subject_name: "Chemistry",
-      subject_code: "CHEM101",
-      total_classes: 10,
-      classes_attended: 8,
-      month: "August",
-    },
-    {
-      subject_name: "Mathematics",
-      subject_code: "MATH101",
-      total_classes: 10,
-      classes_attended: 7,
-      month: "August",
-    },
-    {
-      subject_name: "Physics",
-      subject_code: "PHYS101",
-      total_classes: 10,
-      classes_attended: 6,
-      month: "August",
-    },
-  ];
-
-  // State for selected month
-  const [selectedMonth, setSelectedMonth] = useState("Overall");
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   // Aggregation logic for "Overall"
   const getAggregatedAttendance = () => {
-    return dummyAttendanceData.reduce((acc, curr) => {
+    return data.reduce((acc, curr) => {
       const existingSubject = acc.find(
-        (data) => data.subject_code === curr.subject_code
+        (subject) => subject.courseCode === curr.courseCode
       );
       if (existingSubject) {
-        existingSubject.total_classes += curr.total_classes;
-        existingSubject.classes_attended += curr.classes_attended;
+        existingSubject.totalClasses += curr.monthWiseAttendance.reduce(
+          (sum, month) => sum + month.totalClasses,
+          0
+        );
+        existingSubject.attendedClasses += curr.monthWiseAttendance.reduce(
+          (sum, month) => sum + month.attendedClasses,
+          0
+        );
       } else {
-        acc.push({ ...curr });
+        acc.push({
+          courseName: curr.courseName,
+          courseCode: curr.courseCode,
+          totalClasses: curr.monthWiseAttendance.reduce(
+            (sum, month) => sum + month.totalClasses,
+            0
+          ),
+          attendedClasses: curr.monthWiseAttendance.reduce(
+            (sum, month) => sum + month.attendedClasses,
+            0
+          ),
+        });
       }
       return acc;
     }, []);
@@ -77,7 +83,16 @@ const AttendanceReport = () => {
   const filteredAttendanceData =
     selectedMonth === "Overall"
       ? getAggregatedAttendance()
-      : dummyAttendanceData.filter((data) => data.month === selectedMonth);
+      : data.flatMap((course) =>
+        course.monthWiseAttendance
+          .filter((month) => month.month === selectedMonth)
+          .map((month) => ({
+            courseName: course.courseName,
+            courseCode: course.courseCode,
+            totalClasses: month.totalClasses,
+            attendedClasses: month.attendedClasses,
+          }))
+      );
 
   // Function to get months based on semester
   const getMonthsForSemester = (semester) => {
@@ -93,16 +108,24 @@ const AttendanceReport = () => {
     return semester % 2 === 0 ? monthsEven : monthsOdd;
   };
 
-  const months = getMonthsForSemester(student.semester);
+  const months = getMonthsForSemester(semester);
+
+  if (loading) {
+    return <div className="text-center py-8">Loading attendance data...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center py-8 text-red-600">{error}</div>;
+  }
 
   return (
-    <div className="attendance-report-container bg-gray-50 p-8 min-h-max flex flex-col items-center">
+    <div className="attendance-report-container p-8 min-h-max flex flex-col items-center">
       {/* Header Section */}
       <div className="header bg-blue-600 text-white px-6 py-4 rounded-lg shadow-md w-full max-w-4xl flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Attendance Report</h1>
           <p className="text-sm mt-1">
-            {student.name} | {student.course} | Semester {student.semester}
+            Semester {semester}
           </p>
         </div>
         {/* Monthly View Dropdown */}
@@ -150,33 +173,32 @@ const AttendanceReport = () => {
           <tbody>
             {filteredAttendanceData.map((subject, index) => {
               const {
-                subject_name,
-                subject_code,
-                total_classes,
-                classes_attended,
+                courseName,
+                courseCode,
+                totalClasses,
+                attendedClasses,
               } = subject;
               const percentage = (
-                (classes_attended / total_classes) *
+                (attendedClasses / totalClasses) *
                 100
               ).toFixed(2);
               const requiredClasses =
                 percentage >= 70
                   ? 0
                   : Math.ceil(
-                      (0.7 * total_classes - classes_attended) / (1 - 0.7)
-                    );
+                    (0.7 * totalClasses - attendedClasses) / (1 - 0.7)
+                  );
 
               return (
                 <tr
                   key={index}
-                  className={`${
-                    index % 2 === 0 ? "bg-gray-50" : "bg-gray-100"
-                  } text-gray-800`}
+                  className={`${index % 2 === 0 ? "bg-gray-50" : "bg-gray-100"
+                    } text-gray-800`}
                 >
-                  <td className="px-6 py-3">{subject_name}</td>
-                  <td className="px-6 py-3">{subject_code}</td>
-                  <td className="px-6 py-3">{total_classes}</td>
-                  <td className="px-6 py-3">{classes_attended}</td>
+                  <td className="px-6 py-3">{courseName}</td>
+                  <td className="px-6 py-3">{courseCode}</td>
+                  <td className="px-6 py-3">{totalClasses}</td>
+                  <td className="px-6 py-3">{attendedClasses}</td>
                   <td className="px-6 py-3">{percentage}%</td>
                   <td className="px-6 py-3">
                     {requiredClasses > 0 ? requiredClasses : "NA"}

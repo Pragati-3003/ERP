@@ -1,7 +1,7 @@
 import React from "react";
 import { ColorModeContext, useMode } from "../theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import Topbar from "../../scenes/global/Topbar";
+import Topbar from "../global/Topbar";
 // import { dummyAttendanceData } from "../../data/mockData";
 import CustomSidebar from "../global/CustomSidebar";
 import { Routes, Route, Navigate } from "react-router-dom";
@@ -18,7 +18,7 @@ import { tokens } from "../theme";
 import StatBox from "../../Components/StatBox";
 import Calendar from "../calender/Calendar";
 import ProgressCircle from "../../Components/ProgressCircle";
-const StudentDb = () => {
+const AdminDb = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   // const [theme, colorMode] = useMode();
@@ -251,4 +251,4 @@ const StudentDb = () => {
   );
 };
 
-export default StudentDb;
+export default AdminDb;

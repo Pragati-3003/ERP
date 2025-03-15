@@ -2,6 +2,9 @@ const Student = require("../models/student.model.js")
 const Course = require("../models/course.model.js")
 const Curriculum = require("../models/curriculum.model.js")
 const Teacher = require("../models/teacher.model.js")
+const Assignment = require("../models/assignment.model.js")
+const AssignmentSubmission = require("../models/assignmentSubmission.model.js")
+const MidTermResult = require("../models/midTermExamsResult.model.js")
 
 //@desc Get student by id
 //@route GET /api/student/profile
@@ -38,7 +41,7 @@ const getCourse = async (req, res) => {
     if (!curriculum)
       return res.status(400).json({ message: "Curriculum does not exist" });
     const semesterData = curriculum.semesters.find(sem => sem.semester === Semester)
-    console.log(curriculum);
+    // console.log(curriculum);
     if (!semesterData)
       return res.status(400).json({ message: "No courses found for this semester" });
     res.status(200).json(semesterData.courses);
@@ -55,14 +58,14 @@ const getCurriculum = async (req, res) => {
     const userId = req.user.id;
     // console.log(userId);
     // console.log(req.user)
-    
+
     const curriculum = await Student.findOne({ UserID: userId }).populate("CurriculumID");
-  // console.log(curriculum);
+    // console.log(curriculum);
     const details = await Curriculum.findById(curriculum.CurriculumID).populate("semesters.courses");
     console.log(details);
-       
+
     // res.status(200).json(curriculum.CurriculumID);
-     res.status(200).json(details);
+    res.status(200).json(details);
   } catch (err) {
     res.status(500).json({ message: "Internal Server Error" });
   }
@@ -138,7 +141,136 @@ const courseEnrolled = async (req, res) => {
 };
 
 
+//@desc Get all assigments of the current semester subject wise/course wise
+//@route GET /api/student/viewAssignments
+const viewAssignments = async (req, res) => {
+  try {
+    const { CourseCode, CourseName, CurriculumID } = req.query;
+    const studentId = req.query.StudentID; // Add StudentID to the query
 
+    // Find the course
+    const course = await Course.findOne({ CourseCode, CourseName });
+    if (!course)
+      return res.status(404).json({ message: "Course not found" });
 
+    const CourseID = course._id;
 
-module.exports = { getStudentById, getCourse, getCurriculum, courseEnrolled};
+    // Find all assignments for the course
+    const assignments = await Assignment.find({ CourseID, CurriculumID });
+    if (!assignments || assignments.length === 0)
+      return res.status(404).json({ message: "Assignments not found" });
+
+    // Fetch submission status for each assignment
+    const assignmentsWithStatus = await Promise.all(
+      assignments.map(async (assignment) => {
+        const submission = await AssignmentSubmission.findOne({
+          AssignmentID: assignment._id,
+          StudentID: studentId,
+        });
+
+        return {
+          ...assignment.toObject(),
+          status: submission ? submission.Status : "Pending",
+          grades: submission ? submission.Grades : null,
+          submissionPDF: submission ? submission.SubmissionPDF : null,
+        };
+      })
+    );
+
+    res.status(200).json(assignmentsWithStatus);
+  } catch (err) {
+    console.error("Error in viewAssignments:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+//@desc Post submit assignment of particular subject
+//@route Post  /api/student/uploadAssignmentSubmissions
+const uploadAssignmentSubmissions = async (req, res) => {
+  try {
+    const { AssignmentID, StudentID } = req.body;
+    if (!req.file) {
+      return res.status(400).json({ message: "PDF file is required" });
+    }
+
+    const pdfPath = req.file.path; // This is where multer stores the file (local path)
+
+    const assignmentSubmission = new AssignmentSubmission({
+      AssignmentID,
+      StudentID,
+      SubmissionDate: new Date(),
+      Status: "Submitted",
+      SubmissionPDF: pdfPath,
+      Remarks: "",
+      Grades: "",
+    });
+
+    await assignmentSubmission.save();
+
+    // Return the submission details
+    res.status(201).json(assignmentSubmission);
+  } catch (err) {
+    console.error("Error in uploadAssignmentSubmissions:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+//@desc GET get mid term exam result of all the courses
+//@route GET  /api/student/getMidtermResults
+const getMidtermResults = async (req,res) => {
+  try {
+    const { StudentSmartID, CurriculumID, semester } = req.query;
+
+    if (!StudentSmartID || !CurriculumID || !semester) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
+
+    const curriculum = await Curriculum.findOne({
+     _id: CurriculumID,
+      "semesters.semester": semester
+    }).populate("semesters.courses");
+
+    if (!curriculum) {
+      return res.status(404).json({ message: "No curriculum found for this semester." });
+    }
+
+    const currentSemester = curriculum.semesters.find(s => s.semester === Number(semester));
+    if (!currentSemester || currentSemester.courses.length === 0) {
+      return res.status(404).json({ message: "No courses found for this semester." });
+    }
+
+    const courseIDs = currentSemester.courses.map(course => course._id);
+
+    const results = await MidTermResult.find({
+      StudentSmartID,
+      CurriculumID,
+      CourseID: { $in: courseIDs }
+    }).populate('CourseID').populate('TeacherID');
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "No midterm results found for this semester." });
+    }
+
+    const midtermResults = results.map(result => ({
+      teacherName: result.TeacherID.FirstName+ " " + result.TeacherID.LastName,
+      courseCode: result.CourseID.CourseCode,
+      courseName: result.CourseID.CourseName,
+      periodical1: result.Periodical1,
+      assignment1: result.Assignment1,
+      periodical2: result.Periodical2,
+      assignment2: result.Assignment2,
+      internals: result.Internals,
+      remarks: result.Remarks
+    }));
+    res.status(200).json({
+      message: "Results fetched successfully.",
+      midtermResults
+    });
+
+  } catch (error) {
+    console.error("Error fetching midterm results:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+module.exports = { getMidtermResults, uploadAssignmentSubmissions, viewAssignments, getStudentById, getCourse, getCurriculum, courseEnrolled };

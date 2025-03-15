@@ -202,7 +202,7 @@ const Calendar = () => {
   const monthName = selectedMonth.split(" ")[0]; // Extracts "March" from "March 2025"
 
   return (
-    <div className="p-5 min-h-screen text-aqua-800 dark:text-white relative flex flex-col items-center">
+    <div className="p-5 min-h-screen text-aqua-800 dark:text-white  flex flex-col items-center overflow-hiddenhidden">
       <h1 className="text-4xl font-bold text-center mb-5">Academic Calendar</h1>
 
       <div className="mb-5">
@@ -219,7 +219,7 @@ const Calendar = () => {
         </select>
       </div>
 
-      <div className="border p-5 rounded-lg shadow-lg max-w-3xl mx-auto bg-blue dark:bg-gray-800 text-aqua-800 dark:text-white relative w-full">
+      <div className="border p-5 rounded-lg shadow-lg max-w-3xl mx-auto bg-blue dark:bg-gray-800 text-aqua-800 dark:text-white  w-full">
         <h2 className="text-2xl font-semibold text-center mb-3">
           {selectedMonth}
         </h2>

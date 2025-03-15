@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express();
 const cors = require('cors')
-
+const path = require("path");
 app.use(cors({
     origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"], 
@@ -25,7 +25,7 @@ const MONGO_URL = process.env.MONGO_URL
 app.get('/', (req, res) => {
     res.send("Hello from the backend , byw ");
 })
-
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 mongoose.connect(MONGO_URL, {})
     .then(() => {
         console.log("MongoDB connected")

@@ -27,8 +27,8 @@ const Attendence1 = () => {
         attendancePercentage >= 70
           ? "NA"
           : Math.ceil(
-              (0.7 * row.total_classes - row.classes_attended) / (1 - 0.7)
-            );
+            (0.7 * row.total_classes - row.classes_attended) / (1 - 0.7)
+          );
 
       return {
         ...row,

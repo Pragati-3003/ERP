@@ -2,6 +2,7 @@ const Course = require("../models/course.model.js")
 const Student = require("../models/student.model.js")
 const Curriculum = require("../models/curriculum.model.js")
 const Attendance = require("../models/attendance.model.js")
+const EndSemesterResult = require("../models/endSemesterResult.model.js")
 //@desc Get course  bycourse id
 //@route GET /api/users/course/:courseId
 
@@ -84,7 +85,6 @@ const getStudentAttendanceOfParticularCourse = async (req, res) => {
     try {
         const { studentId, teacherId, courseId } = req.body;
         const totalClassesConducted = await Attendance.countDocuments({
-            TeacherID: teacherId,
             CourseID: courseId
         });
         //    console.log(totalClassesConducted);
@@ -97,7 +97,6 @@ const getStudentAttendanceOfParticularCourse = async (req, res) => {
 
         res.status(200).json({
             studentId,
-            teacherId,
             courseId,
             totalClassesConducted,
             totalClassesAttended
@@ -108,4 +107,137 @@ const getStudentAttendanceOfParticularCourse = async (req, res) => {
     }
 }
 
-module.exports = { getStudentAttendanceOfParticularCourse, getCourseById, getStudentsByCurriculum, getStudentByCourse }
+
+const getAttendance = async (req, res) => {
+    try {
+        // Extract query parameters
+        const { studentId, curriculumId, semester } = req.query;
+
+        // Find the student
+        const student = await Student.findById(studentId);
+        if (!student)
+            return res.status(404).json({ message: "Student not found" });
+
+        // Find the curriculum
+        const curriculum = await Curriculum.findOne({ _id: curriculumId });
+        if (!curriculum) {
+            return res.status(404).json({ message: "Curriculum not found" });
+        }
+
+        // Check if semesters array exists and is not empty
+        if (!curriculum.semesters || curriculum.semesters.length === 0) {
+            return res.status(404).json({ message: "No semesters found in curriculum" });
+        }
+
+        // Convert semester to number (if necessary)
+        const semesterNumber = parseInt(semester, 10);
+
+        // Find the current semester
+        const currentSemester = curriculum.semesters.find(sem => sem.semester === semesterNumber);
+        if (!currentSemester) {
+            return res.status(404).json({ message: "Semester not found in curriculum" });
+        }
+
+        // Get course IDs for the current semester
+        const courseIds = currentSemester.courses;
+
+        // Fetch attendance data for each course
+        const attendanceData = await Promise.all(
+            courseIds.map(async (courseId) => {
+                const course = await Course.findOne({ _id: courseId });
+                if (!course) {
+                    return null;
+                }
+
+                // Fetch attendance records for the course
+                const attendanceRecords = await Attendance.find({
+                    CourseID: courseId,
+                });
+
+                // Group attendance records by month
+                const attendanceByMonth = attendanceRecords.reduce((acc, record) => {
+                    const month = record.Date.toLocaleString("default", { month: "long" });
+                    if (!acc[month]) {
+                        acc[month] = {
+                            totalClasses: 0,
+                            attendedClasses: 0,
+                        };
+                    }
+                    acc[month].totalClasses += 1;
+                    if (record.StudentID == studentId && record.Status === "Present") {
+                        acc[month].attendedClasses += 1;
+                    }
+                    return acc;
+                }, {});
+
+                // Format the month-wise attendance data
+                const monthWiseAttendance = Object.keys(attendanceByMonth).map(
+                    (month) => ({
+                        month,
+                        totalClasses: attendanceByMonth[month].totalClasses,
+                        attendedClasses: attendanceByMonth[month].attendedClasses,
+                    })
+                );
+
+                return {
+                    courseName: course.CourseName,
+                    courseCode: course.CourseCode,
+                    monthWiseAttendance,
+                };
+            })
+        );
+
+        // Filter out null values
+        const filteredAttendanceData = attendanceData.filter((data) => data !== null);
+
+        // Return the attendance data
+        res.status(200).json(filteredAttendanceData);
+
+    } catch (err) {
+        console.error("Error fetching students:", err);
+        res.status(500).json({ message: "Internal Server Error", error: err.message });
+    }
+};
+
+//@desc Get all the courses of the particular Curriculum  ---> Example Get all  the courses of MCA according to their current Semester
+//@route GET /api/users/getAllCoursesByCurriculumId
+const getAllCoursesByCurriculumID = async (req, res) => {
+    try {
+        const { curriculumId, semester } = req.query;
+        const curriculum = await Curriculum.findById(curriculumId).populate("semesters.courses")
+        if (!curriculum) {
+            return res.status(404).json({ message: "Curriculum not found" });
+        }
+        // console.log(curriculum.semesters)
+        const semestersDetail = curriculum.semesters.find(sem => sem.semester === parseInt(semester))
+
+        res.status(200).json(semestersDetail.courses);
+    } catch (err) {
+        console.error("Error fetching students:", err);
+        res.status(500).json({ message: "Internal Server Error", error: err.message });
+    }
+}
+
+//@desc Get end semester result for student by studentID
+//@route GET /api/users/getEndSemRes
+const getSemesterResultByStudentId = async (req, res) => {
+    try {
+        const { smartCardId } = req.query;
+        const student = await Student.findOne({ smartID: smartCardId });
+        if (!student)
+            return res.status(404).json({ message: "Student doesn't exist" })
+        const studentId = student._id;
+        // console.log(studentId)
+        const result = await EndSemesterResult.findOne({ StudentID: studentId })
+        // console.log(result);
+        if (!result)
+            return res.status(404).json({ message: "Result doesn't exist" })
+     
+        res.status(200).json(result);
+    }
+    catch (err) {
+        console.error("Error fetching students:", err);
+        res.status(500).json({ message: "Internal Server Error", error: err.message });
+    }
+}
+module.exports = { getSemesterResultByStudentId, getAllCoursesByCurriculumID, getAttendance, getStudentAttendanceOfParticularCourse, getCourseById, getStudentsByCurriculum, getStudentByCourse }

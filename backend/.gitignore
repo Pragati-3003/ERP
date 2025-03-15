@@ -15,7 +15,10 @@ dist-ssr
 *.local
 .env/
 /.env
-
+/uploads/assignments/*
+/uploads/assignments/
+/uploads/*
+./uploads/assignments/*
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

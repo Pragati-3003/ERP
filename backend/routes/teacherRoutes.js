@@ -2,10 +2,12 @@ const express = require('express')
 const verifyToken = require('../middlewares/authMiddleware.js')
 const authorizeRoles = require('../middlewares/roleMiddleware.js')
 const router = express.Router();
-const {markAttendance,updateAttendance} = require("../controllers/teacherController.js")
+const {upload}  = require("../middlewares/uploadMiddleware.js")
+const {uploadMidtermResult,markAttendance,updateAttendance,uploadAssignment} = require("../controllers/teacherController.js")
 
 router.post('/markAttendance', verifyToken, authorizeRoles("Teacher"), markAttendance)
 router.put('/updateAttendance', verifyToken, authorizeRoles("Teacher"), updateAttendance)
-
+router.post('/uploadAssignment', verifyToken,  authorizeRoles("Teacher"), upload.single("pdfFile"), uploadAssignment)
+router.patch('/uploadMidtermResult', verifyToken,  authorizeRoles("Teacher"), uploadMidtermResult)
 
 module.exports = router;
