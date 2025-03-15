@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import "./Profile.css";
 const StudentProfile = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [editMode, setEditMode] = useState(false);
@@ -11,9 +11,12 @@ const StudentProfile = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/student/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get(
+          "http://localhost:5000/api/student/profile",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setUserInfo(response.data);
       } catch (error) {
         console.error("Failed to fetch profile data", error);
@@ -50,16 +53,19 @@ const StudentProfile = () => {
       setProfilePicture(null);
 
       // Fetch the updated profile data
-      const updatedProfileResponse = await axios.get("http://localhost:5000/api/student/profile", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const updatedProfileResponse = await axios.get(
+        "http://localhost:5000/api/student/profile",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setUserInfo(updatedProfileResponse.data);
 
       setEditMode(false);
       alert("Profile updated successfully!");
     } catch (error) {
       console.error("Failed to update profile", error);
-    //   alert("Failed to update profile. Please try again.");
+      //   alert("Failed to update profile. Please try again.");
     }
   };
 
@@ -107,127 +113,185 @@ const StudentProfile = () => {
       </div>
 
       {/* Profile Form */}
-      <form onSubmit={handleUpdate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form
+        onSubmit={handleUpdate}
+        className="grid grid-cols-1 md:grid-cols-2 gap-4"
+      >
         {/* Personal Information */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">First Name</label>
+          <label className="block text-sm font-medium text-gray-700">
+            First Name
+          </label>
           <input
             type="text"
             className="input-field"
             value={userInfo.FirstName}
-            onChange={(e) => setUserInfo({ ...userInfo, FirstName: e.target.value })}
+            name="fname"
+            onChange={(e) =>
+              setUserInfo({ ...userInfo, FirstName: e.target.value })
+            }
             disabled={!editMode}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Last Name</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Last Name
+          </label>
           <input
             type="text"
             className="input-field"
+            name="lname"
             value={userInfo.LastName}
-            onChange={(e) => setUserInfo({ ...userInfo, LastName: e.target.value })}
+            onChange={(e) =>
+              setUserInfo({ ...userInfo, LastName: e.target.value })
+            }
             disabled={!editMode}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Email</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Email
+          </label>
           <input
             type="email"
             className="input-field"
+            name="email"
             value={userInfo.Email}
-            onChange={(e) => setUserInfo({ ...userInfo, Email: e.target.value })}
+            onChange={(e) =>
+              setUserInfo({ ...userInfo, Email: e.target.value })
+            }
             disabled={!editMode}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Phone Number
+          </label>
           <input
             type="text"
             className="input-field"
+            name="phnum"
             value={userInfo.PhoneNumber}
-            onChange={(e) => setUserInfo({ ...userInfo, PhoneNumber: e.target.value })}
+            onChange={(e) =>
+              setUserInfo({ ...userInfo, PhoneNumber: e.target.value })
+            }
             disabled={!editMode}
           />
         </div>
 
         {/* Guardian Information */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">Father's Name</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Father's Name
+          </label>
           <input
             type="text"
             className="input-field"
+            name="fathername"
             value={userInfo.FatherName}
-            onChange={(e) => setUserInfo({ ...userInfo, FatherName: e.target.value })}
+            onChange={(e) =>
+              setUserInfo({ ...userInfo, FatherName: e.target.value })
+            }
             disabled={!editMode}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Mother's Name</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Mother's Name
+          </label>
           <input
             type="text"
             className="input-field"
+            name="mothername"
             value={userInfo.MotherName}
-            onChange={(e) => setUserInfo({ ...userInfo, MotherName: e.target.value })}
+            onChange={(e) =>
+              setUserInfo({ ...userInfo, MotherName: e.target.value })
+            }
             disabled={!editMode}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Guardian Email</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Guardian Email
+          </label>
           <input
             type="email"
             className="input-field"
+            name="gdmail"
             value={userInfo.GuardianEmail}
-            onChange={(e) => setUserInfo({ ...userInfo, GuardianEmail: e.target.value })}
+            onChange={(e) =>
+              setUserInfo({ ...userInfo, GuardianEmail: e.target.value })
+            }
             disabled={!editMode}
           />
         </div>
 
         {/* Academic Information */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">Enrollment Number</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Enrollment Number
+          </label>
           <input
             type="text"
-            className="input-field"
+            className="input-field "
+            name="elnum"
             value={userInfo.EnrollmentNumber}
-            onChange={(e) => setUserInfo({ ...userInfo, EnrollmentNumber: e.target.value })}
+            onChange={(e) =>
+              setUserInfo({ ...userInfo, EnrollmentNumber: e.target.value })
+            }
             disabled={!editMode}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Department ID</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Department ID
+          </label>
           <input
             type="text"
             className="input-field"
             value={userInfo.DeptID}
-            onChange={(e) => setUserInfo({ ...userInfo, DeptID: e.target.value })}
+            name="deptid"
+            onChange={(e) =>
+              setUserInfo({ ...userInfo, DeptID: e.target.value })
+            }
             disabled={!editMode}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Year of Study</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Year of Study
+          </label>
           <input
             type="text"
             className="input-field"
             value={userInfo.YearOfStudy}
-            onChange={(e) => setUserInfo({ ...userInfo, YearOfStudy: e.target.value })}
+            name="yrstdy"
+            onChange={(e) =>
+              setUserInfo({ ...userInfo, YearOfStudy: e.target.value })
+            }
             disabled={!editMode}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Semester</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Semester
+          </label>
           <input
             type="text"
             className="input-field"
+            name="sem"
             value={userInfo.Semester}
-            onChange={(e) => setUserInfo({ ...userInfo, Semester: e.target.value })}
+            onChange={(e) =>
+              setUserInfo({ ...userInfo, Semester: e.target.value })
+            }
             disabled={!editMode}
           />
         </div>

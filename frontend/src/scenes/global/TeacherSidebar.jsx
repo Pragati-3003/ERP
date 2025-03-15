@@ -29,7 +29,7 @@ import image from "../../assets/user1.jpg"; // Importing profile image
 import axios from "axios";
 import { useSelector } from "react-redux";
 
-const AdminSidebar = () => {
+const TeacherSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const [userImage, setUserImage] = useState(image);
@@ -67,7 +67,7 @@ const AdminSidebar = () => {
   const menuItems = [
     {
       title: "Dashboard",
-      to: "/admin-dashboard",
+      to: "/teacher-dashboard",
       icon: <HomeOutlinedIcon />,
     },
 
@@ -215,4 +215,4 @@ const AdminSidebar = () => {
   );
 };
 
-export default AdminSidebar;
+export default TeacherSidebar;

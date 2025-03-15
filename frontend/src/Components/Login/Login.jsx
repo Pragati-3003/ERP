@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../../../store/authSlice.js";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { jwtDecode } from "jwt-decode";
 const Login = () => {
   const [captcha, setCaptcha] = useState("");
   const [enteredCaptcha, setEnteredCaptcha] = useState("");
@@ -45,6 +45,33 @@ const Login = () => {
       return;
     }
 
+    // try {
+    //   const response = await axios.post(
+    //     "http://localhost:5000/api/auth/login",
+    //     {
+    //       email,
+    //       password,
+    //       role,
+    //     }
+    //   );
+
+    //   dispatch(
+    //     login({
+    //       user: response.data.user,
+    //       token: response.data.token,
+    //       isAuthenticated: true,
+    //     })
+    //   );
+    //   localStorage.setItem("token", response.data.token);
+    //   navigate("/admin-dashboard");
+    // } catch (error) {
+    //   console.error(
+    //     "Login failed:",
+    //     error.response?.data?.message || error.message
+    //   );
+
+    //   alert(error.response?.data?.message || "Login failed. Please try again.");
+    // }
     try {
       const response = await axios.post(
         "http://localhost:5000/api/auth/login",
@@ -59,17 +86,32 @@ const Login = () => {
         login({
           user: response.data.user,
           token: response.data.token,
+          role: response.data.user.role,
           isAuthenticated: true,
         })
       );
+
       localStorage.setItem("token", response.data.token);
-      navigate("/student-dashboard");
+      localStorage.setItem("role", response.data.user.role);
+
+      switch (response.data.user.role) {
+        case "Admin":
+          navigate("/admin-dashboard");
+          break;
+        case "Teacher":
+          navigate("/teacher-dashboard");
+          break;
+        case "Student":
+          navigate("/student-dashboard");
+          break;
+        default:
+          navigate("/login");
+      }
     } catch (error) {
       console.error(
         "Login failed:",
         error.response?.data?.message || error.message
       );
-
       alert(error.response?.data?.message || "Login failed. Please try again.");
     }
   };

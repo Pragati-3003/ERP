@@ -7,6 +7,8 @@ import StudentDb from "./scenes/dashboard/StudentDb";
 import AdminDb from "./scenes/dashboard/AdminDb";
 import TeacherDb from "./scenes/dashboard/TeacherDb";
 import StCustomSidebar from "./scenes/global/StCustomSidebar";
+import AdminSidebar from "./scenes/global/AdminSidebar";
+import TeacherSidebar from "./scenes/global/TeacherSidebar";
 
 import EventPage from "./Components/EventPage/EventPage";
 import Topbar from "./scenes/global/Topbar";
@@ -22,116 +24,84 @@ import CourseEnrolled from "./Components/courseEnrolled/CourseEnrolled";
 import ResultChart from "./Components/Charts/ResultChart";
 import Attendence1 from "./scenes/Attendence1/Attendence1";
 import Calendar from "./scenes/calender/Calendar";
+import { jwtDecode } from "jwt-decode";
 import { useSelector } from "react-redux";
 import ProtectedRoute from "./Components/ProtectedRoute";
-
 import FeeStructure from "./Components/FeeStructure/FeeStructure";
 import EndSemResult from "./Components/EndSemResult/EndSemResult";
 import MidTermResult from "./Components/MidTermResult/MidTermResult";
 import StudentProfile from "./Components/StudentProfile/StudentProfile";
-
 import AttendanceReport from "./Components/Attendance_student/Attendance";
 
 function App() {
+  const token = localStorage.getItem("token");
+  let role = null;
+
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token);
+      role = decodedToken.role; // Extract the role from the decoded token
+      console.log("Decoded Role:", role); // Debugging log
+    } catch (error) {
+      console.error("Invalid token", error);
+    }
+  }
   const [theme, colorMode] = useMode();
   const location = useLocation();
 
-  // Check if the user is authenticated
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   console.log(isAuthenticated);
-  const token = localStorage.getItem("token");
+
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {isAuthenticated && <StCustomSidebar />}{" "}
-        {/* Sidebar hidden if not authenticated */}
+        {/* {isAuthenticated && <TeacherSidebar />} */}
+        {isAuthenticated && role === "Teacher" && <TeacherSidebar />}
+        {isAuthenticated && role === "Admin" && <AdminSidebar />}
+        {isAuthenticated && role === "Student" && <StCustomSidebar />}
         <main className="content">
           {isAuthenticated && (
             <div className="topbar">
               <Topbar />
             </div>
-          )}{" "}
-          {/* Topbar hidden if not authenticated */}
+          )}
           <Routes>
-            {/* Home Page: Redirect to Dashboard if authenticated, otherwise to Login */}
             <Route
               path="/"
               element={
-                isAuthenticated ? (
-                  <Navigate to="/student-dashboard" />
+                token ? (
+                  <Navigate to={`/${role}-dashboard`} />
                 ) : (
                   <Navigate to="/login" />
                 )
               }
             />
-
-            {/* Login Page */}
             <Route path="/login" element={<Login />} />
-            {/* Protected Routes */}
-            {/* <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<StudentDb />} />
-              <Route path="/dashboard" element={<AdminDb />} />
-              <Route path="/assignment" element={<Assignment />} />
-              <Route path="/timetable" element={<TimeTable />} />
-              <Route path="/attendance" element={<Attendance />} />
-              <Route path="/events" element={<EventPage />} />
-              <Route path="/course-enrolled" element={<CourseEnrolled />} />
-              <Route path="/resultChart" element={<ResultBar />} />
-              <Route path="/attendenceChart" element={<AttendenceBar />} />
-              <Route path="/feesStructure" element={<FeeStructure />} />
-              <Route path="/semresult" element={<EndSemResult />} />
-              <Route path="/midTermResult" element={<MidTermResult />} />
-              <Route path="/profile" element={<StudentProfile />} />
-              <Route path="/calendar" element={<Calendar />} />
-            </Route> */}
-
-            {/* <Route element={<ProtectedRoute />}> */}
-            {/* <Route path="/dashboard" element={<StudentDb />} />
-            <Route path="/assignment" element={<Assignment />} />
-            <Route path="/timetable" element={<TimeTable />} />
-            <Route path="/attendance" element={<Attendence1 />} />
-
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/course-enrolled" element={<CourseEnrolled />} />
-            <Route path="/resultChart" element={<ResultBar />} />
-            <Route path="/attendenceChart" element={<AttendenceBar />} /> */}
-            {/* </Route> */}
-
-            {/* <Route element={<ProtectedRoute />}> */}
-            {/* <Route path="/dashboard" element={<StudentDb />} /> */}
-            {/* <Route path="/dashboard" element={<AdminDb />} />
-            <Route path="/assignment" element={<Assignment />} />
-            <Route path="/timetable" element={<TimeTable />} />
-            <Route path="/attendance" element={<AttendanceReport />} />
-            <Route path="/course-enrolled" element={<CourseEnrolled />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/feesStructure" element={<FeeStructure />} />
-            <Route path="/semresult" element={<EndSemResult />} />
-            <Route path="/midTermResult" element={<MidTermResult />} />
-            <Route path="/resultChart" element={<ResultBar />} />
-            <Route path="/attendenceChart" element={<AttendenceBar />} /> */}
-            {/* </Route> */}
-
-            {/* <Route element={<ProtectedRoute />}>
-              {/* <Route path="/dashboard" element={<StudentDb />} /> */}
-            {/* <Route path="/dashboard" element={<AdminDb />} /> */}
-            {/* <Route path="/assignment" element={<Assignment />} />
-              <Route path="/timetable" element={<TimeTable />} />
-              <Route path="/attendance" element={<AttendanceReport />} />
-              <Route path="/course-enrolled" element={<CourseEnrolled />} />
-              <Route path="/calendar" element={<Calendar />} />
-              <Route path="/feesStructure" element={<FeeStructure />} />
-              <Route path="/semresult" element={<EndSemResult />} />
-              <Route path="/midTermResult" element={<MidTermResult />} />
-              <Route path="/resultChart" element={<ResultBar />} />
-              <Route path="/attendenceChart" element={<AttendenceBar />} />
-            </Route> */}
-
             <Route element={<ProtectedRoute />}>
-              <Route path="/admin-dashboard" element={<AdminDb />} />
+              {/* <Route path="/admin-dashboard" element={<AdminDb />} />
               <Route path="/teacher-dashboard" element={<TeacherDb />} />
-              <Route path="/student-dashboard" element={<StudentDb />} />
+              <Route path="/student-dashboard" element={<StudentDb />} /> */}
+              <Route
+                path="/student-dashboard"
+                element={
+                  role === "Student" ? <StudentDb /> : <Navigate to="/login" />
+                }
+              />
+              {/* Warden Dashboard */}
+              <Route
+                path="/teacher-dashboard"
+                element={
+                  role === "Teacher" ? <TeacherDb /> : <Navigate to="/login" />
+                }
+              />
+              {/* Admin Dashboard*/}
+              <Route
+                path="/admin-dashboard"
+                element={
+                  role === "Admin" ? <AdminDb /> : <Navigate to="/login" />
+                }
+              />
               <Route path="/assignment" element={<Assignment />} />
               <Route path="/timetable" element={<TimeTable />} />
               <Route path="/attendance" element={<Attendance />} />
@@ -145,8 +115,6 @@ function App() {
               <Route path="/profile" element={<StudentProfile />} />
               <Route path="/calendar" element={<Calendar />} />
             </Route>
-
-            {/* Fallback route for invalid paths */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>
