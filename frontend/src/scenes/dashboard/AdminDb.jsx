@@ -3,7 +3,7 @@ import { ColorModeContext, useMode } from "../theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Topbar from "../global/Topbar";
 // import { dummyAttendanceData } from "../../data/mockData";
-import CustomSidebar from "../global/CustomSidebar";
+import CustomSidebar from "../global/StCustomSidebar";
 import { Routes, Route, Navigate } from "react-router-dom";
 import "./dashboard.css"; // Import the Student Dashboard CSS file
 import ResultChart from "../../Components/Charts/ResultChart";
@@ -26,7 +26,7 @@ const AdminDb = () => {
     // <ColorModeContext.Provider value={colorMode}>
     //   <ThemeProvider theme={theme}>
     //     <CssBaseline />
-    <div className="student-dashboard">
+    <div className="admin-dashboard">
       {/* <CustomSidebar /> */}
       <main className="content">
         {/* <div className="topbar">

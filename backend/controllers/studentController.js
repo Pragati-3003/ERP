@@ -5,7 +5,8 @@ const Teacher = require("../models/teacher.model.js")
 const Assignment = require("../models/assignment.model.js")
 const AssignmentSubmission = require("../models/assignmentSubmission.model.js")
 const MidTermResult = require("../models/midTermExamsResult.model.js")
-
+const Event = require("../models/events.model.js")
+const StudentTimetable = require("../models/student_timetables.model.js")
 //@desc Get student by id
 //@route GET /api/student/profile
 
@@ -24,9 +25,41 @@ const getStudentById = async (req, res) => {
   }
 }
 
+//@desc update student by id
+//@route PATCH /api/student/updateProfile
+const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; // Ensure this matches the field name in your JWT payload
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const profilePicturePath = req.file.path; // Path to the uploaded file
+
+    // Find the student by UserID and update the profile picture
+    const student = await Student.findOneAndUpdate(
+      { UserID: userId }, // Query to find the student
+      { ProfilePic: profilePicturePath }, // Update the profile picture field
+      { new: true } // Return the updated document
+    );
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    // Respond with the updated student profile
+    res.status(200).json({
+      message: "Profile picture updated successfully",
+      profilePicture: student.ProfilePic,
+    });
+  } catch (err) {
+    console.error("Error updating profile:", err);
+    res.status(500).json({ message: "Internal Server Error", error: err.message });
+  }
+};
+
 //@desc Get course 
 //@route GET /api/student/course
-
 const getCourse = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -217,7 +250,7 @@ const uploadAssignmentSubmissions = async (req, res) => {
 
 //@desc GET get mid term exam result of all the courses
 //@route GET  /api/student/getMidtermResults
-const getMidtermResults = async (req,res) => {
+const getMidtermResults = async (req, res) => {
   try {
     const { StudentSmartID, CurriculumID, semester } = req.query;
 
@@ -226,7 +259,7 @@ const getMidtermResults = async (req,res) => {
     }
 
     const curriculum = await Curriculum.findOne({
-     _id: CurriculumID,
+      _id: CurriculumID,
       "semesters.semester": semester
     }).populate("semesters.courses");
 
@@ -252,7 +285,7 @@ const getMidtermResults = async (req,res) => {
     }
 
     const midtermResults = results.map(result => ({
-      teacherName: result.TeacherID.FirstName+ " " + result.TeacherID.LastName,
+      teacherName: result.TeacherID.FirstName + " " + result.TeacherID.LastName,
       courseCode: result.CourseID.CourseCode,
       courseName: result.CourseID.CourseName,
       periodical1: result.Periodical1,
@@ -273,4 +306,43 @@ const getMidtermResults = async (req,res) => {
   }
 }
 
-module.exports = { getMidtermResults, uploadAssignmentSubmissions, viewAssignments, getStudentById, getCourse, getCurriculum, courseEnrolled };
+//@desc GET get all the events
+//@route GET  /api/student/getEvents
+const getEvents =async(req,res)=>{
+  try {
+    const role  = req.user.role; 
+    // Validate role
+    if (!role) {
+      return res.status(400).json({ message: "Role is required" });
+    }
+
+    // Find events where the user's role is included in the roles array or the event is for ALL
+    const events = await Event.find({
+      $or: [
+        { roles: role }, // Events specific to the user's role
+        { roles: "ALL" }, // Events accessible to all roles
+      ],
+    }).sort({ startDate: 1 }); // Sort by start date
+
+    res.status(200).json(events);
+  } catch (err) {
+    console.error("Error fetching events:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+//@desc GET  TImeTable for the current Semester
+//@route GET  /api/student/getTimeTable
+const getTimeTable =async(req,res)=>{
+  try{
+        const {curriculumID,semester } = req.query;
+        const timeTable = await StudentTimetable.findOne({curriculumID,semester})
+        if (!timeTable) return res.status(400).json({ message: "timeTable not found" });
+        res.status(200).json(timeTable)
+  } catch (err) {
+    console.error("Error fetching events:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+module.exports = {getTimeTable, getEvents,updateProfile, getMidtermResults, uploadAssignmentSubmissions, viewAssignments, getStudentById, getCourse, getCurriculum, courseEnrolled };

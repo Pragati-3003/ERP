@@ -69,19 +69,46 @@ const uploadResult = multer({
     }
 });
 
-// storage to store the profile photo of the user
-// Define storage location and filename structure
 const storage3 = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "uploads/profilePictures");  // Folder to store PDFs
+        cb(null, "uploads/profilePictures");  // Folder to store profile pictures
     },
     filename: (req, file, cb) => {
+        // Rename the file to avoid conflicts
         cb(null, `${Date.now()}-${file.originalname}`);
     }
 });
 
 const uploadProfilePictures = multer({
     storage: storage3,
+    fileFilter: (req, file, cb) => {
+        // Allow only image files
+        const allowedMimeTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
+        if (allowedMimeTypes.includes(file.mimetype)) {
+            cb(null, true); // Accept the file
+        } else {
+            cb(new Error("Only image files (JPEG, PNG, JPG, GIF) are allowed")); // Reject the file
+        }
+    },
+    limits: {
+        fileSize: 5 * 1024 * 1024, // Limit file size to 5MB
+    },
+});
+
+
+// storage to store the student Time table
+// Define storage location and filename structure
+const storage4 = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/studentTimeTable");  // Folder to store PDFs
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+
+const uploadTimeTable = multer({
+    storage: storage4,
     fileFilter: (req, file, cb) => {
         const allowedMimeTypes = ["application/pdf"];
         if (allowedMimeTypes.includes(file.mimetype)) {
@@ -92,4 +119,27 @@ const uploadProfilePictures = multer({
     }
 });
 
-module.exports = { upload, uploadSubmission ,uploadResult,uploadProfilePictures};
+// storage to store the student Time table
+// Define storage location and filename structure
+const storage5 = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/teacherTimeTable");  // Folder to store PDFs
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+
+const uploadTeacherTimeTable = multer({
+    storage: storage5,
+    fileFilter: (req, file, cb) => {
+        const allowedMimeTypes = ["application/pdf"];
+        if (allowedMimeTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error("Only PDF files are allowed"));
+        }
+    }
+});
+
+module.exports = { upload, uploadTeacherTimeTable,uploadSubmission ,uploadResult,uploadProfilePictures,uploadTimeTable};

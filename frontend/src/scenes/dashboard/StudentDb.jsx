@@ -3,7 +3,7 @@ import { ColorModeContext, useMode } from "../theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Topbar from "../../scenes/global/Topbar";
 // import { dummyAttendanceData } from "../../data/mockData";
-import CustomSidebar from "../global/CustomSidebar";
+
 import { Routes, Route, Navigate } from "react-router-dom";
 import "./dashboard.css"; // Import the Student Dashboard CSS file
 import ResultChart from "../../Components/Charts/ResultChart";

@@ -130,11 +130,11 @@ const FeeStructure = () => {
 
         {/* Details Section */}
         {showDetails && (
-          <div className="bg-gray-50 p-6 rounded-lg shadow-md mx-auto w-3/4">
+          <div className="bg-gray-50 p-6 color-black rounded-lg shadow-md mx-auto w-3/4">
             <h2 className="text-xl font-bold text-blue-900 mb-4">
               Payment Details
             </h2>
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse  text-gray-800">
               <tbody>
                 <tr className="border-b">
                   <td className="px-4 py-2 font-semibold">
