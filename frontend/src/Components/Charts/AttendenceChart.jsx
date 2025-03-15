@@ -44,6 +44,7 @@ const AttendanceChart = ({ isDashboard = false }) => {
         flexDirection="column"
         alignItems="center"
         width="80%"
+        className="chart"
       >
         <select
           onChange={(e) => setSelectedSemester(e.target.value)}

@@ -6,7 +6,7 @@ const AttendenceBar = () => {
   return (
     <Box m="20px">
       <Header title="Attendence Chart" subtitle="Track Your Attendance" />
-      <Box height="75vh">
+      <Box height="75vh" overflow={"hidden"}>
         <AttendenceChart />
       </Box>
     </Box>

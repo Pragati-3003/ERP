@@ -75,12 +75,12 @@ const CustomSidebar = () => {
     },
 
     {
-      title: "Course Enrolled",
+      title: "CourseEnrolled",
       to: "/course-enrolled",
       icon: <AssignmentOutlinedIcon />,
     },
     {
-      title: "Fees Structure",
+      title: "FeesStructure",
       to: "/feesStructure",
       icon: <AssignmentOutlinedIcon />,
     },
@@ -90,12 +90,12 @@ const CustomSidebar = () => {
       icon: <AssignmentOutlinedIcon />,
     },
     {
-      title: "Semeter Result",
+      title: "SemeterResult",
       to: "/semresult",
       icon: <AssignmentOutlinedIcon />,
     },
     {
-      title: "Mid Term Result",
+      title: "MidTermResult",
       to: "/midTermResult",
       icon: <AssignmentOutlinedIcon />,
     },
