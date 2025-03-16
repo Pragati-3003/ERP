@@ -4,11 +4,13 @@ import userPhoto from "../../assets/user1.jpg";
 const AdmitCard = () => {
   return (
     <div className="max-w-4xl mx-auto border-4 border-gray-800 p-8 shadow-lg">
-      {/* Header */}
+      {/* Header section */}
       <div className="text-center mb-8">
+
         <h1 className="text-3xl font-bold uppercase">BANASTHALI VIDYAPITH</h1>
         <h2 className="text-xl font-semibold mt-2">ADMIT CARD</h2>
         <p className="mt-1">SEMESTER EXAMINATION (December 2024)</p>
+
       </div>
 
       {/* Candidate Information */}
