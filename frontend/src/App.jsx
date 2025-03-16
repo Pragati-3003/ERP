@@ -4,6 +4,7 @@ import "./App.css";
 import "./index.css";
 
 import StudentDb from "./scenes/dashboard/StudentDb";
+import AdmitCard from "./Components/AmitCard/AdmitCard";
 import AdminDb from "./scenes/dashboard/AdminDb";
 import TeacherDb from "./scenes/dashboard/TeacherDb";
 import StCustomSidebar from "./scenes/global/StCustomSidebar";
@@ -114,6 +115,7 @@ function App() {
               <Route path="/midTermResult" element={<MidTermResult />} />
               <Route path="/profile" element={<StudentProfile />} />
               <Route path="/calendar" element={<Calendar />} />
+              <Route path="/admitCard" element={<AdmitCard/>}/>
             </Route>
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
