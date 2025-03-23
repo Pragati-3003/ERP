@@ -1,0 +1,284 @@
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
+const StudentManagement = () => {
+    const [activeTab, setActiveTab] = useState("add"); // 'add', 'update', 'delete'
+    const [formData, setFormData] = useState({
+        FirstName: "",
+        LastName: "",
+        Address: "",
+        EnrollmentNumber: "",
+        YearOfStudy: "",
+        DOB: "",
+        Gender: "",
+        smartID: "",
+        FatherName: "",
+        MotherName: "",
+        Semester: "",
+        GuardianEmail: "",
+        PhoneNumber: "",
+        Email: "",
+        program: "",
+        specialization: "",
+        deptName: "",
+    });
+    useEffect(() => {
+        setSearchResult(null);  // Reset search result when switching tabs
+        setFormData({           // Reset form data
+            FirstName: "",
+            LastName: "",
+            Address: "",
+            EnrollmentNumber: "",
+            YearOfStudy: "",
+            DOB: "",
+            Gender: "",
+            smartID: "",
+            FatherName: "",
+            MotherName: "",
+            Semester: "",
+            GuardianEmail: "",
+            PhoneNumber: "",
+            Email: "",
+            program: "",
+            specialization: "",
+            deptName: "",
+        });
+    }, [activeTab]); // Runs whenever activeTab changes
+
+    const [smartID, setsmartID] = useState(""); // For update/delete actions
+    const [searchResult, setSearchResult] = useState(null); // For update action
+
+    // Handle form changes
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    // Submit actions
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Provide Token");
+            return;
+        }
+
+        if (activeTab === "add") {
+            try {
+                const response = await axios.post(
+                    "http://localhost:5000/api/admin/add-student",
+                    formData,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+                alert(response.data.message);
+                setSearchResult(null)
+            } catch (err) {
+                alert(err.response?.data?.message || "An error occurred");
+            }
+        } else if (activeTab === "update") {
+            try {
+                const response = await axios.patch(
+                    `http://localhost:5000/api/admin/update-student/${smartID}`, // Fix here
+                    formData,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+                setsmartID("")
+                setSearchResult(null)
+                alert(response.data.message);
+            } catch (err) {
+                alert(err.response?.data?.message || "An error occurred");
+            }
+        } else if (activeTab === "delete") {
+            try {
+                const response = await axios.delete(
+                    `http://localhost:5000/api/admin/delete-student/${smartID}`, // Fix here
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+                alert(response.data.message);
+                setsmartID("")
+            } catch (err) {
+                alert(err.response?.data?.message || "An error occurred");
+            }
+        }
+    };
+
+
+    // Search student for update
+    const handleSearch = async () => {
+        if (!smartID) {
+            alert("Please enter Email or Smart ID");
+            return;
+        }
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Provide Token");
+            return;
+        }
+        try {
+            const response = await axios.get(
+                `http://localhost:5000/api/user/getStudentsBySmartID?smartID=${smartID}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );// Assuming your backend allows querying by email or smartID
+            // console.log(response.data)
+            setSearchResult(response.data);
+            setFormData(response.data);
+        } catch (err) {
+            alert(err.response?.data?.message || "Student not found");
+        }
+    };
+
+
+    return (
+        <div className="flex flex-col items-center py-12">
+            {/* Tab Navigation */}
+            <div className="mb-6 flex space-x-4">
+                <button
+                    onClick={() => setActiveTab("add")}
+                    className={`px-6 py-2 rounded-md ${activeTab === "add" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
+                        }`}
+                >
+                    Add Student
+                </button>
+                <button
+                    onClick={() => setActiveTab("update")}
+                    className={`px-6 py-2 rounded-md ${activeTab === "update" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
+                        }`}
+                >
+                    Update Student
+                </button>
+                <button
+                    onClick={() => setActiveTab("delete")}
+                    className={`px-6 py-2 rounded-md ${activeTab === "delete" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
+                        }`}
+                >
+                    Delete Student
+                </button>
+            </div>
+
+            {/* Forms */}
+            <form
+                className="shadow-sm rounded-lg border border-gray-300 p-8 w-full max-w-2xl"
+                onSubmit={handleSubmit}
+            >
+                {activeTab === "add" && (
+                    <>
+                        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Add Student</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {Object.keys(formData).map((field) => (
+                                <div key={field} className="flex flex-col">
+                                    <label htmlFor={field} className="block text-sm font-medium text-gray-400 mb-1">
+                                        {field}
+                                    </label>
+                                    <input
+                                        type={field === "DOB" ? "date" : "text"}
+                                        id={field}
+                                        name={field}
+                                        value={formData[field] ?? ""}
+                                        onChange={handleChange}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 placeholder:text-gray-400"
+                                        placeholder={`Enter ${field}`}
+                                    />
+
+                                </div>
+                            ))}
+                        </div>
+                        <button
+                            type="submit"
+                            className="w-full mt-8 py-3 px-6 text-white font-semibold rounded-md bg-blue-600 hover:bg-blue-700 transition duration-300"
+                        >
+                            Add Student
+                        </button>
+                    </>
+                )}
+
+                {activeTab === "update" && (
+                    <>
+                        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Update Student</h2>
+                        <div className="mb-4">
+                            <label htmlFor="smartID" className="block text-sm font-medium text-gray-400 mb-1">
+                                Enter Email or Smart ID
+                            </label>
+
+                            <input
+                                type="text"
+                                id="smartID"
+                                name="smartID"
+                                value={smartID}
+                                onChange={(e) => setsmartID(e.target.value)}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                                placeholder="Enter Student Enrollment Number"
+                            />
+                        </div>
+                        <button
+                            type="button"
+                            onClick={handleSearch}
+                            className="w-full mb-6 py-3 px-6 text-white font-semibold rounded-md bg-green-500 hover:bg-green-600 transition duration-300"
+                        >
+                            Search Student
+                        </button>
+                        {searchResult && (
+                            <>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {Object.keys(formData).map((field) => (
+                                        <div key={field} className="flex flex-col">
+                                            <label
+                                                htmlFor={field}
+                                                className="block text-sm font-medium text-gray-400 mb-1"
+                                            >
+                                                {field}
+                                            </label>
+                                            <input
+                                                type={field === "DOB" ? "date" : "text"}
+                                                id={field}
+                                                name={field}
+                                                value={formData[field]}
+                                                onChange={handleChange}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 placeholder:text-gray-400"
+                                                placeholder={`Enter ${field}`}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="w-full mt-8 py-3 px-6 text-white font-semibold rounded-md bg-yellow-500 hover:bg-yellow-600 transition duration-300"
+                                >
+                                    Update Student
+                                </button>
+                            </>
+                        )}
+                    </>
+                )}
+
+                {activeTab === "delete" && (
+                    <>
+                        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Delete Student</h2>
+                        <div className="mb-4">
+                            <label htmlFor="smartID" className="block text-sm font-medium text-gray-400 mb-1">
+                                Enter Email or Smart ID
+                            </label>
+
+                            <input
+                                type="text"
+                                id="smartID"
+                                name="smartID"
+                                value={smartID}
+                                onChange={(e) => setsmartID(e.target.value)}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                                placeholder="Enter Student Enrollment Number"
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            className="w-full py-3 px-6 text-white font-semibold rounded-md bg-red-500 hover:bg-red-600 transition duration-300"
+                        >
+                            Delete Student
+                        </button>
+                    </>
+                )}
+            </form>
+        </div>
+    );
+};
+
+export default StudentManagement;

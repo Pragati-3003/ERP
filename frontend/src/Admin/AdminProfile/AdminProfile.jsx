@@ -1,29 +1,35 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import axios from "axios";
-const StudentProfile = () => {
+
+const AdminProfile = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
 
   const token = localStorage.getItem("token"); // Assuming token is stored in localStorage
+  const email = useSelector((state) => state.auth.user?.userInfo?.Email); // Ensure safety
 
   useEffect(() => {
+    if (!email) return; // Prevent API call if email is not available
+
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/student/profile",
+          `http://localhost:5000/api/admin/getAdminProfilebyEmail/${email}`, // ✅ Pass email as URL param
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
         setUserInfo(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error("Failed to fetch profile data", error);
       }
     };
 
     fetchData();
-  }, [token]);
+  }, [token, email]); // ✅ Add email dependency
 
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -36,7 +42,7 @@ const StudentProfile = () => {
     try {
       console.log("Submitting form data...");
       const response = await axios.patch(
-        "http://localhost:5000/api/student/updateProfile",
+        "http://localhost:5000/api/admin/updateProfile",
         formData,
         {
           headers: {
@@ -48,12 +54,11 @@ const StudentProfile = () => {
 
       console.log("Response:", response.data);
 
-      // Reset the profile picture state
       setProfilePicture(null);
 
       // Fetch the updated profile data
       const updatedProfileResponse = await axios.get(
-        "http://localhost:5000/api/student/profile",
+        `http://localhost:5000/api/admin/getAdminProfilebyEmail/${email}`, // ✅ Correct API call
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -64,7 +69,6 @@ const StudentProfile = () => {
       alert("Profile updated successfully!");
     } catch (error) {
       console.error("Failed to update profile", error);
-      //   alert("Failed to update profile. Please try again.");
     }
   };
 
@@ -77,7 +81,7 @@ const StudentProfile = () => {
     // Preview the uploaded image
     const reader = new FileReader();
     reader.onload = () => {
-      setUserInfo({ ...userInfo, ProfilePic: reader.result });
+      setUserInfo((prev) => ({ ...prev, ProfilePic: reader.result }));
     };
     reader.readAsDataURL(file);
   };
@@ -118,53 +122,62 @@ const StudentProfile = () => {
       >
         {/* Personal Information */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            First Name
-          </label>
+          <label className="block text-sm font-medium text-gray-700">Name</label>
           <input
             type="text"
             className="input-field"
-            value={userInfo.FirstName}
+            value={userInfo?.Name || ""} // ✅ Prevents null error
             name="fname"
             onChange={(e) =>
-              setUserInfo({ ...userInfo, FirstName: e.target.value })
+              setUserInfo((prev) => ({ ...prev, Name: e.target.value }))
             }
             disabled={!editMode}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Last Name
-          </label>
-          <input
-            type="text"
-            className="input-field"
-            name="lname"
-            value={userInfo.LastName}
-            onChange={(e) =>
-              setUserInfo({ ...userInfo, LastName: e.target.value })
-            }
-            disabled={!editMode}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
+          <label className="block text-sm font-medium text-gray-700">Email</label>
           <input
             type="email"
             className="input-field"
             name="email"
-            value={userInfo.Email}
+            value={userInfo?.Email || ""}
             onChange={(e) =>
-              setUserInfo({ ...userInfo, Email: e.target.value })
+              setUserInfo((prev) => ({ ...prev, Email: e.target.value }))
             }
             disabled={!editMode}
           />
         </div>
-
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Gender
+          </label>
+          <input
+            type="text"
+            className="input-field"
+            name="phnum"
+            value={userInfo?.Gender || ""}
+            onChange={(e) =>
+              setUserInfo((prev) => ({ ...prev, Gender: e.target.value }))
+            }
+            disabled={!editMode}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+           Address
+          </label>
+          <input
+            type="text"
+            className="input-field"
+            name="phnum"
+            value={userInfo?.Address || ""}
+            onChange={(e) =>
+              setUserInfo((prev) => ({ ...prev, Address: e.target.value }))
+            }
+            disabled={!editMode}
+          />
+        </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Phone Number
@@ -173,123 +186,44 @@ const StudentProfile = () => {
             type="text"
             className="input-field"
             name="phnum"
-            value={userInfo.PhoneNumber}
+            value={userInfo?.PhoneNumber || ""}
             onChange={(e) =>
-              setUserInfo({ ...userInfo, PhoneNumber: e.target.value })
+              setUserInfo((prev) => ({ ...prev, PhoneNumber: e.target.value }))
             }
             disabled={!editMode}
           />
         </div>
 
-        {/* Guardian Information */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Father's Name
+            DOB
           </label>
           <input
             type="text"
             className="input-field"
-            name="fathername"
-            value={userInfo.FatherName}
+            name="phnum"
+            value={userInfo?.DOB || ""}
             onChange={(e) =>
-              setUserInfo({ ...userInfo, FatherName: e.target.value })
+              setUserInfo((prev) => ({ ...prev, DOB: e.target.value }))
             }
             disabled={!editMode}
           />
         </div>
-
+         
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Mother's Name
+            Work Experience
           </label>
           <input
             type="text"
             className="input-field"
-            name="mothername"
-            value={userInfo.MotherName}
-            onChange={(e) =>
-              setUserInfo({ ...userInfo, MotherName: e.target.value })
-            }
-            disabled={!editMode}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Guardian Email
-          </label>
-          <input
-            type="email"
-            className="input-field"
-            name="gdmail"
-            value={userInfo.GuardianEmail}
-            onChange={(e) =>
-              setUserInfo({ ...userInfo, GuardianEmail: e.target.value })
-            }
-            disabled={!editMode}
-          />
-        </div>
-
-        {/* Academic Information */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Enrollment Number
-          </label>
-          <input
-            type="text"
-            className="input-field "
-            name="elnum"
-            value={userInfo.EnrollmentNumber}
-            onChange={(e) =>
-              setUserInfo({ ...userInfo, EnrollmentNumber: e.target.value })
-            }
-            disabled={!editMode}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Department ID
-          </label>
-          <input
-            type="text"
-            className="input-field"
-            value={userInfo.DeptID}
-            name="deptid"
-            onChange={(e) =>
-              setUserInfo({ ...userInfo, DeptID: e.target.value })
-            }
-            disabled={!editMode}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Year of Study
-          </label>
-          <input
-            type="text"
-            className="input-field"
-            value={userInfo.YearOfStudy}
+            value={userInfo?.WorkExperience || ""}
             name="yrstdy"
             onChange={(e) =>
-              setUserInfo({ ...userInfo, YearOfStudy: e.target.value })
-            }
-            disabled={!editMode}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Semester
-          </label>
-          <input
-            type="text"
-            className="input-field"
-            name="sem"
-            value={userInfo.Semester}
-            onChange={(e) =>
-              setUserInfo({ ...userInfo, Semester: e.target.value })
+              setUserInfo((prev) => ({
+                ...prev,
+                WorkExperience: e.target.value,
+              }))
             }
             disabled={!editMode}
           />
@@ -319,4 +253,4 @@ const StudentProfile = () => {
   );
 };
 
-export default StudentProfile;
+export default AdminProfile;

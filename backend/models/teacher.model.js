@@ -1,18 +1,18 @@
 const mongoose = require("mongoose");
 
 const TeacherSchema = new mongoose.Schema({
-    FirstName: { type: String },
+  FirstName: { type: String },
   LastName: { type: String },
   PhoneNumber: { type: String },
-  Email:{ type: String },
-  smartID:{type:String ,required:true},
+  Address:{type:String},
+  Email: { type: String },
   UserID: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   Designation: { type: String },
   Specialization: { type: String },
   CoursesTaught: [
     {
       course: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
-      curriculum: { type: mongoose.Schema.Types.ObjectId, ref: "Curriculum" } // Store Curriculum ID instead of Program
+      curriculum: { type: mongoose.Schema.Types.ObjectId, ref: "Curriculum" },
     }
   ],
   DOB: { type: Date },
@@ -20,9 +20,7 @@ const TeacherSchema = new mongoose.Schema({
   EmploymentType: { type: String },
   Qualification: { type: String },
   ExperienceYears: { type: Number },
-  DutyPlace: { type: String },
   SalaryStatus: { type: String },
-  AttendanceRecords: { type: String },
   DeptID: { type: mongoose.Schema.Types.ObjectId, ref: "Department" },
 });
 

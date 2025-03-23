@@ -1,5 +1,7 @@
 const Student = require("../models/student.model.js")
 const User = require("../models/user.model.js")
+const mongoose = require("mongoose");
+const Admin = require("../models/admin.model.js")
 const bcrypt = require("bcryptjs");
 const Event = require("../models/events.model.js")
 const Teacher = require("../models/teacher.model.js")
@@ -8,28 +10,34 @@ const Curriculum = require("../models/curriculum.model.js")
 const EndSemesterResult = require("../models/endSemesterResult.model.js")
 const StudentTimetable = require("../models/student_timetables.model.js")
 const TeacherTimetable = require("../models/teacher_timetables.model.js")
+const Department = require("../models/department.model.js")
 // @desc Add Student 
 // route api/admin/add-student
 const addStudent = async (req, res) => {
   try {
     const {
-      FirstName, LastName, EnrollmentNumber, DeptID, YearOfStudy, DOB, Gender,
-      FatherName, MotherName, Semester, GuardianEmail, PhoneNumber, Email, CurriculumID
-    } = req.body;
+      FirstName, LastName, Address, EnrollmentNumber, YearOfStudy, DOB, Gender, smartID,
+      FatherName, MotherName, Semester, GuardianEmail, PhoneNumber, Email, program, specialization,
+      deptName } = req.body;
 
     if (!Email || !FirstName || !LastName) {
       return res.status(400).json({ message: "Missing required fields" });
     }
+    const curriculum = await Curriculum.findOne({ program, specialization });
 
+    if (!curriculum)
+      return res.status(400).json({ message: "Curriculum not exist exists" });
+    const CurriculumID = curriculum._id
     const existingStudent = await Student.findOne({ Email });
     if (existingStudent) {
       return res.status(400).json({ message: "Student already exists" });
     }
 
-    const curriculum = await Curriculum.findById(CurriculumID);
-    if (!curriculum) {
-      return res.status(400).json({ message: "Invalid CurriculumID: Curriculum does not exist" });
+    const department = await Department.findOne({ deptName });
+    if (!department) {
+      return res.status(400).json({ message: "Invalid department: department does not exist" });
     }
+    const DeptID = department._id
     let user = await User.findOne({ email: Email });
 
     if (!user) {
@@ -39,16 +47,17 @@ const addStudent = async (req, res) => {
         Email,
         Role: "Student",
         Password: hashedPassword,
+        smartID
       });
 
       await user.save();
     }
 
     const newStudent = new Student({
-      UserID: user._id, Semester,
+      UserID: user._id, Semester, smartID, Address,
       FirstName, LastName, EnrollmentNumber, DeptID, YearOfStudy, DOB, Gender,
       FatherName, MotherName, GuardianEmail, PhoneNumber, Email,
-      CurriculumID: curriculum._id,
+      CurriculumID, DeptID
     });
 
     await newStudent.save();
@@ -60,13 +69,63 @@ const addStudent = async (req, res) => {
   }
 };
 
+// @desc Update Student
+// @route PATCH /api/admin/update-student/:smartID
+const updateStudent = async (req, res) => {
+  try {
+    const smartID = req.params.smartID;  // Change this
+    const updates = req.body;
+
+    const student = await Student.findOne({ smartID });
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    Object.assign(student, updates);
+    await student.save();
+
+
+
+    res.status(200).json({
+      message: "Student updated successfully",
+      student,
+    });
+  } catch (err) {
+    console.error("Error updating student:", err);
+    res.status(500).json({ message: "Internal Server Error", error: err.message });
+  }
+};
+
+
+// @desc Delete Student
+// @route DELETE /api/admin/delete-student/:smartID
+const deleteStudent = async (req, res) => {
+  try {
+    const smartID = req.params.smartID;  // Change this
+    const student = await Student.findOne({ smartID });
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const id = student._id;
+    await Student.findByIdAndDelete(id);
+    await User.findOneAndDelete({ Email: student.Email });
+
+    res.status(200).json({ message: "Student deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting student:", err);
+    res.status(500).json({ message: "Internal Server Error", error: err.message });
+  }
+};
+
+
 // @desc Add Teacher 
 // route api/admin/add-teacher
 
 const addTeacher = async (req, res) => {
   try {
     const {
-      FirstName, LastName, PhoneNumber, Email, DeptID, Designation, Specialization,
+      FirstName, LastName, PhoneNumber, Email, deptName, Designation, Specialization,
       DOB, Gender, EmploymentType, Qualification, ExperienceYears, CoursesTaught
     } = req.body;
 
@@ -74,12 +133,19 @@ const addTeacher = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields: Email, FirstName, or LastName" });
     }
 
+    const department = await Department.findOne({ deptName });
+    if (!department) {
+      return res.status(400).json({ message: "Invalid department: department does not exist" });
+    }
+
+
+    const DeptID = department._id;
     const existingTeacher = await Teacher.findOne({ Email });
     if (existingTeacher) {
       return res.status(400).json({ message: "Teacher already exists" });
     }
 
-    let user = await User.findOne({ email: Email });
+    let user = await User.findOne({ Email });
     if (!user) {
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash("banasthali", saltRounds);
@@ -91,10 +157,20 @@ const addTeacher = async (req, res) => {
       await user.save();
     }
 
+    // ✅ Ensure CoursesTaught is formatted correctly
+    let formattedCoursesTaught = [];
+    if (Array.isArray(CoursesTaught)) {
+      formattedCoursesTaught = CoursesTaught.map(course => ({
+        course: new mongoose.Types.ObjectId(course.course),
+        curriculum: new mongoose.Types.ObjectId(course.curriculum)
+      }));
+    }
+
     const newTeacher = new Teacher({
       UserID: user._id,
       FirstName, LastName, PhoneNumber, Email, DeptID, Designation, Specialization,
-      DOB, Gender, EmploymentType, ExperienceYears, Qualification, CoursesTaught
+      DOB, Gender, EmploymentType, ExperienceYears, Qualification,
+      CoursesTaught: formattedCoursesTaught,  // ✅ Correctly formatted array
     });
 
     await newTeacher.save();
@@ -107,25 +183,66 @@ const addTeacher = async (req, res) => {
 };
 
 
-// @desc Add Course 
-// route api/admin/add-course
+
+// @desc delete Course 
+// route api/admin/delete-course/:CourseCode/:CourseName
 const addCourse = async (req, res) => {
   try {
-    const { DeptID, CourseName, CreditPoints, CourseCode
-      , Programs, Prerequisites, Syllabus, TotalLectures, Type
+    const { deptName, CourseName, CreditPoints, CourseCode
+      , Programs, Prerequisites, TotalLectures, Type
     } = req.body
+    // console.log(req.body)
     const isExist = await Course.findOne({ CourseCode });
     if (isExist)
       return res.status(404).json({ message: "Course Already Exist" });
+    const department = await Department.findOne({ deptName })
+    if (!department)
+      return res.status(404).json({ message: "Department Not Exist" });
+    const DeptID = department._id;
     const newCourse = new Course({
       DeptID, CourseCode, CourseName, CreditPoints
-      , Programs, Prerequisites, Syllabus, TotalLectures, Type
+      , Programs, Prerequisites, TotalLectures, Type
     })
     await newCourse.save();
     res.status(201).json({ message: "Course added successfully", course: newCourse });
   } catch (err) {
     console.error("Error adding student:", err);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+// @desc Add Course 
+// route api/admin/delete-course/:CourseCode/:CourseName
+const deleteCourse = async (req, res) => {
+  try {
+    const { CourseCode, CourseName } = req.params;
+
+    const deletedCourse = await Course.findOneAndDelete({ CourseCode, CourseName });
+    if (!deletedCourse) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    res.status(200).json({ message: "Course deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting Course", error: error.message });
+  }
+};
+
+
+
+// @desc update Course 
+// route patch api/admin/update-course/:CourseCode/:CourseName
+const updateCourse = async (req, res) => {
+  try {
+    const { CourseCode, CourseName } = req.params;
+    const updateData = req.body;
+
+    const updatedCourse = await Course.findOneAndUpdate({ CourseCode, CourseName }, updateData, { new: true });
+    if (!updatedCourse) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+    res.status(200).json({ message: "COurse updated successfully", updatedCourse });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating course", error: error.message });
   }
 }
 
@@ -232,7 +349,7 @@ const addEvents = async (req, res) => {
 // route  POST api/admin/addStudentTimeTable
 const addStudentTimeTable = async (req, res) => {
   try {
-    const { program, specialization ,semester } = req.body;
+    const { program, specialization, semester } = req.body;
     // console.log(req.body)
     if (!req.file) return res.status(400).json({ message: "PDF file is required" });
     const pdfPath = req.file.path;
@@ -278,4 +395,229 @@ const addTeacherTimeTable = async (req, res) => {
   }
 }
 
-module.exports = { addTeacherTimeTable, addEvents, addStudentTimeTable, addEndSemResultBySmartID, addStudent, addTeacher, addCourse, addCurriculum } 
+// @desc Update Teacher by Email
+// @route PATCH /api/admin/update-teacher/:email
+const updateTeacherByEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+    const updateData = req.body;
+
+    const updatedTeacher = await Teacher.findOneAndUpdate({ Email: email }, updateData, { new: true });
+    if (!updatedTeacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    res.status(200).json({ message: "Teacher updated successfully", updatedTeacher });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating teacher", error: error.message });
+  }
+};
+
+// @desc Delete Teacher by Email
+// @route DELETE /api/admin/delete-teacher/:email
+const deleteTeacherByEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    const deletedTeacher = await Teacher.findOneAndDelete({ Email: email });
+    if (!deletedTeacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    res.status(200).json({ message: "Teacher deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting teacher", error: error.message });
+  }
+};
+
+const addCourseToTeacher = async (req, res) => {
+  try {
+    const { teacherEmail, courseCode, courseName, program, specialization } = req.body;
+    // console.log(req.body)
+
+    const teacher = await Teacher.findOne({ Email: teacherEmail });
+    if (!teacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    // ✅ Find Course ID using courseCode
+    const course = await Course.findOne({ CourseCode: courseCode, CourseName: courseName });
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    // ✅ Find Curriculum ID using program & specialization
+    const curriculum = await Curriculum.findOne({ program, specialization });
+    console.log(program, specialization)
+    if (!curriculum) {
+      return res.status(404).json({ message: "Curriculum not found" });
+    }
+
+    // ✅ Check if course already assigned to teacher
+    const isAlreadyAssigned = teacher.CoursesTaught.some(
+      (taught) => taught.course.equals(course._id) && taught.curriculum.equals(curriculum._id)
+    );
+
+    if (!isAlreadyAssigned) {
+      teacher.CoursesTaught.push({ course: course._id, curriculum: curriculum._id });
+
+      //  console.log(teacher)
+      await teacher.save();
+    }
+    res.status(200).json({ message: "Course assigned to teacher successfully", teacher });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error", error });
+  }
+};
+
+const getTeacherCoursesByEmail = async (req, res) => {
+  // console.log(req.params);
+  try {
+    const { teacherEmail } = req.params;
+    // console.log(teacherEmail);
+
+    const teacher = await Teacher.findOne({ Email: teacherEmail }).populate({
+      path: "CoursesTaught.course",
+      select: "CourseName CourseCode",
+    }).populate({
+      path: "CoursesTaught.curriculum",
+      select: "program specialization",
+    });
+    console.log(teacher.CoursesTaught);
+    if (!teacher) return res.status(404).json({ message: "Teacher not found" });
+
+    res.status(200).json(teacher.CoursesTaught);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+}
+
+const deleteTeacherCourseByEmailandCourseTaught = async (req, res) => {
+  try {
+    const { teacherEmail, courseId } = req.params;
+
+    const teacher = await Teacher.findOne({ Email: teacherEmail });
+    // console.log(courseId)
+    if (!teacher) return res.status(404).json({ message: "Teacher not found" });
+
+    teacher.CoursesTaught = teacher.CoursesTaught.filter(
+      (c) => c._id.toString() !== courseId
+    );
+    // console.log(teacher.CoursesTaught)
+    await teacher.save();
+
+    res.status(200).json({ message: "Course removed successfully!" });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+}
+
+const getAdminProfilebyEmail = async (req, res) => {
+  try {
+    const Email = req.params.Email
+    if (!Email)
+      return res.status(404).json({ message: "Please Provide Email" })
+    const admin = await Admin.findOne({ Email });
+    if (!admin)
+      return res.status(404).json({ message: "Admin doesm't exist" });
+    const updatedAdmin = {
+      Name: admin.Name || "",
+      Address: admin.Address || "",
+      DOB: admin.DOB || "",
+      Gender: admin.Gender || "",
+      PhoneNumber: admin.PhoneNumber || "",
+      Email: admin.Email || "",
+      WorkExperience: admin.WorkExperience || "",
+      ProfilePic: admin.ProfilePic || ""
+    }
+    res.status(200).json(updatedAdmin);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+
+}
+
+
+//@desc update admin by id
+//@route PATCH /api/admin/updateProfile
+const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; // Ensure this matches the field name in your JWT payload
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const profilePicturePath = req.file.path; // Path to the uploaded file
+
+    const admin = await Admin.findOneAndUpdate(
+      { UserID: userId }, // Query to find the student
+      { ProfilePic: profilePicturePath }, // Update the profile picture field
+      { new: true } // Return the updated document
+    );
+
+    if (!admin) {
+      return res.status(404).json({ message: "admin not found" });
+    }
+
+    // Respond with the updated admin profile
+    res.status(200).json({
+      message: "Profile picture updated successfully",
+      profilePicture: admin.ProfilePic,
+    });
+  } catch (err) {
+    console.error("Error updating profile:", err);
+    res.status(500).json({ message: "Internal Server Error", error: err.message });
+  }
+};
+
+const addAdmin = async (req, res) => {
+  try {
+    const {
+     Name, Address, DOB, Gender, PhoneNumber, Email,WorkExperience,
+      deptName } = req.body;
+
+    if (!Email || !Name) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+ 
+    const existingAdmin = await Admin.findOne({ Email });
+    if (existingAdmin) {
+      return res.status(400).json({ message: "Admin already exists" });
+    }
+
+    const department = await Department.findOne({ deptName });
+    if (!department) {
+      return res.status(400).json({ message: "Invalid department: department does not exist" });
+    }
+    const DeptID = department._id
+    let user = await User.findOne({ email: Email });
+
+    if (!user) {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash("banasthali", saltRounds);
+      user = new User({
+        Email,
+        Role: "Admin",
+        Password: hashedPassword,
+      });
+
+      await user.save();
+    }
+
+    const newAdmin = new Admin({
+      UserID: user._id, Address,
+      Name, DeptID, DOB, Gender,
+      WorkExperience,
+      PhoneNumber, Email, DeptID
+    });
+
+    await newAdmin.save();
+    res.status(201).json({ message: "Admin added successfully!", Admin: newAdmin });
+
+  } catch (err) {
+    console.error("Error adding Admin:", err);
+    res.status(500).json({ message: "Internal Server Error", error: err.message });
+  }
+};
+
+module.exports = {addAdmin, updateProfile,getAdminProfilebyEmail, updateCourse, deleteCourse, deleteTeacherCourseByEmailandCourseTaught, getTeacherCoursesByEmail, addCourseToTeacher, deleteTeacherByEmail, updateTeacherByEmail, deleteStudent, updateStudent, addTeacherTimeTable, addEvents, addStudentTimeTable, addEndSemResultBySmartID, addStudent, addTeacher, addCourse, addCurriculum } 

@@ -34,17 +34,19 @@ const AdminSidebar = () => {
 
   const [userImage, setUserImage] = useState(image);
 
+  // console.log(email)
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
   const [userInfo, setUserInfo] = useState(null);
   const token = localStorage.getItem("token");
   const role = useSelector((state) => state.auth.user.role);
+  const email = useSelector((state) => state.auth.user?.userInfo?.Email);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/student/profile",
+          `http://localhost:5000/api/admin/getAdminProfilebyEmail/${email}`, // ✅ Correct API call
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -70,46 +72,34 @@ const AdminSidebar = () => {
       to: "/admin-dashboard",
       icon: <HomeOutlinedIcon />,
     },
-
-    // { title: "Results", to: "/result", icon: <SaveAsOutlinedIcon /> },
-    { title: "Events", to: "/events", icon: <EventOutlinedIcon /> },
     {
-      title: "Attendance",
-      to: "/attendance",
+      title: "Student Management",
+      to: "/admin/studentmanagment",
       icon: <AssessmentOutlinedIcon />,
     },
     {
-      title: "Assignment",
-      to: "/assignment",
-      icon: <AssignmentOutlinedIcon />,
-    },
-
-    {
-      title: "CourseEnrolled",
-      to: "/course-enrolled",
-      icon: <AssignmentOutlinedIcon />,
+      title: "Teacher Management",
+      to: "/admin/teachermanagment",
+      icon: <AssessmentOutlinedIcon />,
     },
     {
-      title: "FeesStructure",
-      to: "/feesStructure",
-      icon: <AssignmentOutlinedIcon />,
+      title: "Course Management",
+      to: "/admin/coursemanagment",
+      icon: <AssessmentOutlinedIcon />,
     },
     {
-      title: "TimeTable",
-      to: "/timetable",
-      icon: <AssignmentOutlinedIcon />,
+      title: "Teacher Course Management",
+      to: "/admin/addteachercourse",
+      icon: <AssessmentOutlinedIcon />,
     },
     {
       title: "SemeterResult",
       to: "/semresult",
       icon: <AssignmentOutlinedIcon />,
     },
-    {
-      title: "MidTermResult",
-      to: "/midTermResult",
-      icon: <AssignmentOutlinedIcon />,
-    },
-    { title: "Profile", to: "/profile", icon: <PersonOutlinedIcon /> },
+
+
+    { title: "Profile", to: "/admin/profile", icon: <PersonOutlinedIcon /> },
     { title: "Calendar", to: "/calendar", icon: <CalendarTodayOutlinedIcon /> },
     // { title: "FAQ", to: "/faq", icon: <HelpOutlineOutlinedIcon /> },
     // {
@@ -190,7 +180,7 @@ const AdminSidebar = () => {
               />
             </Box>
             <Typography variant="h6" sx={{ fontWeight: "bold", mt: 1 }}>
-              {userInfo.FirstName + " " + userInfo.LastName}
+              {userInfo.Name }
             </Typography>
             <Typography variant="body2" sx={{ color: colors.greenAccent[500] }}>
               {role}
