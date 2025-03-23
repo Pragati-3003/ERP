@@ -39,11 +39,11 @@ const Login = () => {
       alert("Please select a role");
       return;
     }
-    if (enteredCaptcha !== captcha) {
-      alert("CAPTCHA is incorrect!");
-      refreshCaptcha();
-      return;
-    }
+    // if (enteredCaptcha !== captcha) {
+    //   alert("CAPTCHA is incorrect!");
+    //   refreshCaptcha();
+    //   return;
+    // }
 
     try {
       const response = await axios.post("http://localhost:5000/api/auth/login", {
@@ -114,11 +114,11 @@ const Login = () => {
           </div>
           <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Enter Email" required />
           <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Enter Password" required />
-          <div className="captcha">
+          {/* <div className="captcha">
             <span>{captcha}</span>
             <button type="button" onClick={refreshCaptcha}>Refresh</button>
           </div>
-          <input value={enteredCaptcha} onChange={(e) => setEnteredCaptcha(e.target.value)} type="text" placeholder="Enter CAPTCHA" required />
+          <input value={enteredCaptcha} onChange={(e) => setEnteredCaptcha(e.target.value)} type="text" placeholder="Enter CAPTCHA" required /> */}
           <div className="remember">
             <input type="checkbox" id="remember" />
             <label htmlFor="remember">Remember me</label>
