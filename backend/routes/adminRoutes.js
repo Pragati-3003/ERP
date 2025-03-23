@@ -1,7 +1,7 @@
 const express = require('express')
 const verifyToken = require('../middlewares/authMiddleware.js')
 const authorizeRoles = require('../middlewares/roleMiddleware.js')
-const {addAdmin, getAdminProfilebyEmail, deleteCourse, updateCourse, deleteTeacherCourseByEmailandCourseTaught, updateProfile, getTeacherCoursesByEmail, updateTeacherByEmail, addCourseToTeacher, deleteTeacherByEmail, updateStudent, deleteStudent, addEvents, addStudentTimeTable, addTeacherTimeTable, addStudent, addTeacher, addCourse, addCurriculum, addEndSemResultBySmartID } = require("../controllers/adminController.js")
+const {addSemesterResult,addAdmin, getAdminProfilebyEmail, deleteCourse, updateCourse, deleteTeacherCourseByEmailandCourseTaught, updateProfile, getTeacherCoursesByEmail, updateTeacherByEmail, addCourseToTeacher, deleteTeacherByEmail, updateStudent, deleteStudent, addEvents, addStudentTimeTable, addTeacherTimeTable, addStudent, addTeacher, addCourse, addCurriculum, addEndSemResultBySmartID } = require("../controllers/adminController.js")
 const { uploadResult, uploadTimeTable, uploadTeacherTimeTable } = require("../middlewares/uploadMiddleware.js")
 const { uploadProfilePictures } = require("../middlewares/uploadMiddleware.js")
 const router = express.Router();
@@ -28,10 +28,10 @@ router.delete("/delete-course-teacher/:teacherEmail/:courseId", verifyToken, aut
 router.get("/get-courses-teacher/:teacherEmail", verifyToken, authorizeRoles("Admin"), getTeacherCoursesByEmail);
 router.get("/getAdminProfilebyEmail/:Email", verifyToken, authorizeRoles("Admin"), getAdminProfilebyEmail);
 router.post('/addEndSemResBySmartId', verifyToken, authorizeRoles("Admin"), uploadResult.single("pdfFile"), addEndSemResultBySmartID)
-router.post('/addStudentTimeTable', verifyToken, authorizeRoles("Admin"), uploadTimeTable.single("pdfFile"), addStudentTimeTable)
+router.put('/addStudentTimeTable', verifyToken, authorizeRoles("Admin"), uploadTimeTable.single("pdfFile"), addStudentTimeTable)
 router.put('/addTeacherTimeTable', verifyToken, authorizeRoles("Admin"), uploadTeacherTimeTable.single("pdfFile"), addTeacherTimeTable)
 router.patch('/updateProfile', verifyToken, authorizeRoles("Admin"), uploadProfilePictures.single("profilePicture"), updateProfile)
-
+router.put('/addSemesterResult', verifyToken,  authorizeRoles("Admin"), uploadResult.single("resultPDF"), addSemesterResult)
 
 
 
