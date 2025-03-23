@@ -1,7 +1,7 @@
 const Student = require("../models/student.model.js")
 const User = require("../models/user.model.js")
 const mongoose = require("mongoose");
-
+const Admin = require("../models/admin.model.js")
 const bcrypt = require("bcryptjs");
 const Event = require("../models/events.model.js")
 const Teacher = require("../models/teacher.model.js")
@@ -195,7 +195,7 @@ const addCourse = async (req, res) => {
     const isExist = await Course.findOne({ CourseCode });
     if (isExist)
       return res.status(404).json({ message: "Course Already Exist" });
-    const department = await Department.findOne({deptName})
+    const department = await Department.findOne({ deptName })
     if (!department)
       return res.status(404).json({ message: "Department Not Exist" });
     const DeptID = department._id;
@@ -214,9 +214,9 @@ const addCourse = async (req, res) => {
 // route api/admin/delete-course/:CourseCode/:CourseName
 const deleteCourse = async (req, res) => {
   try {
-    const { CourseCode,CourseName } = req.params;
+    const { CourseCode, CourseName } = req.params;
 
-    const deletedCourse = await Course.findOneAndDelete({ CourseCode,CourseName });
+    const deletedCourse = await Course.findOneAndDelete({ CourseCode, CourseName });
     if (!deletedCourse) {
       return res.status(404).json({ message: "Course not found" });
     }
@@ -231,12 +231,12 @@ const deleteCourse = async (req, res) => {
 
 // @desc update Course 
 // route patch api/admin/update-course/:CourseCode/:CourseName
-const updateCourse = async(req,res)=>{
+const updateCourse = async (req, res) => {
   try {
-    const { CourseCode,CourseName } = req.params;
+    const { CourseCode, CourseName } = req.params;
     const updateData = req.body;
 
-    const updatedCourse = await Course.findOneAndUpdate({ CourseCode ,CourseName }, updateData, { new: true });
+    const updatedCourse = await Course.findOneAndUpdate({ CourseCode, CourseName }, updateData, { new: true });
     if (!updatedCourse) {
       return res.status(404).json({ message: "Course not found" });
     }
@@ -433,7 +433,7 @@ const deleteTeacherByEmail = async (req, res) => {
 const addCourseToTeacher = async (req, res) => {
   try {
     const { teacherEmail, courseCode, courseName, program, specialization } = req.body;
-      // console.log(req.body)
+    // console.log(req.body)
 
     const teacher = await Teacher.findOne({ Email: teacherEmail });
     if (!teacher) {
@@ -460,8 +460,8 @@ const addCourseToTeacher = async (req, res) => {
 
     if (!isAlreadyAssigned) {
       teacher.CoursesTaught.push({ course: course._id, curriculum: curriculum._id });
-      
-    //  console.log(teacher)
+
+      //  console.log(teacher)
       await teacher.save();
     }
     res.status(200).json({ message: "Course assigned to teacher successfully", teacher });
@@ -475,7 +475,7 @@ const getTeacherCoursesByEmail = async (req, res) => {
   try {
     const { teacherEmail } = req.params;
     // console.log(teacherEmail);
-    
+
     const teacher = await Teacher.findOne({ Email: teacherEmail }).populate({
       path: "CoursesTaught.course",
       select: "CourseName CourseCode",
@@ -499,7 +499,7 @@ const deleteTeacherCourseByEmailandCourseTaught = async (req, res) => {
     const teacher = await Teacher.findOne({ Email: teacherEmail });
     // console.log(courseId)
     if (!teacher) return res.status(404).json({ message: "Teacher not found" });
- 
+
     teacher.CoursesTaught = teacher.CoursesTaught.filter(
       (c) => c._id.toString() !== courseId
     );
@@ -511,4 +511,113 @@ const deleteTeacherCourseByEmailandCourseTaught = async (req, res) => {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 }
-module.exports = {updateCourse, deleteCourse,deleteTeacherCourseByEmailandCourseTaught, getTeacherCoursesByEmail, addCourseToTeacher, deleteTeacherByEmail, updateTeacherByEmail, deleteStudent, updateStudent, addTeacherTimeTable, addEvents, addStudentTimeTable, addEndSemResultBySmartID, addStudent, addTeacher, addCourse, addCurriculum } 
+
+const getAdminProfilebyEmail = async (req, res) => {
+  try {
+    const Email = req.params.Email
+    if (!Email)
+      return res.status(404).json({ message: "Please Provide Email" })
+    const admin = await Admin.findOne({ Email });
+    if (!admin)
+      return res.status(404).json({ message: "Admin doesm't exist" });
+    const updatedAdmin = {
+      Name: admin.Name || "",
+      Address: admin.Address || "",
+      DOB: admin.DOB || "",
+      Gender: admin.Gender || "",
+      PhoneNumber: admin.PhoneNumber || "",
+      Email: admin.Email || "",
+      WorkExperience: admin.WorkExperience || "",
+      ProfilePic: admin.ProfilePic || ""
+    }
+    res.status(200).json(updatedAdmin);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+
+}
+
+
+//@desc update admin by id
+//@route PATCH /api/admin/updateProfile
+const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; // Ensure this matches the field name in your JWT payload
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const profilePicturePath = req.file.path; // Path to the uploaded file
+
+    const admin = await Admin.findOneAndUpdate(
+      { UserID: userId }, // Query to find the student
+      { ProfilePic: profilePicturePath }, // Update the profile picture field
+      { new: true } // Return the updated document
+    );
+
+    if (!admin) {
+      return res.status(404).json({ message: "admin not found" });
+    }
+
+    // Respond with the updated admin profile
+    res.status(200).json({
+      message: "Profile picture updated successfully",
+      profilePicture: admin.ProfilePic,
+    });
+  } catch (err) {
+    console.error("Error updating profile:", err);
+    res.status(500).json({ message: "Internal Server Error", error: err.message });
+  }
+};
+
+const addAdmin = async (req, res) => {
+  try {
+    const {
+     Name, Address, DOB, Gender, PhoneNumber, Email,WorkExperience,
+      deptName } = req.body;
+
+    if (!Email || !Name) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+ 
+    const existingAdmin = await Admin.findOne({ Email });
+    if (existingAdmin) {
+      return res.status(400).json({ message: "Admin already exists" });
+    }
+
+    const department = await Department.findOne({ deptName });
+    if (!department) {
+      return res.status(400).json({ message: "Invalid department: department does not exist" });
+    }
+    const DeptID = department._id
+    let user = await User.findOne({ email: Email });
+
+    if (!user) {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash("banasthali", saltRounds);
+      user = new User({
+        Email,
+        Role: "Admin",
+        Password: hashedPassword,
+      });
+
+      await user.save();
+    }
+
+    const newAdmin = new Admin({
+      UserID: user._id, Address,
+      Name, DeptID, DOB, Gender,
+      WorkExperience,
+      PhoneNumber, Email, DeptID
+    });
+
+    await newAdmin.save();
+    res.status(201).json({ message: "Admin added successfully!", Admin: newAdmin });
+
+  } catch (err) {
+    console.error("Error adding Admin:", err);
+    res.status(500).json({ message: "Internal Server Error", error: err.message });
+  }
+};
+
+module.exports = {addAdmin, updateProfile,getAdminProfilebyEmail, updateCourse, deleteCourse, deleteTeacherCourseByEmailandCourseTaught, getTeacherCoursesByEmail, addCourseToTeacher, deleteTeacherByEmail, updateTeacherByEmail, deleteStudent, updateStudent, addTeacherTimeTable, addEvents, addStudentTimeTable, addEndSemResultBySmartID, addStudent, addTeacher, addCourse, addCurriculum } 
