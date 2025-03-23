@@ -45,7 +45,6 @@ const getStudentsByCurriculum = async (req, res) => {
     }
 }
 
-
 //@desc Get Student by course id  like DAA , TOC
 //@route GET /api/users/students/course/:courseId
 const getStudentByCourse = async (req, res) => {

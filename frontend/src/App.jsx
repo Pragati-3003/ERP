@@ -37,7 +37,7 @@ import StudentManagement from "./Admin/StudentManagement/StudentManagement";
 import TeacherManagement from "./Admin/TeacherManagement/TeacherManagement";
 import AddTeacherCourse from "./Admin/AddTeacherCourse/AddTeacherCourse"
 import CourseManagement from "./Admin/CourseManagement/CourseManagement"
-
+import AdminProfile from "./Admin/AdminProfile/AdminProfile";
 import AttendanceReport from "./Components/Attendance_student/Attendance";
 
 function App() {
@@ -48,7 +48,7 @@ function App() {
     try {
       const decodedToken = jwtDecode(token);
       role = decodedToken.role; // Extract the role from the decoded token
-      console.log("Decoded Role:", role); // Debugging log
+      // console.log("Decoded Role:", role); // Debugging log
     } catch (error) {
       console.error("Invalid token", error);
     }
@@ -57,7 +57,7 @@ function App() {
   const location = useLocation();
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  console.log(isAuthenticated);
+  // console.log(isAuthenticated);
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -130,6 +130,7 @@ function App() {
             <Route path="/admin/teachermanagment" element={<TeacherManagement />} />
             <Route path="/admin/addteachercourse" element={<AddTeacherCourse />} />
             <Route path="/admin/coursemanagment" element={<CourseManagement />} />
+            <Route path="/admin/profile" element={<AdminProfile/>} />
            
             {/* Fallback route for invalid paths */}
 
