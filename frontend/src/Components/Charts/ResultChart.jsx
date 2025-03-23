@@ -33,7 +33,6 @@ const ResultChart = ({ isDashboard = false }) => {
 
   return (
     <Box
-      overflow="hidden"
       display="flex"
       flexDirection="row" // Ensures legend appears on the side
       alignItems="center"
@@ -44,7 +43,7 @@ const ResultChart = ({ isDashboard = false }) => {
       padding="5px"
     >
       {/* Chart Container */}
-      <div style={{ height: "250px", width: "75%" }}>
+      <div className="chart" style={{ height: "250px", width: "75%" }}>
         <select
           onChange={(e) => setSelectedSemester(e.target.value)}
           value={selectedSemester}
