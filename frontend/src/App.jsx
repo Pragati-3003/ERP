@@ -31,6 +31,13 @@ import FeeStructure from "./Components/FeeStructure/FeeStructure";
 import EndSemResult from "./Components/EndSemResult/EndSemResult";
 import MidTermResult from "./Components/MidTermResult/MidTermResult";
 import StudentProfile from "./Components/StudentProfile/StudentProfile";
+
+// import Calender from "./scenes/calender/Calender"
+import StudentManagement from "./Admin/StudentManagement/StudentManagement";
+import TeacherManagement from "./Admin/TeacherManagement/TeacherManagement";
+import AddTeacherCourse from "./Admin/AddTeacherCourse/AddTeacherCourse"
+import CourseManagement from "./Admin/CourseManagement/CourseManagement"
+
 import AttendanceReport from "./Components/Attendance_student/Attendance";
 
 function App() {
@@ -113,8 +120,22 @@ function App() {
               <Route path="/semresult" element={<EndSemResult />} />
               <Route path="/midTermResult" element={<MidTermResult />} />
               <Route path="/profile" element={<StudentProfile />} />
+
+              {/* <Route path="/calendar" element={<Calender />} /> */}
+
+              {/* Admin routesss */}
+             
+            </Route>
+            <Route path="/admin/studentmanagment" element={<StudentManagement />} />
+            <Route path="/admin/teachermanagment" element={<TeacherManagement />} />
+            <Route path="/admin/addteachercourse" element={<AddTeacherCourse />} />
+            <Route path="/admin/coursemanagment" element={<CourseManagement />} />
+           
+            {/* Fallback route for invalid paths */}
+
               <Route path="/calendar" element={<Calendar />} />
             </Route>
+
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>
