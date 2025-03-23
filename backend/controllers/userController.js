@@ -2,20 +2,29 @@ const Course = require("../models/course.model.js")
 const Student = require("../models/student.model.js")
 const Curriculum = require("../models/curriculum.model.js")
 const Attendance = require("../models/attendance.model.js")
+const Teacher = require("../models/teacher.model.js")
 const User = require("../models/user.model.js")
 const EndSemesterResult = require("../models/endSemesterResult.model.js")
 //@desc Get course  bycourse id
-//@route GET /api/users/course/:courseId
+//@route GET /api/users/course/:CourseCode/:CourseName
 
-const getCourseById = async (req, res) => {
+const getCourseByNameandCode = async (req, res) => {
     try {
-        const courseId = req.params.courseId;
-        if (!courseId)
-            return res.status(400).json({ message: "Course Id is required" })
-        const course = await Course.findById(courseId);
+        const {CourseCode,CourseName} = req.params;
+      
+        const course = await Course.findOne({CourseCode,CourseName});
         if (!course)
             return res.status(400).json({ message: "Course doesn't exist" })
-        res.status(200).json(course);
+        const updatedCourse= {
+            CourseCode:course.CourseCode || "",
+            CourseName : course.CourseName || "",
+            CreditPoints:course.CreditPoints|| "",
+            Type:course.Type|| "",
+            Prerequisites:course.Prerequisites|| "",
+            TotalLectures:course.TotalLectures|| ""
+
+        }
+        res.status(200).json(updatedCourse);
     } catch (err) {
         res.status(500).json({ message: "Internal Server Error" })
     }
@@ -206,6 +215,7 @@ const getAllCoursesByCurriculumID = async (req, res) => {
     try {
         const { curriculumId, semester } = req.query;
         const curriculum = await Curriculum.findById(curriculumId).populate("semesters.courses")
+        //  console.log(curriculumId)
         if (!curriculum) {
             return res.status(404).json({ message: "Curriculum not found" });
         }
@@ -233,7 +243,7 @@ const getSemesterResultByStudentId = async (req, res) => {
         // console.log(result);
         if (!result)
             return res.status(404).json({ message: "Result doesn't exist" })
-     
+
         res.status(200).json(result);
     }
     catch (err) {
@@ -243,6 +253,103 @@ const getSemesterResultByStudentId = async (req, res) => {
 }
 
 
+//@desc Get Student by smartid 
+//@route GET /api/users/student/:smartID
+const getStudentsBySmartID = async (req, res) => {
+    try {
+        const smartID = req.query.smartID;
 
+        if (!smartID) {
+            return res.status(400).json({ message: "Smart ID is required" });
+        }
 
-module.exports = { getSemesterResultByStudentId, getAllCoursesByCurriculumID, getAttendance, getStudentAttendanceOfParticularCourse, getCourseById, getStudentsByCurriculum, getStudentByCourse }
+        const student = await Student.findOne({ smartID });
+
+        if (!student) {
+            return res.status(404).json({ message: "Student not found" });
+        }
+
+        const updatedStudent = {
+            FirstName: student.FirstName || "",
+            LastName: student.LastName || "",
+            Address: student.Address || "",
+            EnrollmentNumber: student.EnrollmentNumber || "",
+            YearOfStudy: student.YearOfStudy || "",
+            DOB: student.DOB || "",
+            Gender: student.Gender || "",
+            smartID: student.smartID || "",
+            FatherName: student.FatherName || "",
+            MotherName: student.MotherName || "",
+            Semester: student.Semester || "",
+            GuardianEmail: student.GuardianEmail || "",
+            PhoneNumber: student.PhoneNumber || "",
+            Email: student.Email || "",
+            HostelName: student.HostelName || "",
+            Scholarship: student.Scholarship || "",
+        };
+        res.status(200).json(updatedStudent);
+    } catch (err) {
+        console.error("Error fetching student:", err);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+//@desc Get Teacher by email
+//@route GET /api/users/getteacher/:email
+const getTeacherByEmail = async (req, res) => {
+    try {
+        const email = req.query.email;
+
+        if (!email) {
+            return res.status(400).json({ message: "Email is required" });
+        }
+
+        const teacher = await Teacher.findOne({ Email: email })
+            .populate({
+                path: "CoursesTaught.course",
+                model: "Course",  // Ensure you specify the correct model
+                select: "CourseCode CourseName",
+            })
+            .populate({
+                path: "CoursesTaught.curriculum",
+                model: "Curriculum",
+                select: "program specialization",
+            });
+
+        //   console.log(teacher.CoursesTaught);
+
+        if (!teacher) {
+            return res.status(404).json({ message: "Teacher not found" });
+        }
+
+        // Formatting response
+        const updatedTeacher = {
+            FirstName: teacher.FirstName || "",
+            LastName: teacher.LastName || "",
+            Address: teacher.Address || "",
+            DOB: teacher.DOB || "",
+            Gender: teacher.Gender || "",
+            PhoneNumber: teacher.PhoneNumber || "",
+            Email: teacher.Email || "",
+            Designation: teacher.Designation || "",
+            Specialization: teacher.Specialization || "",
+            EmploymentType: teacher.EmploymentType || "",
+            Qualification: teacher.Qualification || "",
+            ExperienceYears: teacher.ExperienceYears || 0,
+            SalaryStatus: teacher.SalaryStatus || "",
+            CoursesTaught: teacher.CoursesTaught.map((course) => ({
+                CourseCode: course.course?.CourseCode || "",
+                CourseName: course.course?.CourseName || "",
+                Program: course.curriculum?.program || "",
+                Specialization: course.curriculum?.specialization || "",
+            })),
+        };
+
+        res.status(200).json(updatedTeacher);
+    } catch (err) {
+        console.error("Error fetching teacher:", err);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+module.exports = { getTeacherByEmail, getStudentsBySmartID, getSemesterResultByStudentId, getAllCoursesByCurriculumID, getAttendance, getStudentAttendanceOfParticularCourse, getCourseByNameandCode, getStudentsByCurriculum, getStudentByCourse }

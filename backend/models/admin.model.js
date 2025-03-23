@@ -6,6 +6,7 @@ const AdminSchema = new mongoose.Schema({
   Name: { type: String },
   smartID:{type:String ,required:true},
   Email: { type: String, unique: true },
+  
 } ,{timestamps : true});
 
 module.exports = mongoose.model("Admin", AdminSchema);

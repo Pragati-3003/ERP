@@ -20,8 +20,11 @@ const createUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
+    console.log(req.body)
+
     try {
         const user = await User.findOne({ Email: email });
+        console.log(user)
         if (!user) {
             return res.status(400).json({ message: "User does not exist" });
         }
@@ -48,7 +51,7 @@ const loginUser = async (req, res) => {
         return res.status(200).json({
             token, user: {
                 id: user._id,
-                LastName: user.LastName,
+                LastName: user.LastName ,
                 firstName: user.FirstName,
                 email: user.Email,
                 role: user.Role,

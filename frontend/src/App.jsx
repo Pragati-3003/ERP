@@ -134,7 +134,7 @@ function App() {
             {/* Fallback route for invalid paths */}
 
               <Route path="/calendar" element={<Calendar />} />
-            </Route>
+            {/* </Route> */}
 
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
