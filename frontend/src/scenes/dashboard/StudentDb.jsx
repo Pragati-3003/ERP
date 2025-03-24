@@ -4,7 +4,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import Topbar from "../../scenes/global/Topbar";
 // import { dummyAttendanceData } from "../../data/mockData";
 
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, Link } from "react-router-dom";
 import "./dashboard.css"; // Import the Student Dashboard CSS file
 import ResultChart from "../../Components/Charts/ResultChart";
 import AttendanceChart from "../../Components/Charts/AttendenceChart";
@@ -72,16 +72,24 @@ const StudentDb = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <StatBox
-                title="60%"
-                subtitle="Overall Attendance"
-                progress="0.60"
-                icon={
-                  <AssessmentOutlinedIcon
-                    sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-                  />
-                }
-              />
+              <Link
+                to="/semresult"
+                className="block transform transition-all duration-300 hover:scale-105"
+              >
+                <StatBox
+                  title="9.2 CGPA"
+                  subtitle="Overall Marks"
+                  progress="0.80"
+                  icon={
+                    <AssignmentOutlinedIcon
+                      sx={{
+                        color: colors.greenAccent[600],
+                        fontSize: "26px",
+                      }}
+                    />
+                  }
+                />
+              </Link>
             </Box>
             <Box
               gridColumn="span 3"
@@ -108,16 +116,21 @@ const StudentDb = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <StatBox
-                title="60%"
-                subtitle="Overall Attendance"
-                progress="0.60"
-                icon={
-                  <AssessmentOutlinedIcon
-                    sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-                  />
-                }
-              />
+              <Link
+                to="/attendance"
+                className="block transform transition-all duration-300 hover:scale-105"
+              >
+                <StatBox
+                  title="60%"
+                  subtitle="Overall Attendance"
+                  progress="0.60"
+                  icon={
+                    <AssessmentOutlinedIcon
+                      sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                    />
+                  }
+                />
+              </Link>
             </Box>
             <Box
               gridColumn="span 3"
@@ -202,7 +215,7 @@ const StudentDb = () => {
               </Box>
             </Box>
             {/* Row 3 */}
-            <Box
+            {/* <Box
               gridColumn="span 7"
               gridRow="span 5"
               backgroundColor={colors.primary[400]}
@@ -218,7 +231,7 @@ const StudentDb = () => {
                   <Calendar />
                 </Box>
               </Box>
-            </Box>
+            </Box> */}
             {/* <Box
               gridColumn="span 4"
               gridRow="span 2"

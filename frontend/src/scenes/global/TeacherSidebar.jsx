@@ -40,11 +40,12 @@ const TeacherSidebar = () => {
   const [userInfo, setUserInfo] = useState(null);
   const token = localStorage.getItem("token");
   const role = useSelector((state) => state.auth.user.role);
+  const email = useSelector((state) => state.auth.user?.userInfo?.Email);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/student/profile",
+          `http://localhost:5000/api/teacher/getTeacherProfilebyEmail/${email}`, // ✅ Correct API call
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -109,7 +110,7 @@ const TeacherSidebar = () => {
       to: "/midTermResult",
       icon: <AssignmentOutlinedIcon />,
     },
-    { title: "Profile", to: "/profile", icon: <PersonOutlinedIcon /> },
+    { title: "Profile", to: "/teacher/profile", icon: <PersonOutlinedIcon /> },
     { title: "Calendar", to: "/calendar", icon: <CalendarTodayOutlinedIcon /> },
     // { title: "FAQ", to: "/faq", icon: <HelpOutlineOutlinedIcon /> },
     // {

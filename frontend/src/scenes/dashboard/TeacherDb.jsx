@@ -202,7 +202,7 @@ const TeacherDb = () => {
               </Box>
             </Box>
             {/* Row 3 */}
-            <Box
+            {/* <Box
               gridColumn="span 7"
               gridRow="span 5"
               backgroundColor={colors.primary[400]}
@@ -218,7 +218,7 @@ const TeacherDb = () => {
                   <Calendar />
                 </Box>
               </Box>
-            </Box>
+            </Box> */}
             {/* <Box
               gridColumn="span 4"
               gridRow="span 2"

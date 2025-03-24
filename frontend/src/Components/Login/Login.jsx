@@ -187,8 +187,20 @@ const Login = () => {
               Admin
             </label>
           </div>
-          <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Enter Email" required />
-          <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Enter Password" required />
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            placeholder="Enter Email"
+            required
+          />
+          <input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            placeholder="Enter Password"
+            required
+          />
           {/* <div className="captcha">
 
           <input
@@ -204,17 +216,13 @@ const Login = () => {
             type="password"
             placeholder="Enter Password"
             required
-          />
+          /> */}
           <div className="captcha">
-
             <span>{captcha}</span>
             <button type="button" onClick={refreshCaptcha}>
               Refresh
             </button>
           </div>
-
-          <input value={enteredCaptcha} onChange={(e) => setEnteredCaptcha(e.target.value)} type="text" placeholder="Enter CAPTCHA" required /> */}
-
 
           <input
             value={enteredCaptcha}
@@ -224,6 +232,13 @@ const Login = () => {
             required
           />
 
+          {/* <input
+            value={enteredCaptcha}
+            onChange={(e) => setEnteredCaptcha(e.target.value)}
+            type="text"
+            placeholder="Enter CAPTCHA"
+            required
+          /> */}
 
           <div className="remember">
             <input type="checkbox" id="remember" />

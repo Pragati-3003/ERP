@@ -35,10 +35,11 @@ import StudentProfile from "./Components/StudentProfile/StudentProfile";
 // import Calender from "./scenes/calender/Calender"
 import StudentManagement from "./Admin/StudentManagement/StudentManagement";
 import TeacherManagement from "./Admin/TeacherManagement/TeacherManagement";
-import AddTeacherCourse from "./Admin/AddTeacherCourse/AddTeacherCourse"
-import CourseManagement from "./Admin/CourseManagement/CourseManagement"
+import AddTeacherCourse from "./Admin/AddTeacherCourse/AddTeacherCourse";
+import CourseManagement from "./Admin/CourseManagement/CourseManagement";
 import AdminProfile from "./Admin/AdminProfile/AdminProfile";
 import AttendanceReport from "./Components/Attendance_student/Attendance";
+import TeacherProfile from "./Components/Teacher/TeacherProfile/TeacherProfile";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -124,17 +125,29 @@ function App() {
               {/* <Route path="/calendar" element={<Calender />} /> */}
 
               {/* Admin routesss */}
-             
             </Route>
-            <Route path="/admin/studentmanagment" element={<StudentManagement />} />
-            <Route path="/admin/teachermanagment" element={<TeacherManagement />} />
-            <Route path="/admin/addteachercourse" element={<AddTeacherCourse />} />
-            <Route path="/admin/coursemanagment" element={<CourseManagement />} />
-            <Route path="/admin/profile" element={<AdminProfile/>} />
-           
+            <Route
+              path="/admin/studentmanagment"
+              element={<StudentManagement />}
+            />
+            <Route
+              path="/admin/teachermanagment"
+              element={<TeacherManagement />}
+            />
+            <Route
+              path="/admin/addteachercourse"
+              element={<AddTeacherCourse />}
+            />
+            <Route
+              path="/admin/coursemanagment"
+              element={<CourseManagement />}
+            />
+            <Route path="/admin/profile" element={<AdminProfile />} />
+            <Route path="/teacher/profile" element={<TeacherProfile />} />
+
             {/* Fallback route for invalid paths */}
 
-              <Route path="/calendar" element={<Calendar />} />
+            <Route path="/calendar" element={<Calendar />} />
             {/* </Route> */}
 
             <Route path="*" element={<Navigate to="/" />} />
