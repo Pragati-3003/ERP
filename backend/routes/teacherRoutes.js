@@ -1,13 +1,56 @@
-const express = require('express')
-const verifyToken = require('../middlewares/authMiddleware.js')
-const authorizeRoles = require('../middlewares/roleMiddleware.js')
+const express = require("express");
+const verifyToken = require("../middlewares/authMiddleware.js");
+const authorizeRoles = require("../middlewares/roleMiddleware.js");
 const router = express.Router();
-const {upload}  = require("../middlewares/uploadMiddleware.js")
-const {uploadMidtermResult,markAttendance,updateAttendance,uploadAssignment} = require("../controllers/teacherController.js")
+const {
+  uploadProfilePictures,
+  upload,
+} = require("../middlewares/uploadMiddleware.js");
 
-router.post('/markAttendance', verifyToken, authorizeRoles("Teacher"), markAttendance)
-router.put('/updateAttendance', verifyToken, authorizeRoles("Teacher"), updateAttendance)
-router.post('/uploadAssignment', verifyToken,  authorizeRoles("Teacher"), upload.single("pdfFile"), uploadAssignment)
-router.patch('/uploadMidtermResult', verifyToken,  authorizeRoles("Teacher"), uploadMidtermResult)
-
+const {
+  uploadMidtermResult,
+  markAttendance,
+  updateAttendance,
+  uploadAssignment,
+  updateProfile,
+  getTeacherProfilebyEmail,
+} = require("../controllers/teacherController.js");
+router.get(
+  "/getTeacherProfilebyEmail/:Email",
+  verifyToken,
+  authorizeRoles("Teacher"),
+  getTeacherProfilebyEmail
+);
+router.post(
+  "/markAttendance",
+  verifyToken,
+  authorizeRoles("Teacher"),
+  markAttendance
+);
+router.put(
+  "/updateAttendance",
+  verifyToken,
+  authorizeRoles("Teacher"),
+  updateAttendance
+);
+router.post(
+  "/uploadAssignment",
+  verifyToken,
+  authorizeRoles("Teacher"),
+  upload.single("pdfFile"),
+  uploadAssignment
+);
+router.patch(
+  "/uploadMidtermResult",
+  verifyToken,
+  authorizeRoles("Teacher"),
+  uploadMidtermResult
+);
+router.patch(
+  "/updateProfile",
+  verifyToken,
+  authorizeRoles("Student"),
+  uploadProfilePictures.single("profilePicture"),
+  updateProfile
+);
 module.exports = router;

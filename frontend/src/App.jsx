@@ -35,13 +35,18 @@ import StudentProfile from "./Components/StudentProfile/StudentProfile";
 // import Calender from "./scenes/calender/Calender"
 import StudentManagement from "./Admin/StudentManagement/StudentManagement";
 import TeacherManagement from "./Admin/TeacherManagement/TeacherManagement";
-import AddTeacherCourse from "./Admin/AddTeacherCourse/AddTeacherCourse"
-import CourseManagement from "./Admin/CourseManagement/CourseManagement"
+import AddTeacherCourse from "./Admin/AddTeacherCourse/AddTeacherCourse";
+import CourseManagement from "./Admin/CourseManagement/CourseManagement";
 import AdminProfile from "./Admin/AdminProfile/AdminProfile";
 import AddSemesterResult from "./Admin/AddSemesterResult/AddSemesterResult";
 import AttendanceReport from "./Components/Attendance_student/Attendance";
+
+import TeacherProfile from "./Components/Teacher/TeacherProfile/TeacherProfile";
+
+
 import UploadStudentTimetable from "./Admin/UploadStudentTimetable/UploadStudentTimetable";
 import UploadTeacherTimetable from "./Admin/UploadTeacherTimetable/UploadTeacherTimetable";
+
 function App() {
   const token = localStorage.getItem("token");
   let role = null;
@@ -126,8 +131,8 @@ function App() {
               {/* <Route path="/calendar" element={<Calender />} /> */}
 
               {/* Admin routesss */}
-             
             </Route>
+
             <Route path="/admin/studentmanagment" element={<StudentManagement />} />
             <Route path="/admin/teachermanagment" element={<TeacherManagement />} />
             <Route path="/admin/addteachercourse" element={<AddTeacherCourse />} />
@@ -136,10 +141,12 @@ function App() {
             <Route path="/admin/resultmgmt" element={<AddSemesterResult/>} />
             <Route path="/admin/addStudentTimetable" element={<UploadStudentTimetable/>} />
             <Route path="/admin/addTeacherTimetable" element={<UploadTeacherTimetable/>} />
+             <Route path="/teacher/profile" element={<TeacherProfile />} />
            
+
             {/* Fallback route for invalid paths */}
 
-              <Route path="/calendar" element={<Calendar />} />
+            <Route path="/calendar" element={<Calendar />} />
             {/* </Route> */}
 
             <Route path="*" element={<Navigate to="/" />} />
