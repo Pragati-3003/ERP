@@ -97,8 +97,17 @@ const AdminSidebar = () => {
       to: "/semresult",
       icon: <AssignmentOutlinedIcon />,
     },
-
-
+    {
+      title: "Student Timetable",
+      to: "/admin/addStudentTimetable",
+      icon: <AssignmentOutlinedIcon />,
+    },
+    {
+      title: "Teacher Timetable",
+      to: "/admin/addTeacherTimetable",
+      icon: <AssignmentOutlinedIcon />,
+    },
+    { title: "Result Management", to: "/admin/resultmgmt", icon: <PersonOutlinedIcon /> },
     { title: "Profile", to: "/admin/profile", icon: <PersonOutlinedIcon /> },
     { title: "Calendar", to: "/calendar", icon: <CalendarTodayOutlinedIcon /> },
     // { title: "FAQ", to: "/faq", icon: <HelpOutlineOutlinedIcon /> },
@@ -180,7 +189,7 @@ const AdminSidebar = () => {
               />
             </Box>
             <Typography variant="h6" sx={{ fontWeight: "bold", mt: 1 }}>
-              {userInfo.Name }
+              {userInfo.Name}
             </Typography>
             <Typography variant="body2" sx={{ color: colors.greenAccent[500] }}>
               {role}

@@ -38,8 +38,14 @@ import TeacherManagement from "./Admin/TeacherManagement/TeacherManagement";
 import AddTeacherCourse from "./Admin/AddTeacherCourse/AddTeacherCourse";
 import CourseManagement from "./Admin/CourseManagement/CourseManagement";
 import AdminProfile from "./Admin/AdminProfile/AdminProfile";
+import AddSemesterResult from "./Admin/AddSemesterResult/AddSemesterResult";
 import AttendanceReport from "./Components/Attendance_student/Attendance";
+
 import TeacherProfile from "./Components/Teacher/TeacherProfile/TeacherProfile";
+
+
+import UploadStudentTimetable from "./Admin/UploadStudentTimetable/UploadStudentTimetable";
+import UploadTeacherTimetable from "./Admin/UploadTeacherTimetable/UploadTeacherTimetable";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -126,24 +132,17 @@ function App() {
 
               {/* Admin routesss */}
             </Route>
-            <Route
-              path="/admin/studentmanagment"
-              element={<StudentManagement />}
-            />
-            <Route
-              path="/admin/teachermanagment"
-              element={<TeacherManagement />}
-            />
-            <Route
-              path="/admin/addteachercourse"
-              element={<AddTeacherCourse />}
-            />
-            <Route
-              path="/admin/coursemanagment"
-              element={<CourseManagement />}
-            />
-            <Route path="/admin/profile" element={<AdminProfile />} />
-            <Route path="/teacher/profile" element={<TeacherProfile />} />
+
+            <Route path="/admin/studentmanagment" element={<StudentManagement />} />
+            <Route path="/admin/teachermanagment" element={<TeacherManagement />} />
+            <Route path="/admin/addteachercourse" element={<AddTeacherCourse />} />
+            <Route path="/admin/coursemanagment" element={<CourseManagement />} />
+            <Route path="/admin/profile" element={<AdminProfile/>} />
+            <Route path="/admin/resultmgmt" element={<AddSemesterResult/>} />
+            <Route path="/admin/addStudentTimetable" element={<UploadStudentTimetable/>} />
+            <Route path="/admin/addTeacherTimetable" element={<UploadTeacherTimetable/>} />
+             <Route path="/teacher/profile" element={<TeacherProfile />} />
+           
 
             {/* Fallback route for invalid paths */}
 
