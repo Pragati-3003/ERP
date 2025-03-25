@@ -153,7 +153,7 @@ const Login = () => {
         />
       </div>
       <div className="form-container">
-        <h2>BANASTHALI'S - ERP</h2>
+        <h2>ERP-CAMPUS DIARY</h2>
         <form onSubmit={handleSubmit}>
           <div className="role-selector">
             <label>
