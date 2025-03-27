@@ -40,6 +40,7 @@ import CourseManagement from "./Admin/CourseManagement/CourseManagement";
 import AdminProfile from "./Admin/AdminProfile/AdminProfile";
 import AttendanceReport from "./Components/Attendance_student/Attendance";
 import TeacherProfile from "./Components/Teacher/TeacherProfile/TeacherProfile";
+import TakeAttendance from "./Components/Teacher/TakeAttendance";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -144,6 +145,7 @@ function App() {
             />
             <Route path="/admin/profile" element={<AdminProfile />} />
             <Route path="/teacher/profile" element={<TeacherProfile />} />
+            <Route path="/take-attendance" element={<TakeAttendance />} />
 
             {/* Fallback route for invalid paths */}
 
