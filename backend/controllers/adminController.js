@@ -346,54 +346,75 @@ const addEvents = async (req, res) => {
 }
 
 // @desc Add Timetable by curriculum Id and the Semester
-// route  POST api/admin/addStudentTimeTable
+// route  PUT api/admin/addStudentTimeTable
 const addStudentTimeTable = async (req, res) => {
   try {
     const { program, specialization, semester } = req.body;
-    // console.log(req.body)
+
     if (!req.file) return res.status(400).json({ message: "PDF file is required" });
     const pdfPath = req.file.path;
     if (!semester) return res.status(400).json({ message: "Semester is required" });
 
     const curriculum = await Curriculum.findOne({ program, specialization });
-    if (!curriculum)
-      return res.status(404).json({ message: "curriculum ot found" });
+    if (!curriculum) return res.status(404).json({ message: "Curriculum not found" });
+
     const curriculumID = curriculum._id;
-    const timetable = new StudentTimetable({
-      curriculumID,
-      semester,
-      pdfURL: pdfPath
-    })
-    await timetable.save();
-    res.status(201).json({ timetable })
+
+    // Check if timetable exists for the given curriculum & semester
+    let timetable = await StudentTimetable.findOne({ curriculumID, semester });
+
+    if (timetable) {
+      // Update existing timetable
+      timetable.pdfURL = pdfPath;
+      await timetable.save();
+      return res.status(200).json({ message: "Timetable updated successfully", timetable });
+    } else {
+      // Create a new timetable
+      timetable = new StudentTimetable({ curriculumID, semester, pdfURL: pdfPath });
+      await timetable.save();
+      return res.status(201).json({ message: "Timetable added successfully", timetable });
+    }
   } catch (err) {
-    console.error("Error creating event:", err);
+    console.error("Error adding/updating timetable:", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};
+
 
 // @desc Add Timetable by curriculum Id and the Semester
 // route  PUT api/admin/addTeacherTimeTable
 const addTeacherTimeTable = async (req, res) => {
   try {
     const { teacherEmail } = req.body;
+
     if (!req.file) return res.status(400).json({ message: "PDF file is required" });
     const pdfPath = req.file.path;
-    const teacher = await Teacher.findOne({ Email: teacherEmail })
-    if (!teacher)
-      return res.status(404).json({ message: "Teacher ot found" });
+
+    const teacher = await Teacher.findOne({ Email: teacherEmail });
+    if (!teacher) return res.status(404).json({ message: "Teacher not found" });
+
     const teacherID = teacher._id;
-    const timetable = new TeacherTimetable({
-      teacherID,
-      pdfURL: pdfPath
-    })
-    await timetable.save();
-    res.status(201).json({ timetable })
+
+    // Check if a timetable already exists for the teacher
+    let timetable = await TeacherTimetable.findOne({ teacherID });
+
+    if (timetable) {
+      // Update existing timetable
+      timetable.pdfURL = pdfPath;
+      await timetable.save();
+      return res.status(200).json({ message: "Timetable updated successfully", timetable });
+    } else {
+      // Create a new timetable
+      timetable = new TeacherTimetable({ teacherID, pdfURL: pdfPath });
+      await timetable.save();
+      return res.status(201).json({ message: "Timetable added successfully", timetable });
+    }
   } catch (err) {
-    console.error("Error creating event:", err);
+    console.error("Error adding/updating timetable:", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};
+
 
 // @desc Update Teacher by Email
 // @route PATCH /api/admin/update-teacher/:email
@@ -620,4 +641,24 @@ const addAdmin = async (req, res) => {
   }
 };
 
-module.exports = {addAdmin, updateProfile,getAdminProfilebyEmail, updateCourse, deleteCourse, deleteTeacherCourseByEmailandCourseTaught, getTeacherCoursesByEmail, addCourseToTeacher, deleteTeacherByEmail, updateTeacherByEmail, deleteStudent, updateStudent, addTeacherTimeTable, addEvents, addStudentTimeTable, addEndSemResultBySmartID, addStudent, addTeacher, addCourse, addCurriculum } 
+const addSemesterResult = async(req,res)=>{
+  try {
+    const { StudentSmartID , Semester } = req.body;
+    const resultPDF = req.file ? req.file.path : null;
+    
+    const existingResult = await EndSemesterResult.findOne({ StudentSmartID });
+
+    if (!existingResult) {
+        return res.status(404).json({ message: "Result not found" });
+    }
+
+    existingResult.ResultPDF = resultPDF || existingResult.ResultPDF;
+    existingResult.IssuedDate = new Date();
+
+    await existingResult.save();
+    res.status(201).json({ message: "Result added successfully", result: existingResult });
+} catch (error) {
+    res.status(500).json({ message: "Error adding result", error: error.message });
+}
+}
+module.exports = {addSemesterResult,addAdmin, updateProfile,getAdminProfilebyEmail, updateCourse, deleteCourse, deleteTeacherCourseByEmailandCourseTaught, getTeacherCoursesByEmail, addCourseToTeacher, deleteTeacherByEmail, updateTeacherByEmail, deleteStudent, updateStudent, addTeacherTimeTable, addEvents, addStudentTimeTable, addEndSemResultBySmartID, addStudent, addTeacher, addCourse, addCurriculum } 

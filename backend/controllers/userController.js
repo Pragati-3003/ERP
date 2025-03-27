@@ -238,7 +238,8 @@ const getSemesterResultByStudentId = async (req, res) => {
             return res.status(404).json({ message: "Student doesn't exist" })
         const studentId = student._id;
         // console.log(studentId)
-        const result = await EndSemesterResult.findOne({ StudentID: studentId })
+        // const result = await EndSemesterResult.findOne({ StudentID: studentId })
+        const result = await EndSemesterResult.findOne({ StudentSmartID: smartCardId })
         // console.log(result);
         if (!result)
             return res.status(404).json({ message: "Result doesn't exist" })

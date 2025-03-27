@@ -38,9 +38,14 @@ import TeacherManagement from "./Admin/TeacherManagement/TeacherManagement";
 import AddTeacherCourse from "./Admin/AddTeacherCourse/AddTeacherCourse";
 import CourseManagement from "./Admin/CourseManagement/CourseManagement";
 import AdminProfile from "./Admin/AdminProfile/AdminProfile";
+import AddSemesterResult from "./Admin/AddSemesterResult/AddSemesterResult";
 import AttendanceReport from "./Components/Attendance_student/Attendance";
+
 import TeacherProfile from "./Components/Teacher/TeacherProfile/TeacherProfile";
 import TakeAttendance from "./Components/Teacher/TakeAttendance";
+
+import UploadStudentTimetable from "./Admin/UploadStudentTimetable/UploadStudentTimetable";
+import UploadTeacherTimetable from "./Admin/UploadTeacherTimetable/UploadTeacherTimetable";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -144,14 +149,21 @@ function App() {
               element={<CourseManagement />}
             />
             <Route path="/admin/profile" element={<AdminProfile />} />
+            <Route path="/admin/resultmgmt" element={<AddSemesterResult />} />
+            <Route
+              path="/admin/addStudentTimetable"
+              element={<UploadStudentTimetable />}
+            />
+            <Route
+              path="/admin/addTeacherTimetable"
+              element={<UploadTeacherTimetable />}
+            />
             <Route path="/teacher/profile" element={<TeacherProfile />} />
             <Route path="/take-attendance" element={<TakeAttendance />} />
-
+            >>>>>>> f59790cce287a8449a553fa7af997990db584045
             {/* Fallback route for invalid paths */}
-
             <Route path="/calendar" element={<Calendar />} />
             {/* </Route> */}
-
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>
