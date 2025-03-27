@@ -160,7 +160,7 @@ function App() {
             />
             <Route path="/teacher/profile" element={<TeacherProfile />} />
             <Route path="/take-attendance" element={<TakeAttendance />} />
-            >>>>>>> f59790cce287a8449a553fa7af997990db584045
+
             {/* Fallback route for invalid paths */}
             <Route path="/calendar" element={<Calendar />} />
             {/* </Route> */}
