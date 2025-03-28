@@ -181,7 +181,7 @@ const AddTeacherCourse = () => {
               placeholder="Teacher Email"
               value={teacherEmail}
               onChange={(e) => setTeacherEmail(e.target.value)}
-              className="w-full px-4 py-2 border rounded mb-4"
+              className="w-full px-4 py-2 border rounded mb-4  text-gray-700"
             />
             <button
               onClick={fetchAssignedCourses}

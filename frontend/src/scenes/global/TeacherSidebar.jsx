@@ -79,6 +79,26 @@ const TeacherSidebar = () => {
       to: "/attendance",
       icon: <AssessmentOutlinedIcon />,
     },
+    {
+      title: "Attendance",
+      to: "/attendance",
+      icon: <AssessmentOutlinedIcon />,
+    },
+    {
+      title: "Attendance",
+      to: "/attendance",
+      icon: <AssessmentOutlinedIcon />,
+    },
+    {
+      title: "Attendance",
+      to: "/attendance",
+      icon: <AssessmentOutlinedIcon />,
+    },
+    {
+      title: "Attendance",
+      to: "/attendance",
+      icon: <AssessmentOutlinedIcon />,
+    },
     // {
     //   title: "Upload Assignment",
     //   to: "/upload-assignment",
