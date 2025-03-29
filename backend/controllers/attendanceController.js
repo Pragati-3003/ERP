@@ -18,7 +18,7 @@ const submitAttendance = async (req, res) => {
   }
 };
 
-// module.exports = { submitAttendance };
+module.exports = { submitAttendance };
 // // ✅ Get students for attendance (based on teacher's email, course, and curriculum)
 // exports.getStudentsByCourseAndCurriculum = async (req, res) => {
 //   try {
