@@ -7,7 +7,6 @@ const StudentSchema = new mongoose.Schema({
   YearOfStudy: { type: String },
   Semester: { type: Number },
   RollNo: { type: String },
-  CourseID: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
   CurriculumID: { type: mongoose.Schema.Types.ObjectId, ref: "Curriculum" },
   CourseFees: { type: Number },
   DOB: { type: Date },

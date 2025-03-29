@@ -1,12 +1,12 @@
-const Student = require("../models/student.model.js")
-const Course = require("../models/course.model.js")
-const Curriculum = require("../models/curriculum.model.js")
-const Teacher = require("../models/teacher.model.js")
-const Assignment = require("../models/assignment.model.js")
-const AssignmentSubmission = require("../models/assignmentSubmission.model.js")
-const MidTermResult = require("../models/midTermExamsResult.model.js")
-const Event = require("../models/events.model.js")
-const StudentTimetable = require("../models/student_timetables.model.js")
+const Student = require("../models/student.model.js");
+const Course = require("../models/course.model.js");
+const Curriculum = require("../models/curriculum.model.js");
+const Teacher = require("../models/teacher.model.js");
+const Assignment = require("../models/assignment.model.js");
+const AssignmentSubmission = require("../models/assignmentSubmission.model.js");
+const MidTermResult = require("../models/midTermExamsResult.model.js");
+const Event = require("../models/events.model.js");
+const StudentTimetable = require("../models/student_timetables.model.js");
 //@desc Get student by id
 //@route GET /api/student/profile
 
@@ -14,16 +14,15 @@ const getStudentById = async (req, res) => {
   try {
     const userId = req.user.id;
     // console.log(userId);
-    const student = await Student.findOne({ UserID: userId })
+    const student = await Student.findOne({ UserID: userId });
     // console.log(student);
     if (!student)
       return res.status(400).json({ message: "Student does not exist" });
     res.status(200).json(student);
-  }
-  catch (err) {
+  } catch (err) {
     res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};
 
 //@desc update student by id
 //@route PATCH /api/student/updateProfile
@@ -54,36 +53,48 @@ const updateProfile = async (req, res) => {
     });
   } catch (err) {
     console.error("Error updating profile:", err);
-    res.status(500).json({ message: "Internal Server Error", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: err.message });
   }
 };
 
-//@desc Get course 
+//@desc Get course
 //@route GET /api/student/course
 const getCourse = async (req, res) => {
   try {
     const userId = req.user.id;
-    const student = await Student.findOne({ UserID: userId }).populate("CurriculumID");
+    const student = await Student.findOne({ UserID: userId }).populate(
+      "CurriculumID"
+    );
     // console.log(student);
     if (!student)
       return res.status(400).json({ message: "Student does not exist" });
     const { CurriculumID, Semester } = student;
     if (!CurriculumID)
-      return res.status(400).json({ message: "Curriculum not assigned to the student" });
-    const curriculum = await Curriculum.findById(CurriculumID).populate("semesters.courses");
+      return res
+        .status(400)
+        .json({ message: "Curriculum not assigned to the student" });
+    const curriculum = await Curriculum.findById(CurriculumID).populate(
+      "semesters.courses"
+    );
     if (!curriculum)
       return res.status(400).json({ message: "Curriculum does not exist" });
-    const semesterData = curriculum.semesters.find(sem => sem.semester === Semester)
+    const semesterData = curriculum.semesters.find(
+      (sem) => sem.semester === Semester
+    );
     // console.log(curriculum);
     if (!semesterData)
-      return res.status(400).json({ message: "No courses found for this semester" });
+      return res
+        .status(400)
+        .json({ message: "No courses found for this semester" });
     res.status(200).json(semesterData.courses);
   } catch (err) {
     res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};
 
-//@desc Get curriculum  
+//@desc Get curriculum
 //@route GET /api/student/curriculum
 
 const getCurriculum = async (req, res) => {
@@ -92,9 +103,13 @@ const getCurriculum = async (req, res) => {
     // console.log(userId);
     // console.log(req.user)
 
-    const curriculum = await Student.findOne({ UserID: userId }).populate("CurriculumID");
+    const curriculum = await Student.findOne({ UserID: userId }).populate(
+      "CurriculumID"
+    );
     // console.log(curriculum);
-    const details = await Curriculum.findById(curriculum.CurriculumID).populate("semesters.courses");
+    const details = await Curriculum.findById(curriculum.CurriculumID).populate(
+      "semesters.courses"
+    );
     console.log(details);
 
     // res.status(200).json(curriculum.CurriculumID);
@@ -102,7 +117,7 @@ const getCurriculum = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};
 
 //@desc Get all the courses semester wise including faulty details
 //@route GET /api/student/course-enrolled
@@ -115,33 +130,36 @@ const courseEnrolled = async (req, res) => {
     }
 
     // Find student's curriculum
-    const student = await Student.findOne({ UserID: userId }).populate("CurriculumID");
+    const student = await Student.findOne({ UserID: userId }).populate(
+      "CurriculumID"
+    );
     if (!student) {
       return res.status(400).json({ message: "Student not found" });
     }
 
-    const curriculumDetails = await Curriculum.findById(student.CurriculumID)
-      .populate("semesters.courses");
+    const curriculumDetails = await Curriculum.findById(
+      student.CurriculumID
+    ).populate("semesters.courses");
 
     if (!curriculumDetails) {
       return res.status(400).json({ message: "Courses not found" });
     }
 
     const studentCurriculum = student.CurriculumID;
-    const courseIds = curriculumDetails.semesters.flatMap(semester =>
-      semester.courses.map(course => course._id)
+    const courseIds = curriculumDetails.semesters.flatMap((semester) =>
+      semester.courses.map((course) => course._id)
     );
 
     // Fetch only teachers who teach in the student's curriculum
     const teachers = await Teacher.find({
       "CoursesTaught.course": { $in: courseIds },
-      "CoursesTaught.curriculum": studentCurriculum // Filter by student's curriculum
+      "CoursesTaught.curriculum": studentCurriculum, // Filter by student's curriculum
     }).populate("CoursesTaught.course");
 
     // Map courses to teachers
     const courseTeacherMap = {};
-    teachers.forEach(teacher => {
-      teacher.CoursesTaught.forEach(courseEntry => {
+    teachers.forEach((teacher) => {
+      teacher.CoursesTaught.forEach((courseEntry) => {
         const course = courseEntry.course;
         if (!courseTeacherMap[course._id]) {
           courseTeacherMap[course._id] = [];
@@ -149,21 +167,21 @@ const courseEnrolled = async (req, res) => {
         courseTeacherMap[course._id].push({
           Name: `${teacher.FirstName} ${teacher.LastName}`,
           Email: teacher.Email,
-          Designation: teacher.Designation
+          Designation: teacher.Designation,
         });
       });
     });
 
     // Structure response
-    const formattedData = curriculumDetails.semesters.map(semester => ({
+    const formattedData = curriculumDetails.semesters.map((semester) => ({
       semester: semester.semester,
-      courses: semester.courses.map(course => ({
+      courses: semester.courses.map((course) => ({
         CourseCode: course.CourseCode,
         CourseName: course.CourseName,
         Type: course.Type,
         CreditPoints: course.CreditPoints,
-        Teacher: courseTeacherMap[course._id] || "No teacher assigned"
-      }))
+        Teacher: courseTeacherMap[course._id] || "No teacher assigned",
+      })),
     }));
 
     res.status(200).json(formattedData);
@@ -172,7 +190,6 @@ const courseEnrolled = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 
 //@desc Get all assigments of the current semester subject wise/course wise
 //@route GET /api/student/viewAssignments
@@ -183,8 +200,7 @@ const viewAssignments = async (req, res) => {
 
     // Find the course
     const course = await Course.findOne({ CourseCode, CourseName });
-    if (!course)
-      return res.status(404).json({ message: "Course not found" });
+    if (!course) return res.status(404).json({ message: "Course not found" });
 
     const CourseID = course._id;
 
@@ -260,31 +276,41 @@ const getMidtermResults = async (req, res) => {
 
     const curriculum = await Curriculum.findOne({
       _id: CurriculumID,
-      "semesters.semester": semester
+      "semesters.semester": semester,
     }).populate("semesters.courses");
 
     if (!curriculum) {
-      return res.status(404).json({ message: "No curriculum found for this semester." });
+      return res
+        .status(404)
+        .json({ message: "No curriculum found for this semester." });
     }
 
-    const currentSemester = curriculum.semesters.find(s => s.semester === Number(semester));
+    const currentSemester = curriculum.semesters.find(
+      (s) => s.semester === Number(semester)
+    );
     if (!currentSemester || currentSemester.courses.length === 0) {
-      return res.status(404).json({ message: "No courses found for this semester." });
+      return res
+        .status(404)
+        .json({ message: "No courses found for this semester." });
     }
 
-    const courseIDs = currentSemester.courses.map(course => course._id);
+    const courseIDs = currentSemester.courses.map((course) => course._id);
 
     const results = await MidTermResult.find({
       StudentSmartID,
       CurriculumID,
-      CourseID: { $in: courseIDs }
-    }).populate('CourseID').populate('TeacherID');
+      CourseID: { $in: courseIDs },
+    })
+      .populate("CourseID")
+      .populate("TeacherID");
 
     if (results.length === 0) {
-      return res.status(404).json({ message: "No midterm results found for this semester." });
+      return res
+        .status(404)
+        .json({ message: "No midterm results found for this semester." });
     }
 
-    const midtermResults = results.map(result => ({
+    const midtermResults = results.map((result) => ({
       teacherName: result.TeacherID.FirstName + " " + result.TeacherID.LastName,
       courseCode: result.CourseID.CourseCode,
       courseName: result.CourseID.CourseName,
@@ -293,24 +319,23 @@ const getMidtermResults = async (req, res) => {
       periodical2: result.Periodical2,
       assignment2: result.Assignment2,
       internals: result.Internals,
-      remarks: result.Remarks
+      remarks: result.Remarks,
     }));
     res.status(200).json({
       message: "Results fetched successfully.",
-      midtermResults
+      midtermResults,
     });
-
   } catch (error) {
     console.error("Error fetching midterm results:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};
 
 //@desc GET get all the events
 //@route GET  /api/student/getEvents
-const getEvents =async(req,res)=>{
+const getEvents = async (req, res) => {
   try {
-    const role  = req.user.role; 
+    const role = req.user.role;
     // Validate role
     if (!role) {
       return res.status(400).json({ message: "Role is required" });
@@ -329,20 +354,56 @@ const getEvents =async(req,res)=>{
     console.error("Error fetching events:", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};
 
 //@desc GET  TImeTable for the current Semester
 //@route GET  /api/student/getTimeTable
-const getTimeTable =async(req,res)=>{
-  try{
-        const {curriculumID,semester } = req.query;
-        const timeTable = await StudentTimetable.findOne({curriculumID,semester})
-        if (!timeTable) return res.status(400).json({ message: "timeTable not found" });
-        res.status(200).json(timeTable)
+const getTimeTable = async (req, res) => {
+  try {
+    const { curriculumID, semester } = req.query;
+    const timeTable = await StudentTimetable.findOne({
+      curriculumID,
+      semester,
+    });
+    if (!timeTable)
+      return res.status(400).json({ message: "timeTable not found" });
+    res.status(200).json(timeTable);
   } catch (err) {
     console.error("Error fetching events:", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};
+const getStudentsInfo = async (req, res) => {
+  try {
+    const { semester, courseId, curriculumId } = req.query;
+    const students = await Student.find({
+      Semester: semester,
+      CourseID: courseId,
+      CurriculumID: curriculumId,
+    }).select("FirstName LastName smartID");
 
-module.exports = {getTimeTable, getEvents,updateProfile, getMidtermResults, uploadAssignmentSubmissions, viewAssignments, getStudentById, getCourse, getCurriculum, courseEnrolled };
+    const formattedStudents = students.map((student) => ({
+      _id: student._id,
+      fullName: `${student.FirstName} ${student.LastName}`,
+      smartID: student.UserId,
+    }));
+
+    res.json(formattedStudents);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = {
+  getTimeTable,
+  getEvents,
+  updateProfile,
+  getMidtermResults,
+  uploadAssignmentSubmissions,
+  viewAssignments,
+  getStudentById,
+  getCourse,
+  getCurriculum,
+  courseEnrolled,
+  getStudentsInfo,
+};

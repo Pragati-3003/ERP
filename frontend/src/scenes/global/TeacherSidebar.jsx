@@ -80,19 +80,44 @@ const TeacherSidebar = () => {
       icon: <AssessmentOutlinedIcon />,
     },
     {
-      title: "Assignment",
-      to: "/assignment",
-      icon: <AssignmentOutlinedIcon />,
+      title: "Attendance",
+      to: "/attendance",
+      icon: <AssessmentOutlinedIcon />,
     },
+    {
+      title: "Attendance",
+      to: "/attendance",
+      icon: <AssessmentOutlinedIcon />,
+    },
+    {
+      title: "Attendance",
+      to: "/attendance",
+      icon: <AssessmentOutlinedIcon />,
+    },
+    {
+      title: "Attendance",
+      to: "/attendance",
+      icon: <AssessmentOutlinedIcon />,
+    },
+    // {
+    //   title: "Upload Assignment",
+    //   to: "/upload-assignment",
+    //   icon: <AssignmentOutlinedIcon />,
+    // },
+    // {
+    //   title: "Upload Marks",
+    //   to: "/upload-assignment",
+    //   icon: <AssignmentOutlinedIcon />,
+    // },
 
+    // {
+    //   title: "Course Alloted",
+    //   to: "/course-alloted",
+    //   icon: <AssignmentOutlinedIcon />,
+    // },
     {
-      title: "CourseEnrolled",
-      to: "/course-enrolled",
-      icon: <AssignmentOutlinedIcon />,
-    },
-    {
-      title: "FeesStructure",
-      to: "/feesStructure",
+      title: "Take Attendance",
+      to: "/take-attendance",
       icon: <AssignmentOutlinedIcon />,
     },
     {
@@ -100,16 +125,7 @@ const TeacherSidebar = () => {
       to: "/timetable",
       icon: <AssignmentOutlinedIcon />,
     },
-    {
-      title: "SemeterResult",
-      to: "/semresult",
-      icon: <AssignmentOutlinedIcon />,
-    },
-    {
-      title: "MidTermResult",
-      to: "/midTermResult",
-      icon: <AssignmentOutlinedIcon />,
-    },
+
     { title: "Profile", to: "/teacher/profile", icon: <PersonOutlinedIcon /> },
     { title: "Calendar", to: "/calendar", icon: <CalendarTodayOutlinedIcon /> },
     // { title: "FAQ", to: "/faq", icon: <HelpOutlineOutlinedIcon /> },

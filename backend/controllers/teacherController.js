@@ -1,11 +1,13 @@
 const Attendance = require("../models/attendance.model.js");
 const Assignment = require("../models/assignment.model.js");
+const mongoose = require("mongoose");
 const AssignmentSubmission = require("../models/assignmentSubmission.model.js");
 const Course = require("../models/course.model.js");
 const Curriculum = require("../models/curriculum.model.js");
 const Student = require("../models/student.model.js");
 const MidTermResult = require("../models/midTermExamsResult.model.js");
 const Teacher = require("../models/teacher.model.js");
+const Event = require("../models/events.model.js");
 //@desc Mark Attendace
 //@route POST /api/teacher/markAttendance
 const markAttendance = async (req, res) => {
@@ -283,6 +285,194 @@ const updateProfile = async (req, res) => {
       .json({ message: "Internal Server Error", error: err.message });
   }
 };
+const getTeacherCoursesByEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    const teacher = await Teacher.findOne({ Email: email })
+      .populate("CoursesTaught.course")
+      .populate("CoursesTaught.curriculum");
+
+    if (!teacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    res.status(200).json(teacher.CoursesTaught);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+const getStudentById = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    // console.log(userId);
+    const student = await Student.findOne({ UserID: userId });
+    // console.log(student);
+    if (!student)
+      return res.status(400).json({ message: "Student does not exist" });
+    res.status(200).json(student);
+  } catch (err) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+const getTeacherCourses = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    // const { Email } = req.params.Email;
+    const teacher = await Teacher.findOne({ UserID: userId })
+      .populate({
+        path: "CoursesTaught.course",
+        select: "CourseName",
+      })
+      .populate({
+        path: "CoursesTaught.curriculum",
+        select: "program semesters",
+        populate: {
+          path: "semesters.courses",
+          select: "CourseName",
+        },
+      });
+
+    if (!teacher) return res.status(404).json({ message: "Teacher not found" });
+
+    res.status(200).json({
+      coursesTaught: teacher.CoursesTaught,
+      CurriculumID: teacher.CoursesTaught.curriculum,
+      teacherName: `${teacher.FirstName} ${teacher.LastName}`,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching teacher's courses" });
+  }
+};
+const getStudentsForAttendance = async (req, res) => {
+  // const { curriculumId, semester, courseId } = req.params;
+  // try {
+  //   const { CurriculumId, Semester, CourseId } = req.params;
+
+  //   // Fetch the curriculum to get the correct courses for the semester
+  //   const curriculum = await Curriculum.findById(CurriculumID).populate(
+  //     "semesters.courses"
+  //   );
+
+  //   if (!curriculum) {
+  //     return res.status(404).json({ error: "Curriculum not found" });
+  //   }
+
+  //   // Find if the requested course exists in the given semester
+  //   const semesterData = curriculum.semesters.find(
+  //     (s) => s.semester === Semester
+  //   );
+  // try {
+  //   const { curriculumId, semester, courseId } = req.params;
+
+  //   // Fetch the curriculum to get the correct courses for the semester
+  //   const curriculum = await Curriculum.findById(curriculumId).populate(
+  //     "semesters.courses"
+  //   );
+
+  //   if (!curriculum) {
+  //     return res.status(404).json({ error: "Curriculum not found" });
+  //   }
+
+  //   // Find if the requested course exists in the given semester
+  //   const semesterData = curriculum.semesters.find(
+  //     (s) => s.semester == semester
+  //   );
+  //   if (
+  //     !semesterData ||
+  //     !semesterData.courses.some((c) => c._id.toString() === CourseId)
+  //   ) {
+  //     return res
+  //       .status(400)
+  //       .json({ error: "Course not found in selected semester" });
+  //   }
+
+  //   // Fetch students whose curriculum and semester match, and who should be taking this course
+  //   const students = await Student.find({
+  //     CurriculumId,
+  //     Semester,
+  //   }).select("FirstName LastName SmartID RollNumber");
+
+  //   res.json(students);
+  // } catch (error) {
+  //   console.error("Error fetching students", error);
+  //   res.status(500).json({ error: "Server error" });
+  // }
+
+  try {
+    const { email, semester, curriculumId } = req.query;
+
+    if (!semester || !curriculumId) {
+      return res.status(400).json({ message: "Missing required filters" });
+    }
+
+    // 1️⃣ Fetch the teacher's assigned courses from the Teacher model
+    const teacher = await Teacher.findOne({ Email: email })
+      .populate({
+        path: "CoursesTaught.course",
+        select: "CourseName",
+      })
+      .populate({
+        path: "CoursesTaught.curriculum",
+        select: "program semesters",
+        populate: {
+          path: "semesters.courses",
+          select: "CourseName",
+        },
+      });
+
+    if (!teacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    const assignedCourseIds = teacher.CoursesTaught.map((c) => c.course._id);
+
+    if (!assignedCourseIds.length) {
+      return res
+        .status(404)
+        .json({ message: "No courses assigned to this teacher" });
+    }
+
+    // 2️⃣ Find the matching curriculum that contains the teacher's courses
+    const curriculum = await Curriculum.findOne({
+      _id: curriculumId,
+      "semesters.semester": semester,
+      "semesters.courses": { $in: assignedCourseIds },
+    });
+
+    if (!curriculum) {
+      return res.status(404).json({ message: "No matching curriculum found" });
+    }
+
+    // 3️⃣ Fetch students where:
+    // - Semester matches
+    // - Curriculum matches
+    const students = await Student.find({
+      Semester: semester,
+      CurriculumID: curriculumId,
+    });
+
+    if (!students.length) {
+      return res.status(404).json({ message: "No students found" });
+    }
+
+    res.status(200).json(students);
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+  // try {
+  //   const students = await Student.find({
+  //     CurriculumId: curriculumId,
+  //     Semester: semester,
+  //     courses: courseId, // Assuming students have a `courses` array field
+  //   }).select("FirstName LastName SmartID RollNumber");
+
+  //   res.status(200).json(students);
+  // } catch (error) {
+  //   res.status(500).json({ error: "Error fetching students" });
+  // }
+};
 
 module.exports = {
   uploadMidtermResult,
@@ -290,5 +480,8 @@ module.exports = {
   updateAttendance,
   uploadAssignment,
   getTeacherProfilebyEmail,
+  getTeacherCoursesByEmail,
+  getTeacherCourses,
   updateProfile,
+  getStudentsForAttendance,
 };

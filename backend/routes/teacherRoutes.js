@@ -14,6 +14,9 @@ const {
   uploadAssignment,
   updateProfile,
   getTeacherProfilebyEmail,
+  getTeacherCourses,
+  getStudentsForAttendance,
+  getTeacherCoursesByEmail,
 } = require("../controllers/teacherController.js");
 router.get(
   "/getTeacherProfilebyEmail/:Email",
@@ -52,5 +55,23 @@ router.patch(
   authorizeRoles("Student"),
   uploadProfilePictures.single("profilePicture"),
   updateProfile
+);
+// router.get(
+//   "/getTeacherCoursesByEmail/:Email",
+//   verifyToken,
+//   authorizeRoles("Teacher"),
+//   getTeacherCoursesByEmail
+// );
+router.get(
+  "/courses",
+  verifyToken,
+  authorizeRoles("Teacher"),
+  getTeacherCourses
+);
+router.get(
+  "/students-attendance",
+  verifyToken,
+  authorizeRoles("Teacher"),
+  getStudentsForAttendance
 );
 module.exports = router;
