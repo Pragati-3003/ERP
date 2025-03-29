@@ -1,7 +1,7 @@
 const express = require("express");
 const verifyToken = require("../middlewares/authMiddleware.js");
 const authorizeRoles = require("../middlewares/roleMiddleware.js");
-const { submitAttendance } = require("../controllers/attendanceController");
+const { submitAttendance,takeAttendance } = require("../controllers/attendanceController");
 
 const router = express.Router();
 
@@ -14,12 +14,12 @@ const router = express.Router();
 // );
 
 // // ✅ Submit attendance
-// router.post(
-//   "/submitAttendance",
-//   verifyToken,
-//   authorizeRoles("Teacher"),
-//   takeAttendance
-// );
+router.post(
+  "/submitAttendance",
+  verifyToken,
+  authorizeRoles("Teacher"),
+  takeAttendance
+);
 router.post(
   "/submit",
   verifyToken,

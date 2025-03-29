@@ -18,7 +18,7 @@ const submitAttendance = async (req, res) => {
   }
 };
 
-// module.exports = { submitAttendance };
+
 // // ✅ Get students for attendance (based on teacher's email, course, and curriculum)
 // exports.getStudentsByCourseAndCurriculum = async (req, res) => {
 //   try {
@@ -65,38 +65,40 @@ const submitAttendance = async (req, res) => {
 // };
 
 // ✅ Take attendance
-// exports.takeAttendance = async (req, res) => {
-// try {
-//   const { teacherEmail, courseId, curriculumId, attendance } = req.body;
+const takeAttendance = async (req, res) => {
+try {
+  const { teacherEmail, courseId, curriculumId, attendance } = req.body;
 
-//   if (!teacherEmail || !courseId || !curriculumId || !attendance) {
-//     return res.status(400).json({ message: "Missing required fields" });
-//   }
+  if (!teacherEmail || !courseId || !curriculumId || !attendance) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
 
-//   // 🔹 Save attendance for each student
-//   const attendanceRecords = attendance.map((entry) => ({
-//     teacherEmail,
-//     courseId,
-//     curriculumId,
-//     studentID: entry.studentID,
-//     status: entry.status, // "Present" or "Absent"
-//     date: new Date(),
-//   }));
+  // 🔹 Save attendance for each student
+  const attendanceRecords = attendance.map((entry) => ({
+    teacherEmail,
+    courseId,
+    curriculumId,
+    studentID: entry.studentID,
+    status: entry.status, // "Present" or "Absent"
+    date: new Date(),
+  }));
 
-//   await Attendance.insertMany(attendanceRecords);
+  await Attendance.insertMany(attendanceRecords);
 
-//   res.status(200).json({ message: "Attendance submitted successfully!" });
-// } catch (error) {
-//   res.status(500).json({ message: "Server error", error });
-// }
-//   if (!attendanceData || attendanceData.length === 0) {
-//     return res.status(400).json({ message: "No attendance data provided." });
-//   }
-//   try {
-//     const { attendance } = req.body;
-//     await Attendance.insertMany(attendance);
-//     res.json({ message: "Attendance submitted successfully" });
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
+  res.status(200).json({ message: "Attendance submitted successfully!" });
+} catch (error) {
+  res.status(500).json({ message: "Server error", error });
+}
+  if (!attendanceData || attendanceData.length === 0) {
+    return res.status(400).json({ message: "No attendance data provided." });
+  }
+  try {
+    const { attendance } = req.body;
+    await Attendance.insertMany(attendance);
+    res.json({ message: "Attendance submitted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = { takeAttendance,submitAttendance };

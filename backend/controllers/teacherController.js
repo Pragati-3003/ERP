@@ -345,68 +345,15 @@ const getTeacherCourses = async (req, res) => {
   }
 };
 const getStudentsForAttendance = async (req, res) => {
-  // const { curriculumId, semester, courseId } = req.params;
-  // try {
-  //   const { CurriculumId, Semester, CourseId } = req.params;
-
-  //   // Fetch the curriculum to get the correct courses for the semester
-  //   const curriculum = await Curriculum.findById(CurriculumID).populate(
-  //     "semesters.courses"
-  //   );
-
-  //   if (!curriculum) {
-  //     return res.status(404).json({ error: "Curriculum not found" });
-  //   }
-
-  //   // Find if the requested course exists in the given semester
-  //   const semesterData = curriculum.semesters.find(
-  //     (s) => s.semester === Semester
-  //   );
-  // try {
-  //   const { curriculumId, semester, courseId } = req.params;
-
-  //   // Fetch the curriculum to get the correct courses for the semester
-  //   const curriculum = await Curriculum.findById(curriculumId).populate(
-  //     "semesters.courses"
-  //   );
-
-  //   if (!curriculum) {
-  //     return res.status(404).json({ error: "Curriculum not found" });
-  //   }
-
-  //   // Find if the requested course exists in the given semester
-  //   const semesterData = curriculum.semesters.find(
-  //     (s) => s.semester == semester
-  //   );
-  //   if (
-  //     !semesterData ||
-  //     !semesterData.courses.some((c) => c._id.toString() === CourseId)
-  //   ) {
-  //     return res
-  //       .status(400)
-  //       .json({ error: "Course not found in selected semester" });
-  //   }
-
-  //   // Fetch students whose curriculum and semester match, and who should be taking this course
-  //   const students = await Student.find({
-  //     CurriculumId,
-  //     Semester,
-  //   }).select("FirstName LastName SmartID RollNumber");
-
-  //   res.json(students);
-  // } catch (error) {
-  //   console.error("Error fetching students", error);
-  //   res.status(500).json({ error: "Server error" });
-  // }
-
   try {
     const { email, semester, curriculumId } = req.query;
 
+    // Validate required parameters
     if (!semester || !curriculumId) {
       return res.status(400).json({ message: "Missing required filters" });
     }
 
-    // 1️⃣ Fetch the teacher's assigned courses from the Teacher model
+    // 1️⃣ Find the teacher & their assigned courses
     const teacher = await Teacher.findOne({ Email: email })
       .populate({
         path: "CoursesTaught.course",
@@ -426,53 +373,43 @@ const getStudentsForAttendance = async (req, res) => {
     }
 
     const assignedCourseIds = teacher.CoursesTaught.map((c) => c.course._id);
-
     if (!assignedCourseIds.length) {
-      return res
-        .status(404)
-        .json({ message: "No courses assigned to this teacher" });
+      return res.status(404).json({ message: "No courses assigned to this teacher" });
     }
 
-    // 2️⃣ Find the matching curriculum that contains the teacher's courses
-    const curriculum = await Curriculum.findOne({
-      _id: curriculumId,
-      "semesters.semester": semester,
-      "semesters.courses": { $in: assignedCourseIds },
-    });
-
+    // 2️⃣ Check if the curriculum exists and contains any of the teacher's courses
+    const curriculum = await Curriculum.findById(curriculumId);
     if (!curriculum) {
-      return res.status(404).json({ message: "No matching curriculum found" });
+      return res.status(404).json({ message: "Curriculum not found" });
     }
 
-    // 3️⃣ Fetch students where:
-    // - Semester matches
-    // - Curriculum matches
+    const semesterData = curriculum.semesters.find((s) => s.semester == semester);
+    if (!semesterData) {
+      return res.status(404).json({ message: "Semester not found in this curriculum" });
+    }
+   
+    // Check if at least one assigned course is in the semester
+    const hasMatchingCourses = semesterData.courses.some((course) =>
+      assignedCourseIds.includes(course._id.toString())
+    );
+    // console.log(teacher)
+    // if (!hasMatchingCourses) {
+    //   return res.status(400).json({ message: "No matching courses found for this semester" });
+    // }
+
+    // 3️⃣ Fetch students belonging to this curriculum and semester
     const students = await Student.find({
       Semester: semester,
       CurriculumID: curriculumId,
     });
-
-    if (!students.length) {
-      return res.status(404).json({ message: "No students found" });
-    }
-
-    res.status(200).json(students);
+// console.log(students)
+    return res.status(200).json(students);
   } catch (error) {
     console.error("Error fetching students:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error" });
   }
-  // try {
-  //   const students = await Student.find({
-  //     CurriculumId: curriculumId,
-  //     Semester: semester,
-  //     courses: courseId, // Assuming students have a `courses` array field
-  //   }).select("FirstName LastName SmartID RollNumber");
-
-  //   res.status(200).json(students);
-  // } catch (error) {
-  //   res.status(500).json({ error: "Error fetching students" });
-  // }
 };
+
 
 module.exports = {
   uploadMidtermResult,
