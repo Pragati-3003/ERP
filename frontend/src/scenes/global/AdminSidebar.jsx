@@ -41,10 +41,11 @@ const AdminSidebar = () => {
   const [userInfo, setUserInfo] = useState(null);
   const token = localStorage.getItem("token");
   const role = useSelector((state) => state.auth.user.role);
-  const email = useSelector((state) => state.auth.user?.userInfo?.Email);
+  const email = useSelector((state) => state.auth.user.email);
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log(email)
         const response = await axios.get(
           `http://localhost:5000/api/admin/getAdminProfilebyEmail/${email}`, // ✅ Correct API call
           {
