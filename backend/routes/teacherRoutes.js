@@ -69,7 +69,7 @@ router.get(
   getTeacherCourses
 );
 router.get(
-  "/students-attendance",
+  "/students",
   verifyToken,
   authorizeRoles("Teacher"),
   getStudentsForAttendance

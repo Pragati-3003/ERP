@@ -73,37 +73,37 @@ const TeacherSidebar = () => {
     },
 
     // { title: "Results", to: "/result", icon: <SaveAsOutlinedIcon /> },
-    { title: "Events", to: "/events", icon: <EventOutlinedIcon /> },
-    {
-      title: "Attendance",
-      to: "/attendance",
-      icon: <AssessmentOutlinedIcon />,
-    },
-    {
-      title: "Attendance",
-      to: "/attendance",
-      icon: <AssessmentOutlinedIcon />,
-    },
-    {
-      title: "Attendance",
-      to: "/attendance",
-      icon: <AssessmentOutlinedIcon />,
-    },
-    {
-      title: "Attendance",
-      to: "/attendance",
-      icon: <AssessmentOutlinedIcon />,
-    },
-    {
-      title: "Attendance",
-      to: "/attendance",
-      icon: <AssessmentOutlinedIcon />,
-    },
+    { title: "Events", to: "/teacher/event", icon: <EventOutlinedIcon /> },
     // {
-    //   title: "Upload Assignment",
-    //   to: "/upload-assignment",
-    //   icon: <AssignmentOutlinedIcon />,
+    //   title: "Attendance",
+    //   to: "/take-attendance",
+    //   icon: <AssessmentOutlinedIcon />,
     // },
+    // {
+    //   title: "Attendance",
+    //   to: "/teacher/event",
+    //   icon: <AssessmentOutlinedIcon />,
+    // },
+    // {
+    //   title: "Attendance",
+    //   to: "/attendance",
+    //   icon: <AssessmentOutlinedIcon />,
+    // },
+    // {
+    //   title: "Attendance",
+    //   to: "/attendance",
+    //   icon: <AssessmentOutlinedIcon />,
+    // },
+    // {
+    //   title: "Attendance",
+    //   to: "/attendance",
+    //   icon: <AssessmentOutlinedIcon />,
+    // },
+    {
+      title: "Upload Assignment",
+      to: "/teacher/upload-assignment",
+      icon: <AssignmentOutlinedIcon />,
+    },
     // {
     //   title: "Upload Marks",
     //   to: "/upload-assignment",

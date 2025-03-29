@@ -1,18 +1,23 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function AssignmentPanel() {
+export default function UploadAssignment() {
   const [assignments, setAssignments] = useState([
     {
-      title: 'Assignment 2',
-      course: 'CS104 Data Communication and Networks',
-      dueDate: '2025-03-15',
+      title: "Assignment 2",
+      course: "CS104 Data Communication and Networks",
+      dueDate: "2025-03-15",
       submissions: 12,
       maxMarks: 100,
     },
   ]);
 
-  const [newAssignment, setNewAssignment] = useState({ title: '', course: '', dueDate: '', maxMarks: '' });
+  const [newAssignment, setNewAssignment] = useState({
+    title: "",
+    course: "",
+    dueDate: "",
+    maxMarks: "",
+  });
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -22,22 +27,32 @@ export default function AssignmentPanel() {
 
   const addAssignment = () => {
     const { title, course, dueDate, maxMarks } = newAssignment;
-    if (!title || !course || !dueDate || !maxMarks || maxMarks <= 0) return alert('Please fill all fields with valid data');
+    if (!title || !course || !dueDate || !maxMarks || maxMarks <= 0)
+      return alert("Please fill all fields with valid data");
     setAssignments([...assignments, { ...newAssignment, submissions: 0 }]);
-    setNewAssignment({ title: '', course: '', dueDate: '', maxMarks: '' });
+    setNewAssignment({ title: "", course: "", dueDate: "", maxMarks: "" });
   };
 
   const deleteAssignment = (index) => {
-    if (window.confirm('Are you sure you want to delete this assignment?')) {
+    if (window.confirm("Are you sure you want to delete this assignment?")) {
       setAssignments(assignments.filter((_, i) => i !== index));
     }
   };
 
   const updateAssignment = (index) => {
-    const updatedTitle = prompt('Update Assignment Title:', assignments[index].title) || assignments[index].title;
-    const updatedCourse = prompt('Update Course:', assignments[index].course) || assignments[index].course;
-    const updatedDueDate = prompt('Update Due Date (YYYY-MM-DD):', assignments[index].dueDate) || assignments[index].dueDate;
-    const updatedMaxMarks = prompt('Update Max Marks:', assignments[index].maxMarks);
+    const updatedTitle =
+      prompt("Update Assignment Title:", assignments[index].title) ||
+      assignments[index].title;
+    const updatedCourse =
+      prompt("Update Course:", assignments[index].course) ||
+      assignments[index].course;
+    const updatedDueDate =
+      prompt("Update Due Date (YYYY-MM-DD):", assignments[index].dueDate) ||
+      assignments[index].dueDate;
+    const updatedMaxMarks = prompt(
+      "Update Max Marks:",
+      assignments[index].maxMarks
+    );
 
     if (updatedMaxMarks !== null && updatedMaxMarks > 0) {
       const updatedAssignments = [...assignments];
@@ -50,12 +65,14 @@ export default function AssignmentPanel() {
       };
       setAssignments(updatedAssignments);
     } else {
-      alert('Max Marks should be a positive number.');
+      alert("Max Marks should be a positive number.");
     }
   };
 
   const viewSubmissions = (index) => {
-    navigate(`/submissions/${index}`, { state: { assignment: assignments[index] } });
+    navigate(`/submissions/${index}`, {
+      state: { assignment: assignments[index] },
+    });
   };
 
   return (
@@ -97,7 +114,9 @@ export default function AssignmentPanel() {
             onChange={handleInputChange}
             className="p-2 rounded bg-gray-800"
           />
-          <button onClick={addAssignment} className="bg-blue-600 p-2 rounded">Add Assignment</button>
+          <button onClick={addAssignment} className="bg-blue-600 p-2 rounded">
+            Add Assignment
+          </button>
         </div>
       </div>
 
@@ -125,15 +144,32 @@ export default function AssignmentPanel() {
                   <td className="p-4">{assignment.submissions}</td>
                   <td className="p-4">{assignment.maxMarks}</td>
                   <td className="p-4 flex gap-2">
-                    <button onClick={() => viewSubmissions(index)} className="bg-green-600 p-2 rounded">View Submissions</button>
-                    <button onClick={() => updateAssignment(index)} className="bg-yellow-600 p-2 rounded">Update</button>
-                    <button onClick={() => deleteAssignment(index)} className="bg-red-600 p-2 rounded">Delete</button>
+                    <button
+                      onClick={() => viewSubmissions(index)}
+                      className="bg-green-600 p-2 rounded"
+                    >
+                      View Submissions
+                    </button>
+                    <button
+                      onClick={() => updateAssignment(index)}
+                      className="bg-yellow-600 p-2 rounded"
+                    >
+                      Update
+                    </button>
+                    <button
+                      onClick={() => deleteAssignment(index)}
+                      className="bg-red-600 p-2 rounded"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="p-4 text-center">No assignments available</td>
+                <td colSpan="6" className="p-4 text-center">
+                  No assignments available
+                </td>
               </tr>
             )}
           </tbody>
