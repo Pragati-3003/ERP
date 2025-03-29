@@ -276,7 +276,10 @@ const TakeAttendance = () => {
     <div className="attendance-container">
       <h2>Mark Attendance</h2>
 
-      <select onChange={(e) => setSelectedCurriculum(e.target.value)}>
+      <select
+        onChange={(e) => setSelectedCurriculum(e.target.value)}
+        className="bg-white  text-gray-800"
+      >
         <option value="">Select Curriculum</option>
         {coursesTaught.map((c) => (
           <option key={c.curriculum._id} value={c.curriculum._id}>
@@ -285,7 +288,10 @@ const TakeAttendance = () => {
         ))}
       </select>
 
-      <select onChange={(e) => setSelectedSemester(e.target.value)}>
+      <select
+        onChange={(e) => setSelectedSemester(e.target.value)}
+        className="bg-white  text-gray-800"
+      >
         <option value="">Select Semester</option>
         {[...new Set(coursesTaught.flatMap((c) => c.curriculum.semesters))].map(
           (s, index) => (
@@ -296,7 +302,10 @@ const TakeAttendance = () => {
         )}
       </select>
 
-      <select onChange={(e) => setSelectedCourse(e.target.value)}>
+      <select
+        onChange={(e) => setSelectedCourse(e.target.value)}
+        className="bg-white  text-gray-800"
+      >
         <option value="">Select Course</option>
         {coursesTaught
           .filter(

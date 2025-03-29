@@ -43,9 +43,11 @@ import AttendanceReport from "./Components/Attendance_student/Attendance";
 
 import TeacherProfile from "./Components/Teacher/TeacherProfile/TeacherProfile";
 import TakeAttendance from "./Components/Teacher/TakeAttendance";
-
+import TeacherEvent from "./Components/Teacher/TeacherEventPage";
+import UploadAssignment from "./Components/UploadAssignment/UploadAssignment";
 import UploadStudentTimetable from "./Admin/UploadStudentTimetable/UploadStudentTimetable";
 import UploadTeacherTimetable from "./Admin/UploadTeacherTimetable/UploadTeacherTimetable";
+import TeacherEventPage from "./Components/Teacher/TeacherEventPage";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -161,6 +163,12 @@ function App() {
 
               <Route path="/take-attendance" element={<TakeAttendance />} />
               <Route path="/teacher/profile" element={<TeacherProfile />} />
+              <Route path="/teacher/event" element={<TeacherEventPage />} />
+              <Route
+                path="/teacher/upload-assignment"
+                element={<UploadAssignment />}
+              />
+
               {/* <Route path="/take-attendance" element={<TakeAttendance />} /> */}
 
               {/* Fallback route for invalid paths */}
