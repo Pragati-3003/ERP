@@ -52,6 +52,7 @@ const ResultChart = ({ isDashboard = false }) => {
             padding: "5px",
             fontSize: "12px",
             color: "black",
+            backgroundColor: "white",
           }}
         >
           <option value="semester1">Semester 1</option>
