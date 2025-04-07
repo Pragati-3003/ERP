@@ -1,193 +1,114 @@
+import React, { useState } from "react";
 
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useSelector } from "react-redux";
-const TakeAttendance = () => {
-  const [coursesTaught, setCoursesTaught] = useState([]);
-  const [students, setStudents] = useState([]);
-  const [selectedSemester, setSelectedSemester] = useState("");
-  const [selectedCourse, setSelectedCourse] = useState("");
-  const [selectedCurriculum, setSelectedCurriculum] = useState("");
-  const [attendance, setAttendance] = useState({});
+const studentsData = [
+  { fullName: "student4 student4", smartId: "", rollNo: "", present: false },
+  { fullName: "student5 abc", smartId: "", rollNo: "", present: false },
+  { fullName: "Pragati Jain", smartId: "", rollNo: "", present: true },
+  { fullName: "Pragati Jain", smartId: "", rollNo: "", present: true },
+];
 
-  useEffect(() => {
-    const fetchTeacherCourses = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const { data } = await axios.get(
-          "http://localhost:5000/api/teacher/courses",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setCoursesTaught(data.coursesTaught);
-      } catch (error) {
-        console.error("Error fetching teacher's courses", error);
-      }
-    };
-    fetchTeacherCourses();
-  }, []);
- const email = useSelector((state) => state.auth.user.userInfo.Email);
-  const fetchStudents = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      // const teacherId = localStorage.getItem("email"); // Ensure it's correctly stored
+export default function AttendancePage() {
+  const [students, setStudents] = useState(studentsData);
 
-      if (!email || !selectedSemester || !selectedCurriculum) {
-        console.error("Missing required filters");
-        return;
-      }
-
-      const { data } = await axios.get(
-        `http://localhost:5000/api/teacher/students?email=${email}&semester=${selectedSemester}&curriculumId=${selectedCurriculum}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      setStudents(data);
-
-      // Initialize attendance state efficiently
-      const initialAttendance = Object.fromEntries(
-        data.map((student) => [student._id, true])
-      );
-      setAttendance(initialAttendance);
-    } catch (error) {
-      console.error("Error fetching students", error);
-    }
+  const toggleAttendance = (index) => {
+    const updatedStudents = [...students];
+    updatedStudents[index].present = !updatedStudents[index].present;
+    setStudents(updatedStudents);
   };
 
-  const toggleAllAttendance = (isPresent) => {
-    setAttendance((prev) =>
-      Object.keys(prev).reduce((acc, id) => {
-        acc[id] = isPresent;
-        return acc;
-      }, {})
-    );
+  const markAll = (present) => {
+    setStudents(students.map((student) => ({ ...student, present })));
   };
 
-  const handleAttendanceChange = (studentId) => {
-    setAttendance((prev) => ({
-      ...prev,
-      [studentId]: !prev[studentId],
+  const handleSubmit = () => {
+    const attendance = students.map((student) => ({
+      name: student.fullName,
+      present: student.present,
     }));
-  };
-
-  const submitAttendance = async () => {
-    const attendanceData = students.map((student) => ({
-      student: student._id,
-      course: selectedCourse,
-      curriculum: selectedCurriculum,
-      semester: selectedSemester,
-      teacher: localStorage.getItem("teacherId"),
-      status: attendance[student._id] ? "Present" : "Absent",
-    }));
-
-    try {
-      const token = localStorage.getItem("token");
-      await axios.post(
-        "http://localhost:5000/api/attendance/submit",
-        { attendanceData },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      alert("Attendance submitted successfully!");
-    } catch (error) {
-      console.error("Error submitting attendance", error);
-    }
+    console.log("Attendance Submitted:", attendance);
+    alert("Attendance Submitted!");
   };
 
   return (
-    <div className="attendance-container">
-      <h2>Mark Attendance</h2>
+    <div className="min-h-screen bg-gray-950 text-white px-6 py-10 font-sans">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-4xl font-bold mb-8 text-center">Mark Attendance</h1>
 
-      <select
-        onChange={(e) => setSelectedCurriculum(e.target.value)}
-        className="bg-white  text-gray-800"
-      >
-        <option value="">Select Curriculum</option>
-        {coursesTaught.map((c) => (
-          <option key={c.curriculum._id} value={c.curriculum._id}>
-            {c.curriculum.program}
-          </option>
-        ))}
-      </select>
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          <select className="bg-gray-800 text-white p-2 rounded w-40">
+            <option>MCA</option>
+          </select>
+          <select className="bg-gray-800 text-white p-2 rounded w-40">
+            <option>Semester 1</option>
+          </select>
+          <select className="bg-gray-800 text-white p-2 rounded w-52">
+            <option>Data Structures</option>
+          </select>
+          <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded shadow">
+            Fetch Students
+          </button>
+        </div>
 
-      <select
-        onChange={(e) => setSelectedSemester(e.target.value)}
-        className="bg-white  text-gray-800"
-      >
-        <option value="">Select Semester</option>
-        {[...new Set(coursesTaught.flatMap((c) => c.curriculum.semesters))].map(
-          (s, index) => (
-            <option key={index} value={s.semester}>
-              Semester {s.semester}
-            </option>
-          )
-        )}
-      </select>
-
-      <select
-        onChange={(e) => setSelectedCourse(e.target.value)}
-        className="bg-white  text-gray-800"
-      >
-        <option value="">Select Course</option>
-        {coursesTaught
-          .filter(
-            (c) =>
-              c.curriculum._id === selectedCurriculum &&
-              c.curriculum.semesters.some((s) => s.semester == selectedSemester)
-          )
-          .map((c) => (
-            <option key={c.course._id} value={c.course._id}>
-              {c.course.CourseName}
-            </option>
-          ))}
-      </select>
-
-      <button onClick={fetchStudents}>Fetch Students</button>
-
-      {students.length > 0 && (
-        <>
-          <h3>Student List</h3>
-          <button onClick={() => toggleAllAttendance(true)}>
+        <div className="flex justify-center gap-6 mb-6">
+          <button
+            onClick={() => markAll(true)}
+            className="bg-green-600 hover:bg-green-700 px-5 py-2 rounded shadow"
+          >
             Mark All Present
           </button>
-          <button onClick={() => toggleAllAttendance(false)}>
+          <button
+            onClick={() => markAll(false)}
+            className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded shadow"
+          >
             Mark All Absent
           </button>
+        </div>
 
-          <table>
+        <div className="overflow-x-auto rounded-lg shadow border border-gray-700">
+          <table className="w-full text-left border-collapse">
             <thead>
-              <tr>
-                <th>Full Name</th>
-                <th>Smart ID</th>
-                <th>Roll Number</th>
-                <th>Present</th>
+              <tr className="bg-gray-800 text-gray-300">
+                <th className="border border-gray-700 px-4 py-3">Full Name</th>
+                <th className="border border-gray-700 px-4 py-3">Smart ID</th>
+                <th className="border border-gray-700 px-4 py-3">Roll Number</th>
+                <th className="border border-gray-700 px-4 py-3 text-center">Present</th>
               </tr>
             </thead>
             <tbody>
-              {students.map((student) => (
-                <tr key={student._id}>
-                  <td>{`${student.FirstName} ${student.LastName}`}</td>
-                  <td>{student.SmartID}</td>
-                  <td>{student.RollNumber}</td>
-                  <td>
+              {students.map((student, idx) => (
+                <tr key={idx} className="hover:bg-gray-800">
+                  <td className="border border-gray-700 px-4 py-2">
+                    {student.fullName}
+                  </td>
+                  <td className="border border-gray-700 px-4 py-2">
+                    {student.smartId}
+                  </td>
+                  <td className="border border-gray-700 px-4 py-2">
+                    {student.rollNo}
+                  </td>
+                  <td className="border border-gray-700 px-4 py-2 text-center">
                     <input
                       type="checkbox"
-                      checked={attendance[student._id]}
-                      onChange={() => handleAttendanceChange(student._id)}
+                      className="form-checkbox h-5 w-5 text-blue-600"
+                      checked={student.present}
+                      onChange={() => toggleAttendance(idx)}
                     />
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
 
-          <button onClick={submitAttendance}>Submit Attendance</button>
-        </>
-      )}
+        <div className="mt-8 flex justify-center">
+          <button
+            onClick={handleSubmit}
+            className="bg-purple-600 hover:bg-purple-700 px-8 py-3 rounded text-lg shadow-lg"
+          >
+            Submit Attendance
+          </button>
+        </div>
+      </div>
     </div>
   );
-};
-
-export default TakeAttendance;
+}
