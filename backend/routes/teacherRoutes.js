@@ -17,6 +17,7 @@ const {
   getTeacherCourses,
   getStudentsForAttendance,
   getTeacherCoursesByEmail,
+  getEvents,
 } = require("../controllers/teacherController.js");
 router.get(
   "/getTeacherProfilebyEmail/:Email",
@@ -68,6 +69,7 @@ router.get(
   authorizeRoles("Teacher"),
   getTeacherCourses
 );
+router.get("/getEvents", verifyToken, authorizeRoles("Teacher"), getEvents);
 router.get(
   "/students",
   verifyToken,

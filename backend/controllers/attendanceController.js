@@ -3,18 +3,27 @@ const Teacher = require("../models/teacher.model.js");
 const Student = require("../models/student.model.js");
 const submitAttendance = async (req, res) => {
   try {
-    const { attendanceData } = req.body; // Expecting an array of attendance records
+    const attendanceArray = req.body.attendanceData;
 
-    if (!attendanceData || attendanceData.length === 0) {
-      return res.status(400).json({ message: "No attendance data provided." });
+    if (!Array.isArray(attendanceArray) || attendanceArray.length === 0) {
+      return res.status(400).json({ error: "No attendance data provided" });
     }
 
-    // Insert attendance records into the database
-    await Attendance.insertMany(attendanceData);
+    const savedRecords = [];
 
-    res.status(201).json({ message: "Attendance recorded successfully!" });
+    for (const data of attendanceArray) {
+      const attendance = new Attendance(data);
+      const saved = await attendance.save();
+      savedRecords.push(saved);
+    }
+
+    res.status(201).json({
+      message: "Attendance submitted successfully",
+      savedAttendance: savedRecords,
+    });
   } catch (error) {
-    res.status(500).json({ error: "Error submitting attendance" });
+    console.error("Error submitting attendance:", error.message);
+    res.status(500).json({ error: "Failed to submit attendance" });
   }
 };
 
