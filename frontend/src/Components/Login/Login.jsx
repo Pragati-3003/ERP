@@ -148,7 +148,7 @@ const Login = () => {
     <div id="login-page" className="container">
       <div className="map">
         <img
-          src="https://in.pinterest.com/pin/588775351313572933/"
+          src="frontend\src\assets\login-image.jpg"
           alt="3D Map Placeholder"
         />
       </div>
