@@ -96,10 +96,10 @@ const Login = () => {
 
       switch (response.data.user.role) {
         case "Admin":
-          navigate("/admin-dashboard");
+          navigate("/admin/studentmanagment");
           break;
         case "Teacher":
-          navigate("/teacher-dashboard");
+          navigate("/teacher/take-attendance");
           break;
         case "Student":
           navigate("/student-dashboard");

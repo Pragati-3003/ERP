@@ -8,6 +8,7 @@ const Student = require("../models/student.model.js");
 const MidTermResult = require("../models/midTermExamsResult.model.js");
 const Teacher = require("../models/teacher.model.js");
 const Event = require("../models/events.model.js");
+const TeacherTimetable = require("../models/teacher_timetables.model.js");
 //@desc Mark Attendace
 //@route POST /api/teacher/markAttendance
 const markAttendance = async (req, res) => {
@@ -99,6 +100,19 @@ const updateAttendance = async (req, res) => {
 
 //@desc Upload Assignment
 //@route POST /api/teacher/uploadAssignment
+const getTimeTable = async (req, res) => {
+  try {
+    const teacherID = req.user.id; // or req.user._id based on your token structure
+    const timeTable = await TeacherTimetable.findOne({ teacherID });
+    if (!timeTable)
+      return res.status(400).json({ message: "timeTable not found" });
+    console.log("TimeTable found:", timeTable);
+    res.status(200).json(timeTable);
+  } catch (err) {
+    console.error("Error fetching events:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 const uploadAssignment = async (req, res) => {
   try {
@@ -448,4 +462,5 @@ module.exports = {
   updateProfile,
   getEvents,
   getStudentsForAttendance,
+  getTimeTable,
 };
