@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 
-export default function AttendancePage() {
+
+const TakeAttendance = () => {
+
   const [coursesTaught, setCoursesTaught] = useState([]);
   const [students, setStudents] = useState([]);
   const [selectedSemester, setSelectedSemester] = useState("");
@@ -18,20 +20,31 @@ export default function AttendancePage() {
         const token = localStorage.getItem("token");
         const { data } = await axios.get(
           "http://localhost:5000/api/teacher/courses",
-          { headers: { Authorization: `Bearer ${token}` } }
+
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+
         );
         setCoursesTaught(data.coursesTaught);
       } catch (error) {
         console.error("Error fetching teacher's courses", error);
       }
     };
+
     fetchTeacherCourses();
   }, []);
 
   const fetchStudents = async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!email || !selectedSemester || !selectedCurriculum) return;
+
+
+      if (!email || !selectedSemester || !selectedCurriculum) {
+        console.error("Missing required filters");
+        return;
+      }
+
 
       const { data } = await axios.get(
         `http://localhost:5000/api/teacher/students?email=${email}&semester=${selectedSemester}&curriculumId=${selectedCurriculum}`,
@@ -39,6 +52,7 @@ export default function AttendancePage() {
       );
 
       setStudents(data);
+
       const initialAttendance = Object.fromEntries(
         data.map((student) => [student._id, true])
       );
@@ -65,79 +79,88 @@ export default function AttendancePage() {
   };
 
   const submitAttendance = async () => {
+
+    const TeacherID = localStorage.getItem("UserId");
+    const currentDate = new Date().toISOString();
+
     const attendanceData = students.map((student) => ({
-      student: student._id,
-      course: selectedCourse,
-      curriculum: selectedCurriculum,
-      semester: selectedSemester,
-      teacher: localStorage.getItem("teacherId"),
-      status: attendance[student._id] ? "Present" : "Absent",
+      StudentID: student._id,
+      CourseID: selectedCourse,
+      CurriculumID: selectedCurriculum,
+      TeacherID,
+      Status: attendance[student._id] ? "Present" : "Absent",
+      Date: currentDate,
+
     }));
 
     try {
       const token = localStorage.getItem("token");
-      await axios.post(
+
+      const response = await axios.post(
         "http://localhost:5000/api/attendance/submit",
         { attendanceData },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
-      alert("Attendance submitted successfully!");
+      alert(response.data.message);
     } catch (error) {
       console.error("Error submitting attendance", error);
+      alert("Failed to submit attendance");
+
     }
   };
 
   return (
+
     <div className="min-h-screen  text-white px-6 py-10 font-sans">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-bold mb-8 text-center">Mark Attendance</h1>
 
         <div className="flex flex-wrap justify-center gap-4 mb-8">
-          <select
-            onChange={(e) => setSelectedCurriculum(e.target.value)}
-            className="bg-gray-800 text-white p-2 rounded w-40"
-          >
-            <option value="">Curriculum</option>
-            {coursesTaught.map((c) => (
-              <option key={c.curriculum._id} value={c.curriculum._id}>
-                {c.curriculum.program}
-              </option>
-            ))}
-          </select>
+           <select
+        onChange={(e) => setSelectedCurriculum(e.target.value)}
+        className="bg-white text-gray-800"
+      >
+        <option value="">Select Curriculum</option>
+        {coursesTaught.map((c) => (
+          <option key={c.curriculum._id} value={c.curriculum._id}>
+            {c.curriculum.program}
+          </option>
+        ))}
+      </select>
 
-          <select
-            onChange={(e) => setSelectedSemester(e.target.value)}
-            className="bg-gray-800 text-white p-2 rounded w-40"
-          >
-            <option value="">Semester</option>
-            {[...new Set(coursesTaught.flatMap((c) => c.curriculum.semesters))].map(
-              (s, index) => (
-                <option key={index} value={s.semester}>
-                  Semester {s.semester}
-                </option>
-              )
-            )}
-          </select>
+      <select
+        onChange={(e) => setSelectedSemester(e.target.value)}
+        className="bg-white text-gray-800"
+      >
+        <option value="">Select Semester</option>
+        {[...new Set(coursesTaught.flatMap((c) => c.curriculum.semesters))].map(
+          (s, index) => (
+            <option key={index} value={s.semester}>
+              Semester {s.semester}
+            </option>
+          )
+        )}
+      </select>
 
-          <select
-            onChange={(e) => setSelectedCourse(e.target.value)}
-            className="bg-gray-800 text-white p-2 rounded w-52"
-          >
-            <option value="">Course</option>
-            {coursesTaught
-              .filter(
-                (c) =>
-                  c.curriculum._id === selectedCurriculum &&
-                  c.curriculum.semesters.some(
-                    (s) => s.semester == selectedSemester
-                  )
-              )
-              .map((c) => (
-                <option key={c.course._id} value={c.course._id}>
-                  {c.course.CourseName}
-                </option>
-              ))}
-          </select>
+      <select
+        onChange={(e) => setSelectedCourse(e.target.value)}
+        className="bg-white text-gray-800"
+      >
+        <option value="">Select Course</option>
+        {coursesTaught
+          .filter(
+            (c) =>
+              c.curriculum._id === selectedCurriculum &&
+              c.curriculum.semesters.some((s) => s.semester == selectedSemester)
+          )
+          .map((c) => (
+            <option key={c.course._id} value={c.course._id}>
+              {c.course.CourseName}
+            </option>
+          ))}
+      </select>
 
           <button
             onClick={fetchStudents}
@@ -211,6 +234,9 @@ export default function AttendancePage() {
           </>
         )}
       </div>
+
     </div>
   );
-}
+};
+
+export default TakeAttendance;
