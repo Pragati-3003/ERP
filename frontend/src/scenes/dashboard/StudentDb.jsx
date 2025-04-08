@@ -3,7 +3,8 @@ import { ColorModeContext, useMode } from "../theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Topbar from "../../scenes/global/Topbar";
 // import { dummyAttendanceData } from "../../data/mockData";
-
+import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
+import AssignmentLateOutlinedIcon from "@mui/icons-material/AssignmentLateOutlined";
 import { Routes, Route, Navigate, Link } from "react-router-dom";
 import "./dashboard.css"; // Import the Student Dashboard CSS file
 import ResultChart from "../../Components/Charts/ResultChart";
@@ -91,24 +92,7 @@ const StudentDb = () => {
                 />
               </Link>
             </Box>
-            <Box
-              gridColumn="span 3"
-              backgroundColor={colors.primary[400]}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <StatBox
-                title="9.2 CGPA"
-                subtitle="Overall Marks"
-                progress="0.80"
-                icon={
-                  <AssignmentOutlinedIcon
-                    sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-                  />
-                }
-              />
-            </Box>
+
             <Box
               gridColumn="span 3"
               backgroundColor={colors.primary[400]}
@@ -139,12 +123,35 @@ const StudentDb = () => {
               alignItems="center"
               justifyContent="center"
             >
+              <Link
+                to="/assignments"
+                className="block transform transition-all duration-300 hover:scale-105"
+              >
+                <StatBox
+                  title="2 Assignments Due"
+                  subtitle="Due in next 3 days"
+                  progress="0.40"
+                  icon={
+                    <AssignmentLateOutlinedIcon
+                      sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
+                    />
+                  }
+                />
+              </Link>
+            </Box>
+            <Box
+              gridColumn="span 3"
+              backgroundColor={colors.primary[400]}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
               <StatBox
-                title="60%"
-                subtitle="Overall Attendance"
-                progress="0.60"
+                title="₹15,000 Pending"
+                subtitle="Fee Due by April 15"
+                progress="0.75"
                 icon={
-                  <AssessmentOutlinedIcon
+                  <AccountBalanceWalletOutlinedIcon
                     sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
                   />
                 }

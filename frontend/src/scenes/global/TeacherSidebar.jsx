@@ -67,11 +67,10 @@ const TeacherSidebar = () => {
 
   const menuItems = [
     {
-      title: "Dashboard",
-      to: "/teacher-dashboard",
-      icon: <HomeOutlinedIcon />,
+      title: "Take Attendance",
+      to: "/teacher/take-attendance",
+      icon: <AssignmentOutlinedIcon />,
     },
-
     // { title: "Results", to: "/result", icon: <SaveAsOutlinedIcon /> },
     { title: "Events", to: "/teacher/event", icon: <EventOutlinedIcon /> },
     // {
@@ -115,14 +114,10 @@ const TeacherSidebar = () => {
     //   to: "/course-alloted",
     //   icon: <AssignmentOutlinedIcon />,
     // },
-    {
-      title: "Take Attendance",
-      to: "/take-attendance",
-      icon: <AssignmentOutlinedIcon />,
-    },
+
     {
       title: "TimeTable",
-      to: "/timetable",
+      to: "/teacher/timetable",
       icon: <AssignmentOutlinedIcon />,
     },
 

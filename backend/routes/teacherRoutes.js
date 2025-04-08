@@ -11,6 +11,7 @@ const {
   uploadMidtermResult,
   markAttendance,
   updateAttendance,
+  getTimeTable,
   uploadAssignment,
   updateProfile,
   getTeacherProfilebyEmail,
@@ -53,7 +54,7 @@ router.patch(
 router.patch(
   "/updateProfile",
   verifyToken,
-  authorizeRoles("Student"),
+  authorizeRoles("Teacher"),
   uploadProfilePictures.single("profilePicture"),
   updateProfile
 );
@@ -75,5 +76,11 @@ router.get(
   verifyToken,
   authorizeRoles("Teacher"),
   getStudentsForAttendance
+);
+router.get(
+  "/getTimeTable",
+  verifyToken,
+  authorizeRoles("Teacher"),
+  getTimeTable
 );
 module.exports = router;

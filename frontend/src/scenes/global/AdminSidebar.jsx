@@ -68,11 +68,6 @@ const AdminSidebar = () => {
 
   const menuItems = [
     {
-      title: "Dashboard",
-      to: "/admin-dashboard",
-      icon: <HomeOutlinedIcon />,
-    },
-    {
       title: "Student Management",
       to: "/admin/studentmanagment",
       icon: <AssessmentOutlinedIcon />,
@@ -107,7 +102,16 @@ const AdminSidebar = () => {
       to: "/admin/addTeacherTimetable",
       icon: <AssignmentOutlinedIcon />,
     },
-    { title: "Result Management", to: "/admin/resultmgmt", icon: <PersonOutlinedIcon /> },
+    {
+      title: "Result Management",
+      to: "/admin/resultmgmt",
+      icon: <PersonOutlinedIcon />,
+    },
+    {
+      title: "Event Management",
+      to: "/admin/addEvents",
+      icon: <CalendarTodayOutlinedIcon />,
+    },
     { title: "Profile", to: "/admin/profile", icon: <PersonOutlinedIcon /> },
     { title: "Calendar", to: "/calendar", icon: <CalendarTodayOutlinedIcon /> },
     // { title: "FAQ", to: "/faq", icon: <HelpOutlineOutlinedIcon /> },
