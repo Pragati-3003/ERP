@@ -3,6 +3,7 @@ import "./Login.css";
 import { useDispatch } from "react-redux";
 import { login } from "../../../store/authSlice.js";
 import { useNavigate } from "react-router-dom";
+import image from "../../assets/login-image.jpg";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 const Login = () => {
@@ -148,7 +149,7 @@ const Login = () => {
     <div id="login-page" className="container">
       <div className="map">
         <img
-          src="https://in.pinterest.com/pin/588775351313572933/"
+          src={image}
           alt="3D Map Placeholder"
         />
       </div>
