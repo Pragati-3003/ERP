@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 
+
 const TakeAttendance = () => {
+
   const [coursesTaught, setCoursesTaught] = useState([]);
   const [students, setStudents] = useState([]);
   const [selectedSemester, setSelectedSemester] = useState("");
@@ -18,9 +20,11 @@ const TakeAttendance = () => {
         const token = localStorage.getItem("token");
         const { data } = await axios.get(
           "http://localhost:5000/api/teacher/courses",
+
           {
             headers: { Authorization: `Bearer ${token}` },
           }
+
         );
         setCoursesTaught(data.coursesTaught);
       } catch (error) {
@@ -35,10 +39,12 @@ const TakeAttendance = () => {
     try {
       const token = localStorage.getItem("token");
 
+
       if (!email || !selectedSemester || !selectedCurriculum) {
         console.error("Missing required filters");
         return;
       }
+
 
       const { data } = await axios.get(
         `http://localhost:5000/api/teacher/students?email=${email}&semester=${selectedSemester}&curriculumId=${selectedCurriculum}`,
@@ -73,6 +79,7 @@ const TakeAttendance = () => {
   };
 
   const submitAttendance = async () => {
+
     const TeacherID = localStorage.getItem("UserId");
     const currentDate = new Date().toISOString();
 
@@ -83,10 +90,12 @@ const TakeAttendance = () => {
       TeacherID,
       Status: attendance[student._id] ? "Present" : "Absent",
       Date: currentDate,
+
     }));
 
     try {
       const token = localStorage.getItem("token");
+
       const response = await axios.post(
         "http://localhost:5000/api/attendance/submit",
         { attendanceData },
@@ -98,14 +107,18 @@ const TakeAttendance = () => {
     } catch (error) {
       console.error("Error submitting attendance", error);
       alert("Failed to submit attendance");
+
     }
   };
 
   return (
-    <div className="attendance-container">
-      <h2>Mark Attendance</h2>
 
-      <select
+    <div className="min-h-screen  text-white px-6 py-10 font-sans">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-4xl font-bold mb-8 text-center">Mark Attendance</h1>
+
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+           <select
         onChange={(e) => setSelectedCurriculum(e.target.value)}
         className="bg-white text-gray-800"
       >
@@ -149,48 +162,79 @@ const TakeAttendance = () => {
           ))}
       </select>
 
-      <button onClick={fetchStudents}>Fetch Students</button>
-
-      {students.length > 0 && (
-        <>
-          <h3>Student List</h3>
-          <button onClick={() => toggleAllAttendance(true)}>
-            Mark All Present
+          <button
+            onClick={fetchStudents}
+            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded shadow"
+          >
+            Fetch Students
           </button>
-          <button onClick={() => toggleAllAttendance(false)}>
-            Mark All Absent
-          </button>
+        </div>
 
-          <table>
-            <thead>
-              <tr>
-                <th>Full Name</th>
-                <th>Smart ID</th>
-                <th>Roll Number</th>
-                <th>Present</th>
-              </tr>
-            </thead>
-            <tbody>
-              {students.map((student) => (
-                <tr key={student._id}>
-                  <td>{`${student.FirstName} ${student.LastName}`}</td>
-                  <td>{student.SmartID}</td>
-                  <td>{student.RollNumber}</td>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={attendance[student._id]}
-                      onChange={() => handleAttendanceChange(student._id)}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {students.length > 0 && (
+          <>
+            <div className="flex justify-center gap-6 mb-6">
+              <button
+                onClick={() => toggleAllAttendance(true)}
+                className="bg-green-600 hover:bg-green-700 px-5 py-2 rounded shadow"
+              >
+                Mark All Present
+              </button>
+              <button
+                onClick={() => toggleAllAttendance(false)}
+                className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded shadow"
+              >
+                Mark All Absent
+              </button>
+            </div>
 
-          <button onClick={submitAttendance}>Submit Attendance</button>
-        </>
-      )}
+            <div className="overflow-x-auto rounded-lg shadow border border-gray-700">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-800 text-gray-300">
+                    <th className="border border-gray-700 px-4 py-3">Full Name</th>
+                    <th className="border border-gray-700 px-4 py-3">Smart ID</th>
+                    <th className="border border-gray-700 px-4 py-3">Roll Number</th>
+                    <th className="border border-gray-700 px-4 py-3 text-center">Present</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {students.map((student) => (
+                    <tr key={student._id} className="hover:bg-gray-800">
+                      <td className="border border-gray-700 px-4 py-2">
+                        {student.FirstName} {student.LastName}
+                      </td>
+                      <td className="border border-gray-700 px-4 py-2">
+                        {student.SmartID}
+                      </td>
+                      <td className="border border-gray-700 px-4 py-2">
+                        {student.RollNumber}
+                      </td>
+                      <td className="border border-gray-700 px-4 py-2 text-center">
+                        <input
+                          type="checkbox"
+                          className="form-checkbox h-5 w-5 text-blue-600"
+                          checked={attendance[student._id]}
+                          onChange={() => handleAttendanceChange(student._id)}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={submitAttendance}
+                className="bg-purple-600 hover:bg-purple-700 px-8 py-3 rounded text-lg shadow-lg"
+              >
+                Submit Attendance
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
     </div>
   );
 };
