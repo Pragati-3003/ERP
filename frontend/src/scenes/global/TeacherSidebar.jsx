@@ -207,7 +207,7 @@ const TeacherSidebar = () => {
               />
             </Box>
             <Typography variant="h6" sx={{ fontWeight: "bold", mt: 1 }}>
-              {userInfo.FirstName + " " + userInfo.LastName}
+              {userInfo.teacherName}
             </Typography>
             <Typography variant="body2" sx={{ color: colors.greenAccent[500] }}>
               {role}

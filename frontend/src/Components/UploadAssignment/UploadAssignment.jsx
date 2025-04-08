@@ -6,6 +6,7 @@ export default function UploadAssignment() {
     {
       title: "Assignment 2",
       course: "CS104 Data Communication and Networks",
+      curriculum: "MCA",
       dueDate: "2025-03-15",
       submissions: 12,
       maxMarks: 100,
@@ -15,6 +16,7 @@ export default function UploadAssignment() {
   const [newAssignment, setNewAssignment] = useState({
     title: "",
     course: "",
+    curriculum: "",
     dueDate: "",
     maxMarks: "",
   });
@@ -26,11 +28,24 @@ export default function UploadAssignment() {
   };
 
   const addAssignment = () => {
-    const { title, course, dueDate, maxMarks } = newAssignment;
-    if (!title || !course || !dueDate || !maxMarks || maxMarks <= 0)
+    const { title, course, curriculum, dueDate, maxMarks } = newAssignment;
+    if (
+      !title ||
+      !course ||
+      !curriculum ||
+      !dueDate ||
+      !maxMarks ||
+      maxMarks <= 0
+    )
       return alert("Please fill all fields with valid data");
     setAssignments([...assignments, { ...newAssignment, submissions: 0 }]);
-    setNewAssignment({ title: "", course: "", dueDate: "", maxMarks: "" });
+    setNewAssignment({
+      title: "",
+      course: "",
+      curriculum: "",
+      dueDate: "",
+      maxMarks: "",
+    });
   };
 
   const deleteAssignment = (index) => {
@@ -46,6 +61,9 @@ export default function UploadAssignment() {
     const updatedCourse =
       prompt("Update Course:", assignments[index].course) ||
       assignments[index].course;
+    const updatedCurriculum =
+      prompt("Update Curriculum:", assignments[index].curriculum) ||
+      assignments[index].curriculum;
     const updatedDueDate =
       prompt("Update Due Date (YYYY-MM-DD):", assignments[index].dueDate) ||
       assignments[index].dueDate;
@@ -59,6 +77,7 @@ export default function UploadAssignment() {
       updatedAssignments[index] = {
         ...updatedAssignments[index],
         title: updatedTitle,
+        curriculum: updatedCurriculum,
         course: updatedCourse,
         dueDate: updatedDueDate,
         maxMarks: updatedMaxMarks,
@@ -76,7 +95,7 @@ export default function UploadAssignment() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
+    <div className="min-h-screen text-white p-8">
       <h1 className="text-3xl font-bold mb-8">Upload Assignment</h1>
 
       {/* Create New Assignment Form */}
@@ -96,6 +115,14 @@ export default function UploadAssignment() {
             name="course"
             placeholder="Course"
             value={newAssignment.course}
+            onChange={handleInputChange}
+            className="p-2 rounded bg-gray-800"
+          />
+          <input
+            type="text"
+            name="curriculum"
+            placeholder="Curriculum"
+            value={newAssignment.curriculum}
             onChange={handleInputChange}
             className="p-2 rounded bg-gray-800"
           />
@@ -128,6 +155,7 @@ export default function UploadAssignment() {
             <tr className="bg-gray-800">
               <th className="p-4">Title</th>
               <th className="p-4">Course</th>
+              <th className="p-4">Curriculum</th>
               <th className="p-4">Due Date</th>
               <th className="p-4">Submissions</th>
               <th className="p-4">Max Marks</th>
@@ -140,6 +168,7 @@ export default function UploadAssignment() {
                 <tr key={index} className="border-t border-gray-700">
                   <td className="p-4">{assignment.title}</td>
                   <td className="p-4">{assignment.course}</td>
+                  <td className="p-4">{assignment.curriculum}</td>
                   <td className="p-4">{assignment.dueDate}</td>
                   <td className="p-4">{assignment.submissions}</td>
                   <td className="p-4">{assignment.maxMarks}</td>
