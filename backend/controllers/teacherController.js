@@ -60,8 +60,7 @@ const getTeacherProfilebyEmail = async (req, res) => {
     if (!teacher)
       return res.status(404).json({ message: "Teacher doesm't exist" });
     const updatedTeacher = {
-      FirstName: teacher.FirstName || "",
-      LastName: teacher.LastName || "",
+      teacherName: teacher.FirstName + " " + teacher.LastName,
       Qualification: teacher.Qualification || "",
       DOB: teacher.DOB || "",
       Gender: teacher.Gender || "",
