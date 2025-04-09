@@ -57,8 +57,8 @@ function App() {
   if (token) {
     try {
       const decodedToken = jwtDecode(token);
-      role = decodedToken.role; // Extract the role from the decoded token
-      // console.log("Decoded Role:", role); // Debugging log
+      role = localStorage.getItem("role"); // Extract the role from the decoded token
+      console.log("Decoded Role:", role); // Debugging log
     } catch (error) {
       console.error("Invalid token", error);
     }
@@ -74,11 +74,11 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         {/* {isAuthenticated && <TeacherSidebar />} */}
-        {isAuthenticated && role === "Teacher" && <TeacherSidebar />}
-        {isAuthenticated && role === "Admin" && <AdminSidebar />}
-        {isAuthenticated && role === "Student" && <StCustomSidebar />}
+        {token && role === "Teacher" && <TeacherSidebar />}
+        {token && role === "Admin" && <AdminSidebar />}
+        {token && role === "Student" && <StCustomSidebar />}
         <main className="content">
-          {isAuthenticated && (
+          {token && (
             <div className="topbar">
               <Topbar />
             </div>

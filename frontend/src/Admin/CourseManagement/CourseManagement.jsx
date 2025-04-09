@@ -150,12 +150,12 @@ const CourseManagement = () => {
       >
         {activeTab === "add" && (
           <>
-            <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
-              Add Student
+            <h2 className="text-3xl font-bold text-white mb-8 text-center">
+              Add Course
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 Assistant Professor">
               {Object.keys(formData).map((field) => (
-                <div key={field} className="flex flex-col text-gray-700">
+                <div key={field} className="flex flex-col text-white">
                   <label
                     htmlFor={field}
                     className="block text-sm font-medium text-gray-400 mb-1"
@@ -185,7 +185,7 @@ const CourseManagement = () => {
 
         {activeTab === "update" && (
           <>
-            <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+            <h2 className="text-3xl font-bold text-white mb-8 text-center">
               Update Course
             </h2>
             <div className="mb-4">
@@ -259,8 +259,8 @@ const CourseManagement = () => {
 
         {activeTab === "delete" && (
           <>
-            <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
-              Delete Student
+            <h2 className="text-3xl font-bold text-white mb-8 text-center">
+              Delete Course
             </h2>
             <div className="mb-4">
               <label
@@ -276,7 +276,7 @@ const CourseManagement = () => {
                 name="CourseCode"
                 value={CourseCode}
                 onChange={(e) => setCourseCode(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                className="w-full px-4 py-2 border text-white border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 placeholder="Enter CourseCode"
               />
               <input

@@ -641,24 +641,35 @@ const addAdmin = async (req, res) => {
   }
 };
 
-const addSemesterResult = async(req,res)=>{
+const addSemesterResult = async (req, res) => {
   try {
-    const { StudentSmartID , Semester } = req.body;
-    const resultPDF = req.file ? req.file.path : null;
-    
-    const existingResult = await EndSemesterResult.findOne({ StudentSmartID });
+    const { StudentSmartID, Semester } = req.body;
+    const resultPDF = req.file ? req.file.path : null; 
+
+    let existingResult = await EndSemesterResult.findOne({ StudentSmartID });
 
     if (!existingResult) {
-        return res.status(404).json({ message: "Result not found" });
+      existingResult = new EndSemesterResult({
+        StudentSmartID,
+        Semester,
+        ResultPDF: resultPDF,
+        IssuedDate: new Date()
+      });
+    } else {
+      existingResult.ResultPDF = resultPDF || existingResult.ResultPDF;
+      existingResult.Semester = Semester || existingResult.Semester;
+      existingResult.IssuedDate = new Date();
     }
 
-    existingResult.ResultPDF = resultPDF || existingResult.ResultPDF;
-    existingResult.IssuedDate = new Date();
-
     await existingResult.save();
-    res.status(201).json({ message: "Result added successfully", result: existingResult });
-} catch (error) {
+
+    res.status(201).json({
+      message: "Result added successfully",
+      result: existingResult,
+    });
+  } catch (error) {
     res.status(500).json({ message: "Error adding result", error: error.message });
-}
-}
+  }
+};
+
 module.exports = {addSemesterResult,addAdmin, updateProfile,getAdminProfilebyEmail, updateCourse, deleteCourse, deleteTeacherCourseByEmailandCourseTaught, getTeacherCoursesByEmail, addCourseToTeacher, deleteTeacherByEmail, updateTeacherByEmail, deleteStudent, updateStudent, addTeacherTimeTable, addEvents, addStudentTimeTable, addEndSemResultBySmartID, addStudent, addTeacher, addCourse, addCurriculum } 
