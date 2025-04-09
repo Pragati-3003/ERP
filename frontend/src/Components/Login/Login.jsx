@@ -97,7 +97,7 @@ const Login = () => {
 
       switch (response.data.user.role) {
         case "Admin":
-          navigate("/admin-dashboard");
+          navigate("/admin/studentmanagment");
           break;
         case "Teacher":
           navigate("/teacher-dashboard");
@@ -148,10 +148,7 @@ const Login = () => {
   return (
     <div id="login-page" className="container">
       <div className="map">
-        <img
-          src={image}
-          alt="3D Map Placeholder"
-        />
+        <img src={image} alt="3D Map Placeholder" />
       </div>
       <div className="form-container">
         <h2>ERP-CAMPUS DIARY</h2>

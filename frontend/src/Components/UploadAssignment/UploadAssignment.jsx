@@ -1,27 +1,29 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const TeacherPanel = () => {
+export default function UploadAssignment() {
   const [assignments, setAssignments] = useState([]);
   const [formData, setFormData] = useState({
-    title: '',
-    course: '',
-    dueDate: '',
-    maxMarks: '',
-    filePath: ''
+    title: "",
+    curriculum: "",
+    course: "",
+    dueDate: "",
+    maxMarks: "",
+    // filePath: "",
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  const courses = ["MCA"];
+  // Added new curriculum and course options
+  const curriculums = ["MCA"];
+  const courses = ["Data Structure"];
 
   const handleInputChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -29,9 +31,9 @@ const navigate = useNavigate();
     const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        filePath: URL.createObjectURL(file)
+        filePath: URL.createObjectURL(file),
       }));
     }
   };
@@ -41,7 +43,14 @@ const navigate = useNavigate();
   };
 
   const saveAssignments = () => {
-    if (!formData.title || !formData.course || !formData.dueDate || !formData.maxMarks || !selectedFile) {
+    if (
+      !formData.title ||
+      !formData.curriculum ||
+      !formData.course ||
+      !formData.dueDate ||
+      !formData.maxMarks ||
+      !selectedFile
+    ) {
       alert("Please fill all fields and select a file.");
       return;
     }
@@ -52,16 +61,17 @@ const navigate = useNavigate();
       setAssignments(updatedAssignments);
       setEditingIndex(null);
     } else {
-      setAssignments(prev => [...prev, formData]);
+      setAssignments((prev) => [...prev, formData]);
     }
 
-    alert("Assignment saved successfully. You can now Edit, View, or Delete it.");
+    alert("Assignment saved successfully.");
     setFormData({
-      title: '',
-      course: '',
-      dueDate: '',
-      maxMarks: '',
-      filePath: ''
+      title: "",
+      curriculum: "",
+      course: "",
+      dueDate: "",
+      maxMarks: "",
+      filePath: "",
     });
     setSelectedFile(null);
   };
@@ -82,43 +92,58 @@ const navigate = useNavigate();
   };
 
   const viewSubmissions = () => {
-    navigate('/submissions');
+    navigate("/teacher/view-submissions");
   };
 
   return (
-    <div className="p-4 md:p-8 bg-gray-900 text-white min-h-screen">
-      <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center md:text-left">
+    <div className="p-14 -mt-14 md:p-8  text-white ">
+      <h1 className="text-2xl md:text-3xl font-bold mt-0 mb-6 text-center md:text-left">
         Upload Assignment
       </h1>
 
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-6">
+      <div className="flex flex-wrap gap-4 mb-6">
         <input
-          className="bg-gray-800 px-4 py-2 rounded w-full"
+          className="bg-gray-800 px-4 py-2 rounded w-full sm:w-60"
           placeholder="Assignment Title"
           name="title"
           value={formData.title}
           onChange={handleInputChange}
         />
+
         <select
-          className="bg-gray-800 px-4 py-2 rounded w-full"
+          className="bg-gray-800 px-4 py-2 rounded w-full sm:w-60"
+          name="curriculum"
+          value={formData.curriculum}
+          onChange={handleInputChange}
+        >
+          <option value="">Select Curriculum</option>
+          <option value="MCA">MCA</option>
+        </select>
+
+        <select
+          className="bg-gray-800 px-4 py-2 rounded w-full sm:w-60"
           name="course"
           value={formData.course}
           onChange={handleInputChange}
         >
           <option value="">Select Course</option>
-          {courses.map((course, idx) => (
-            <option key={idx} value={course}>{course}</option>
-          ))}
+          <option value="Data Structure">Data Structure</option>
         </select>
+        <label for="date" className="py-2">
+          Due Date:
+        </label>
         <input
           type="date"
-          className="bg-gray-800 px-4 py-2 rounded w-full"
+          id="date"
+          className="bg-gray-800 px-4 py-2 rounded w-full sm:w-60"
           name="dueDate"
           value={formData.dueDate}
           onChange={handleInputChange}
+          placeholder="Set Due Date"
         />
+
         <input
-          className="bg-gray-800 px-4 py-2 rounded w-full"
+          className="bg-gray-800 px-4 py-2 rounded w-full sm:w-60"
           placeholder="Max Marks"
           name="maxMarks"
           value={formData.maxMarks}
@@ -134,15 +159,18 @@ const navigate = useNavigate();
       />
 
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
-        <Button onClick={triggerFileInput} className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white">
-          Add Assignment
-        </Button>
-        <Button
-          onClick={saveAssignments}
-          className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white"
+        <button
+          onClick={triggerFileInput}
+          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
         >
-          Save Assignment
-        </Button>
+          Choose File
+        </button>
+        <button
+          onClick={saveAssignments}
+          className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+        >
+          Upload
+        </button>
       </div>
 
       {formData.filePath && (
@@ -151,26 +179,28 @@ const navigate = useNavigate();
         </p>
       )}
 
-      <div className="overflow-x-auto">
-        <table className="w-full table-auto border-separate border-spacing-y-2 text-sm">
-          <thead>
-            <tr className="bg-gray-800 text-left">
-              <th className="p-2">Title</th>
-              <th className="p-2">Course</th>
-              <th className="p-2">Due Date</th>
-              <th className="p-2">Max Marks</th>
-              <th className="p-2">File</th>
+      <div className="overflow-y-auto max-h-[300px] overflow-x-auto rounded border border-gray-700">
+        <table className="w-full table-auto text-sm text-center">
+          <thead className="sticky top-0 bg-gray-800">
+            <tr>
+              <th className="p-2 border-r border-gray-700">Title</th>
+              <th className="p-2 border-r border-gray-700">Curriculum</th>
+              <th className="p-2 border-r border-gray-700">Course</th>
+              <th className="p-2 border-r border-gray-700">Due Date</th>
+              <th className="p-2 border-r border-gray-700">Max Marks</th>
+              <th className="p-2 border-r border-gray-700">File</th>
               <th className="p-2">Actions</th>
             </tr>
           </thead>
           <tbody>
             {assignments.map((a, idx) => (
-              <tr key={idx} className="bg-gray-700 rounded">
-                <td className="p-2">{a.title}</td>
-                <td className="p-2">{a.course}</td>
-                <td className="p-2">{a.dueDate}</td>
-                <td className="p-2">{a.maxMarks}</td>
-                <td className="p-2 break-all">
+              <tr key={idx} className="bg-gray-700">
+                <td className="p-2 border-r border-gray-800">{a.title}</td>
+                <td className="p-2 border-r border-gray-800">{a.curriculum}</td>
+                <td className="p-2 border-r border-gray-800">{a.course}</td>
+                <td className="p-2 border-r border-gray-800">{a.dueDate}</td>
+                <td className="p-2 border-r border-gray-800">{a.maxMarks}</td>
+                <td className="p-2 border-r border-gray-800 break-all">
                   <a
                     href={a.filePath}
                     target="_blank"
@@ -181,15 +211,24 @@ const navigate = useNavigate();
                   </a>
                 </td>
                 <td className="p-2 flex flex-col sm:flex-row gap-2">
-                  <Button onClick={() => updateAssignment(idx)} className="bg-yellow-500 hover:bg-yellow-600 text-white text-xs">
+                  <button
+                    onClick={() => updateAssignment(idx)}
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-3 py-1 rounded"
+                  >
                     Edit
-                  </Button>
-                  <Button onClick={() => deleteAssignment(idx)} className="bg-red-600 hover:bg-red-700 text-white text-xs">
+                  </button>
+                  <button
+                    onClick={() => deleteAssignment(idx)}
+                    className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded"
+                  >
                     Delete
-                  </Button>
-                  <Button onClick={viewSubmissions} className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs">
+                  </button>
+                  <button
+                    onClick={viewSubmissions}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-1 rounded"
+                  >
                     View Submissions
-                  </Button>
+                  </button>
                 </td>
               </tr>
             ))}
@@ -198,6 +237,4 @@ const navigate = useNavigate();
       </div>
     </div>
   );
-};
-
-export default TeacherPanel;
+}

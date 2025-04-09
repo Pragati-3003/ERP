@@ -11,12 +11,14 @@ const {
   uploadMidtermResult,
   markAttendance,
   updateAttendance,
+  getTimeTable,
   uploadAssignment,
   updateProfile,
   getTeacherProfilebyEmail,
   getTeacherCourses,
   getStudentsForAttendance,
   getTeacherCoursesByEmail,
+  getEvents,
 } = require("../controllers/teacherController.js");
 router.get(
   "/getTeacherProfilebyEmail/:Email",
@@ -52,7 +54,7 @@ router.patch(
 router.patch(
   "/updateProfile",
   verifyToken,
-  authorizeRoles("Student"),
+  authorizeRoles("Teacher"),
   uploadProfilePictures.single("profilePicture"),
   updateProfile
 );
@@ -68,10 +70,17 @@ router.get(
   authorizeRoles("Teacher"),
   getTeacherCourses
 );
+router.get("/getEvents", verifyToken, authorizeRoles("Teacher"), getEvents);
 router.get(
   "/students",
   verifyToken,
   authorizeRoles("Teacher"),
   getStudentsForAttendance
+);
+router.get(
+  "/getTimeTable",
+  verifyToken,
+  authorizeRoles("Teacher"),
+  getTimeTable
 );
 module.exports = router;

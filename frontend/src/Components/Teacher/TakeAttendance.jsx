@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 
-
 const TakeAttendance = () => {
-
   const [coursesTaught, setCoursesTaught] = useState([]);
   const [students, setStudents] = useState([]);
   const [selectedSemester, setSelectedSemester] = useState("");
@@ -24,7 +22,6 @@ const TakeAttendance = () => {
           {
             headers: { Authorization: `Bearer ${token}` },
           }
-
         );
         setCoursesTaught(data.coursesTaught);
       } catch (error) {
@@ -39,12 +36,10 @@ const TakeAttendance = () => {
     try {
       const token = localStorage.getItem("token");
 
-
       if (!email || !selectedSemester || !selectedCurriculum) {
         console.error("Missing required filters");
         return;
       }
-
 
       const { data } = await axios.get(
         `http://localhost:5000/api/teacher/students?email=${email}&semester=${selectedSemester}&curriculumId=${selectedCurriculum}`,
@@ -79,7 +74,6 @@ const TakeAttendance = () => {
   };
 
   const submitAttendance = async () => {
-
     const TeacherID = localStorage.getItem("UserId");
     const currentDate = new Date().toISOString();
 
@@ -90,7 +84,6 @@ const TakeAttendance = () => {
       TeacherID,
       Status: attendance[student._id] ? "Present" : "Absent",
       Date: currentDate,
-
     }));
 
     try {
@@ -107,60 +100,60 @@ const TakeAttendance = () => {
     } catch (error) {
       console.error("Error submitting attendance", error);
       alert("Failed to submit attendance");
-
     }
   };
 
   return (
-
     <div className="min-h-screen  text-white px-6 py-10 font-sans">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-bold mb-8 text-center">Mark Attendance</h1>
 
         <div className="flex flex-wrap justify-center gap-4 mb-8">
-           <select
-        onChange={(e) => setSelectedCurriculum(e.target.value)}
-        className="bg-white text-gray-800"
-      >
-        <option value="">Select Curriculum</option>
-        {coursesTaught.map((c) => (
-          <option key={c.curriculum._id} value={c.curriculum._id}>
-            {c.curriculum.program}
-          </option>
-        ))}
-      </select>
+          <select
+            onChange={(e) => setSelectedCurriculum(e.target.value)}
+            className="bg-white text-gray-800"
+          >
+            <option value="">Select Curriculum</option>
+            {coursesTaught.map((c) => (
+              <option key={c.curriculum._id} value={c.curriculum._id}>
+                {c.curriculum.program}
+              </option>
+            ))}
+          </select>
 
-      <select
-        onChange={(e) => setSelectedSemester(e.target.value)}
-        className="bg-white text-gray-800"
-      >
-        <option value="">Select Semester</option>
-        {[...new Set(coursesTaught.flatMap((c) => c.curriculum.semesters))].map(
-          (s, index) => (
-            <option key={index} value={s.semester}>
-              Semester {s.semester}
-            </option>
-          )
-        )}
-      </select>
+          <select
+            onChange={(e) => setSelectedSemester(e.target.value)}
+            className="bg-white text-gray-800"
+          >
+            <option value="">Select Semester</option>
+            {[
+              ...new Set(coursesTaught.flatMap((c) => c.curriculum.semesters)),
+            ].map((s, index) => (
+              <option key={index} value={s.semester}>
+                Semester {s.semester}
+              </option>
+            ))}
+          </select>
 
-      <select
-        onChange={(e) => setSelectedCourse(e.target.value)}
-        className="bg-white text-gray-800"
-      >
-        <option value="">Select Course</option>
-        {coursesTaught
-          .filter(
-            (c) =>
-              c.curriculum._id === selectedCurriculum &&
-              c.curriculum.semesters.some((s) => s.semester == selectedSemester)
-          )
-          .map((c) => (
-            <option key={c.course._id} value={c.course._id}>
-              {c.course.CourseName}
-            </option>
-          ))}
-      </select>
+          <select
+            onChange={(e) => setSelectedCourse(e.target.value)}
+            className="bg-white text-gray-800"
+          >
+            <option value="">Select Course</option>
+            {coursesTaught
+              .filter(
+                (c) =>
+                  c.curriculum._id === selectedCurriculum &&
+                  c.curriculum.semesters.some(
+                    (s) => s.semester == selectedSemester
+                  )
+              )
+              .map((c) => (
+                <option key={c.course._id} value={c.course._id}>
+                  {c.course.CourseName}
+                </option>
+              ))}
+          </select>
 
           <button
             onClick={fetchStudents}
@@ -191,10 +184,18 @@ const TakeAttendance = () => {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-gray-800 text-gray-300">
-                    <th className="border border-gray-700 px-4 py-3">Full Name</th>
-                    <th className="border border-gray-700 px-4 py-3">Smart ID</th>
-                    <th className="border border-gray-700 px-4 py-3">Roll Number</th>
-                    <th className="border border-gray-700 px-4 py-3 text-center">Present</th>
+                    <th className="border border-gray-700 px-4 py-3">
+                      Full Name
+                    </th>
+                    <th className="border border-gray-700 px-4 py-3">
+                      Smart ID
+                    </th>
+                    <th className="border border-gray-700 px-4 py-3">
+                      Roll Number
+                    </th>
+                    <th className="border border-gray-700 px-4 py-3 text-center">
+                      Present
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -234,7 +235,6 @@ const TakeAttendance = () => {
           </>
         )}
       </div>
-
     </div>
   );
 };
