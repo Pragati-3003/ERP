@@ -67,8 +67,13 @@ const TeacherSidebar = () => {
 
   const menuItems = [
     {
+      title: "Dashboard",
+      to: "/teacher-dashboard",
+      icon: <HomeOutlinedIcon />,
+    },
+    {
       title: "Take Attendance",
-      to: "/teacher/take-attendance",
+      to: "/take-attendance",
       icon: <AssignmentOutlinedIcon />,
     },
     // { title: "Results", to: "/result", icon: <SaveAsOutlinedIcon /> },

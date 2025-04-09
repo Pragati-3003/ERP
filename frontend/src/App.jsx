@@ -93,7 +93,7 @@ function App() {
                   ) : role === "Student" ? (
                     <Navigate to="/student-dashboard" />
                   ) : role === "Teacher" ? (
-                    <Navigate to="/teacher/take-attendance" />
+                    <Navigate to="/teacher-dashboard" />
                   ) : (
                     <Navigate to="/login" />
                   )
@@ -115,13 +115,9 @@ function App() {
               />
               {/* Warden Dashboard */}
               <Route
-                path="/teacher/take-attendance"
+                path="/teacher-dashboard"
                 element={
-                  role === "Teacher" ? (
-                    <TakeAttendance />
-                  ) : (
-                    <Navigate to="/login" />
-                  )
+                  role === "Teacher" ? <TeacherDb /> : <Navigate to="/login" />
                 }
               />
 
@@ -181,7 +177,7 @@ function App() {
               <Route path="/admin/addEvents" element={<AdminEvent />} />
               {/* Teacher routesss */}
               <Route path="/teacher/timetable" element={<Teachertimetable />} />
-              {/* <Route path="/take-attendance" element={<TakeAttendance />} /> */}
+              <Route path="/take-attendance" element={<TakeAttendance />} />
               <Route path="/teacher/profile" element={<TeacherProfile />} />
               <Route path="/teacher/event" element={<TeacherEventPage />} />
               <Route

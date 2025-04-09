@@ -100,7 +100,7 @@ const Login = () => {
           navigate("/admin/studentmanagment");
           break;
         case "Teacher":
-          navigate("/teacher/take-attendance");
+          navigate("/teacher-dashboard");
           break;
         case "Student":
           navigate("/student-dashboard");
@@ -148,10 +148,7 @@ const Login = () => {
   return (
     <div id="login-page" className="container">
       <div className="map">
-        <img
-          src={image}
-          alt="3D Map Placeholder"
-        />
+        <img src={image} alt="3D Map Placeholder" />
       </div>
       <div className="form-container">
         <h2>ERP-CAMPUS DIARY</h2>
