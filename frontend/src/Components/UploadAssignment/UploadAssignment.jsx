@@ -9,7 +9,7 @@ export default function UploadAssignment() {
     course: "",
     dueDate: "",
     maxMarks: "",
-    filePath: "",
+    // filePath: "",
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
