@@ -84,7 +84,7 @@ const TeacherManagement = () => {
   // Search teacher for update
   const handleSearch = async () => {
     if (!email) {
-      alert("Please enter Email or Smart ID");
+      alert("Please enter Email");
       return;
     }
     const token = localStorage.getItem("token");
@@ -148,10 +148,10 @@ const TeacherManagement = () => {
       >
         {activeTab === "add" && (
           <>
-            <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+            <h2 className="text-3xl font-bold text-white mb-8 text-center">
               Add Teacher
             </h2>
-            <div className="grid grid-cols-1  text-gray-800 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1  text-white md:grid-cols-2 gap-6">
               {Object.keys(formData).map((field) => (
                 <div key={field} className="flex flex-col">
                   <label
@@ -183,7 +183,7 @@ const TeacherManagement = () => {
 
         {activeTab === "update" && (
           <>
-            <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+            <h2 className="text-3xl font-bold text-white mb-8 text-center">
               Update Teacher
             </h2>
             <div className="mb-4">
@@ -200,7 +200,7 @@ const TeacherManagement = () => {
                 value={email}
                 onChange={(e) => setemail(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-                placeholder="Enter Teacher Smart ID"
+                placeholder="Enter Teacher Email"
               />
             </div>
             <button
@@ -246,12 +246,12 @@ const TeacherManagement = () => {
 
         {activeTab === "delete" && (
           <>
-            <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+            <h2 className="text-3xl font-bold text-white mb-8 text-center">
               Delete Teacher
             </h2>
             <input
               type="text"
-              placeholder="Enter Smart ID or Email"
+              placeholder="Enter  Email"
               value={email}
               onChange={(e) => setemail(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-md"

@@ -17,6 +17,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import Login from "./Components/Login/Login";
 import Assignment from "./Components/Assignment/Assignment";
 import TimeTable from "./Components/TimeTable/TimeTable";
+import Teachertimetable from "./Components/Teacher/Teachertimetable/Teachertimetable";
 import Attendance from "./Components/Attendance_student/Attendance";
 import AttendenceBar from "./scenes/bar/AttendenceBar";
 import ResultBar from "./scenes/bar/Resultbar";
@@ -40,7 +41,6 @@ import CourseManagement from "./Admin/CourseManagement/CourseManagement";
 import AdminProfile from "./Admin/AdminProfile/AdminProfile";
 import AddSemesterResult from "./Admin/AddSemesterResult/AddSemesterResult";
 import AttendanceReport from "./Components/Attendance_student/Attendance";
-
 import TeacherProfile from "./Components/Teacher/TeacherProfile/TeacherProfile";
 import TakeAttendance from "./Components/Teacher/TakeAttendance";
 import TeacherEvent from "./Components/Teacher/TeacherEventPage";
@@ -48,7 +48,8 @@ import UploadAssignment from "./Components/UploadAssignment/UploadAssignment";
 import UploadStudentTimetable from "./Admin/UploadStudentTimetable/UploadStudentTimetable";
 import UploadTeacherTimetable from "./Admin/UploadTeacherTimetable/UploadTeacherTimetable";
 import TeacherEventPage from "./Components/Teacher/TeacherEventPage";
-
+import AdminEvent from "./Admin/AdminEvent/AdminEvent";
+import ViewSubmissions from "./Components/UploadAssignment/ViewSubmissions";
 function App() {
   const token = localStorage.getItem("token");
   let role = null;
@@ -87,7 +88,15 @@ function App() {
               path="/"
               element={
                 token ? (
-                  <Navigate to={`/${role}-dashboard`} />
+                  role === "Admin" ? (
+                    <Navigate to="/admin/studentmanagment" />
+                  ) : role === "Student" ? (
+                    <Navigate to="/student-dashboard" />
+                  ) : role === "Teacher" ? (
+                    <Navigate to="/teacher-dashboard" />
+                  ) : (
+                    <Navigate to="/login" />
+                  )
                 ) : (
                   <Navigate to="/login" />
                 )
@@ -111,13 +120,19 @@ function App() {
                   role === "Teacher" ? <TeacherDb /> : <Navigate to="/login" />
                 }
               />
+
               {/* Admin Dashboard*/}
               <Route
-                path="/admin-dashboard"
+                path="/admin/studentmanagment"
                 element={
-                  role === "Admin" ? <AdminDb /> : <Navigate to="/login" />
+                  role === "Admin" ? (
+                    <StudentManagement />
+                  ) : (
+                    <Navigate to="/login" />
+                  )
                 }
               />
+
               <Route path="/assignment" element={<Assignment />} />
               <Route path="/timetable" element={<TimeTable />} />
               <Route path="/attendance" element={<Attendance />} />
@@ -133,10 +148,10 @@ function App() {
               {/* <Route path="/calendar" element={<Calender />} /> */}
 
               {/* Admin routesss */}
-              <Route
+              {/* <Route
                 path="/admin/studentmanagment"
                 element={<StudentManagement />}
-              />
+              /> */}
               <Route
                 path="/admin/teachermanagment"
                 element={<TeacherManagement />}
@@ -159,14 +174,19 @@ function App() {
                 path="/admin/addTeacherTimetable"
                 element={<UploadTeacherTimetable />}
               />
+              <Route path="/admin/addEvents" element={<AdminEvent />} />
               {/* Teacher routesss */}
-
+              <Route path="/teacher/timetable" element={<Teachertimetable />} />
               <Route path="/take-attendance" element={<TakeAttendance />} />
               <Route path="/teacher/profile" element={<TeacherProfile />} />
               <Route path="/teacher/event" element={<TeacherEventPage />} />
               <Route
                 path="/teacher/upload-assignment"
                 element={<UploadAssignment />}
+              />
+              <Route
+                path="/teacher/view-submissions"
+                element={<ViewSubmissions />}
               />
 
               {/* <Route path="/take-attendance" element={<TakeAttendance />} /> */}

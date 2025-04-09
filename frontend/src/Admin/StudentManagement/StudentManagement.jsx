@@ -162,7 +162,7 @@ const StudentManagement = () => {
             >
                 {activeTab === "add" && (
                     <>
-                        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Add Student</h2>
+                        <h2 className="text-3xl font-bold text-white mb-8 text-center">Add Student</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {Object.keys(formData).map((field) => (
                                 <div key={field} className="flex flex-col">
@@ -193,10 +193,10 @@ const StudentManagement = () => {
 
                 {activeTab === "update" && (
                     <>
-                        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Update Student</h2>
+                        <h2 className="text-3xl font-bold text-white mb-8 text-center">Update Student</h2>
                         <div className="mb-4">
                             <label htmlFor="smartID" className="block text-sm font-medium text-gray-400 mb-1">
-                                Enter Email or Smart ID
+                                Enter Smart ID
                             </label>
 
                             <input
@@ -206,7 +206,7 @@ const StudentManagement = () => {
                                 value={smartID}
                                 onChange={(e) => setsmartID(e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-                                placeholder="Enter Student Enrollment Number"
+                                placeholder="Enter Student Smart Card Id"
                             />
                         </div>
                         <button
@@ -252,10 +252,10 @@ const StudentManagement = () => {
 
                 {activeTab === "delete" && (
                     <>
-                        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Delete Student</h2>
+                        <h2 className="text-3xl font-bold text-white mb-8 text-center">Delete Student</h2>
                         <div className="mb-4">
                             <label htmlFor="smartID" className="block text-sm font-medium text-gray-400 mb-1">
-                                Enter Email or Smart ID
+                                Enter Smart ID
                             </label>
 
                             <input
@@ -265,7 +265,7 @@ const StudentManagement = () => {
                                 value={smartID}
                                 onChange={(e) => setsmartID(e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-                                placeholder="Enter Student Enrollment Number"
+                                placeholder="Enter Student Smart ID"
                             />
                         </div>
                         <button

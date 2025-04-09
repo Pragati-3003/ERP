@@ -8,6 +8,7 @@ const Student = require("../models/student.model.js");
 const MidTermResult = require("../models/midTermExamsResult.model.js");
 const Teacher = require("../models/teacher.model.js");
 const Event = require("../models/events.model.js");
+const TeacherTimetable = require("../models/teacher_timetables.model.js");
 //@desc Mark Attendace
 //@route POST /api/teacher/markAttendance
 const markAttendance = async (req, res) => {
@@ -60,8 +61,7 @@ const getTeacherProfilebyEmail = async (req, res) => {
     if (!teacher)
       return res.status(404).json({ message: "Teacher doesm't exist" });
     const updatedTeacher = {
-      FirstName: teacher.FirstName || "",
-      LastName: teacher.LastName || "",
+      teacherName: teacher.FirstName + " " + teacher.LastName,
       Qualification: teacher.Qualification || "",
       DOB: teacher.DOB || "",
       Gender: teacher.Gender || "",
@@ -100,6 +100,19 @@ const updateAttendance = async (req, res) => {
 
 //@desc Upload Assignment
 //@route POST /api/teacher/uploadAssignment
+const getTimeTable = async (req, res) => {
+  try {
+    const teacherID = req.user.id; // or req.user._id based on your token structure
+    const timeTable = await TeacherTimetable.findOne({ teacherID });
+    if (!timeTable)
+      return res.status(400).json({ message: "timeTable not found" });
+    console.log("TimeTable found:", timeTable);
+    res.status(200).json(timeTable);
+  } catch (err) {
+    console.error("Error fetching events:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 const uploadAssignment = async (req, res) => {
   try {
@@ -374,7 +387,9 @@ const getStudentsForAttendance = async (req, res) => {
 
     const assignedCourseIds = teacher.CoursesTaught.map((c) => c.course._id);
     if (!assignedCourseIds.length) {
-      return res.status(404).json({ message: "No courses assigned to this teacher" });
+      return res
+        .status(404)
+        .json({ message: "No courses assigned to this teacher" });
     }
 
     // 2️⃣ Check if the curriculum exists and contains any of the teacher's courses
@@ -383,11 +398,15 @@ const getStudentsForAttendance = async (req, res) => {
       return res.status(404).json({ message: "Curriculum not found" });
     }
 
-    const semesterData = curriculum.semesters.find((s) => s.semester == semester);
+    const semesterData = curriculum.semesters.find(
+      (s) => s.semester == semester
+    );
     if (!semesterData) {
-      return res.status(404).json({ message: "Semester not found in this curriculum" });
+      return res
+        .status(404)
+        .json({ message: "Semester not found in this curriculum" });
     }
-   
+
     // Check if at least one assigned course is in the semester
     const hasMatchingCourses = semesterData.courses.some((course) =>
       assignedCourseIds.includes(course._id.toString())
@@ -402,11 +421,33 @@ const getStudentsForAttendance = async (req, res) => {
       Semester: semester,
       CurriculumID: curriculumId,
     });
-// console.log(students)
+    // console.log(students)
     return res.status(200).json(students);
   } catch (error) {
     console.error("Error fetching students:", error);
     return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+const getEvents = async (req, res) => {
+  try {
+    const role = req.user.role;
+    // Validate role
+    if (!role) {
+      return res.status(400).json({ message: "Role is required" });
+    }
+
+    // Find events where the user's role is included in the roles array or the event is for ALL
+    const events = await Event.find({
+      $or: [
+        { roles: role }, // Events specific to the user's role
+        { roles: "ALL" }, // Events accessible to all roles
+      ],
+    }).sort({ startDate: 1 }); // Sort by start date
+
+    res.status(200).json(events);
+  } catch (err) {
+    console.error("Error fetching events:", err);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -419,5 +460,7 @@ module.exports = {
   getTeacherCoursesByEmail,
   getTeacherCourses,
   updateProfile,
+  getEvents,
   getStudentsForAttendance,
+  getTimeTable,
 };

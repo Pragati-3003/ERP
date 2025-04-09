@@ -14,17 +14,17 @@ const ViewSubmissions = () => {
       course: "MCA",
       curriculum: "Semester 1",
       subject: "Data Structures",
-      studentName: "John Doe",
+      studentName: "Pragati Jain",
       studentId: "MCA001",
-      status: "Submitted"
+      status: "Submitted",
     },
     {
       course: "MCA",
       curriculum: "Semester 1",
       subject: "Data Structures",
-      studentName: "Jane Smith",
+      studentName: "Shweta Sindhu",
       studentId: "MCA002",
-      status: "Pending"
+      status: "Pending",
     },
     {
       course: "MBA",
@@ -32,8 +32,8 @@ const ViewSubmissions = () => {
       subject: "Mathematics",
       studentName: "Alice Johnson",
       studentId: "MBA003",
-      status: "Submitted"
-    }
+      status: "Submitted",
+    },
   ];
 
   const filteredSubmissions = submissions.filter(
@@ -44,7 +44,7 @@ const ViewSubmissions = () => {
   );
 
   return (
-    <div className="p-6 bg-gray-900 text-white min-h-screen">
+    <div className="p-6  text-white min-h-screen">
       <h2 className="text-2xl font-bold mb-6">Student Submissions</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
@@ -86,20 +86,24 @@ const ViewSubmissions = () => {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full table-auto border-separate border-spacing-y-2 text-sm">
+        <table className="w-full border border-gray-700 text-sm text-center">
           <thead>
-            <tr className="bg-gray-800 text-left">
-              <th className="p-2">Student Name</th>
-              <th className="p-2">Student ID</th>
-              <th className="p-2">Status</th>
+            <tr className="bg-gray-800">
+              <th className="p-3 border-r border-gray-700">Student Name</th>
+              <th className="p-3 border-r border-gray-700">Student ID</th>
+              <th className="p-3">Status</th>
             </tr>
           </thead>
           <tbody>
             {filteredSubmissions.map((submission, idx) => (
-              <tr key={idx} className="bg-gray-700 rounded">
-                <td className="p-2">{submission.studentName}</td>
-                <td className="p-2">{submission.studentId}</td>
-                <td className="p-2">{submission.status}</td>
+              <tr key={idx} className="bg-gray-700 border-t border-gray-600">
+                <td className="p-3 border-r border-gray-980">
+                  {submission.studentName}
+                </td>
+                <td className="p-3 border-r border-gray-980">
+                  {submission.studentId}
+                </td>
+                <td className="p-3">{submission.status}</td>
               </tr>
             ))}
           </tbody>
