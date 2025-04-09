@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 
 const TeacherPanel = () => {
   const [assignments, setAssignments] = useState([]);
@@ -133,7 +133,7 @@ const navigate = useNavigate();
         onChange={handleFileSelect}
       />
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+      {/* <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
         <Button onClick={triggerFileInput} className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white">
           Add Assignment
         </Button>
@@ -143,7 +143,7 @@ const navigate = useNavigate();
         >
           Save Assignment
         </Button>
-      </div>
+      </div> */}
 
       {formData.filePath && (
         <p className="text-green-400 mb-4 text-sm break-all">
@@ -180,7 +180,7 @@ const navigate = useNavigate();
                     View
                   </a>
                 </td>
-                <td className="p-2 flex flex-col sm:flex-row gap-2">
+                {/* <td className="p-2 flex flex-col sm:flex-row gap-2">
                   <Button onClick={() => updateAssignment(idx)} className="bg-yellow-500 hover:bg-yellow-600 text-white text-xs">
                     Edit
                   </Button>
@@ -190,7 +190,7 @@ const navigate = useNavigate();
                   <Button onClick={viewSubmissions} className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs">
                     View Submissions
                   </Button>
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>

@@ -6,6 +6,9 @@ import {
   InputBase,
   Typography,
 } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../../store/authSlice.js"
 import { ColorModeContext, tokens } from "../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
@@ -17,7 +20,8 @@ const Topbar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [scrolling, setScrolling] = useState(false);
 
   useEffect(() => {
@@ -32,7 +36,11 @@ const Topbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    dispatch(logout());
+    navigate("/login");
+  };
   return (
     <Box
       display="flex"
@@ -90,7 +98,7 @@ const Topbar = () => {
           <SettingsOutlinedIcon />
         </IconButton>
         <IconButton>
-          <PersonOutlinedIcon />
+          <PersonOutlinedIcon onClick={handleLogout} />
         </IconButton>
       </Box>
     </Box>

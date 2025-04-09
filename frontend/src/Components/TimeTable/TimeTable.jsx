@@ -38,7 +38,7 @@ const TimeTable = () => {
             <div >
                 <div>
                     <h1 className='text-2xl font-bold mb-6'>
-                        University TimeTables</h1>
+                         TimeTable</h1>
                 </div>
                 <div>
                     {timetable ? (
