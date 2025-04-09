@@ -190,9 +190,9 @@ const TakeAttendance = () => {
                     <th className="border border-gray-700 px-4 py-3">
                       Smart ID
                     </th>
-                    <th className="border border-gray-700 px-4 py-3">
+                    {/* <th className="border border-gray-700 px-4 py-3">
                       Roll Number
-                    </th>
+                    </th> */}
                     <th className="border border-gray-700 px-4 py-3 text-center">
                       Present
                     </th>
@@ -205,11 +205,11 @@ const TakeAttendance = () => {
                         {student.FirstName} {student.LastName}
                       </td>
                       <td className="border border-gray-700 px-4 py-2">
-                        {student.SmartID}
+                        {student.smartID}
                       </td>
-                      <td className="border border-gray-700 px-4 py-2">
+                      {/* <td className="border border-gray-700 px-4 py-2">
                         {student.RollNumber}
-                      </td>
+                      </td> */}
                       <td className="border border-gray-700 px-4 py-2 text-center">
                         <input
                           type="checkbox"

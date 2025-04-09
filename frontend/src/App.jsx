@@ -50,6 +50,7 @@ import UploadTeacherTimetable from "./Admin/UploadTeacherTimetable/UploadTeacher
 import TeacherEventPage from "./Components/Teacher/TeacherEventPage";
 import AdminEvent from "./Admin/AdminEvent/AdminEvent";
 import ViewSubmissions from "./Components/UploadAssignment/ViewSubmissions";
+import CurriculumManagement from "./Admin/CurriculumManagement/CurriculumManagement";
 function App() {
   const token = localStorage.getItem("token");
   let role = null;
@@ -163,6 +164,10 @@ function App() {
               <Route
                 path="/admin/coursemanagment"
                 element={<CourseManagement />}
+              />
+              <Route
+                path="/admin/curriculum-managment"
+                element={<CurriculumManagement />}
               />
               <Route path="/admin/profile" element={<AdminProfile />} />
               <Route path="/admin/resultmgmt" element={<AddSemesterResult />} />

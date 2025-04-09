@@ -83,6 +83,11 @@ const AdminSidebar = () => {
       icon: <AssessmentOutlinedIcon />,
     },
     {
+      title: "Curriculum Management",
+      to: "/admin/curriculum-managment",
+      icon: <AssessmentOutlinedIcon />,
+    },
+    {
       title: "Teacher Course Management",
       to: "/admin/addteachercourse",
       icon: <AssessmentOutlinedIcon />,
