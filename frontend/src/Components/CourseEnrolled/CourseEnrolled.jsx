@@ -35,10 +35,10 @@ const CourseEnrolled = () => {
     <div className="container mx-auto px-6 py-10">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-extrabold text-gray-800 mb-2">
+        <h1 className="text-4xl font-extrabold  mb-2">
           Enrolled Courses
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-gray-400">
           Explore your current semester's courses
         </p>
       </div>
@@ -47,7 +47,7 @@ const CourseEnrolled = () => {
       <div className="flex justify-end items-center mb-6">
         <label
           htmlFor="semester"
-          className="mr-3 text-lg font-medium text-gray-700"
+          className="mr-3 text-lg font-medium text-gray-300"
         >
           Select Semester:
         </label>

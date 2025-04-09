@@ -163,7 +163,7 @@ const Assignment = () => {
           </label>
           <select
             id="subject"
-            className="border  border-gray-300 text-gray-800 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border  border-gray-300 text-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={selectedCourseCode + " " + selectedCourseName}
             onChange={(e) => (
               setSelectedCourseCode(e.target.value.substring(0, 5)),

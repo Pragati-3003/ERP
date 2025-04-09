@@ -845,6 +845,7 @@ const addAdmin = async (req, res) => {
       .json({ message: "Internal Server Error", error: err.message });
   }
 };
+
 const getCurriculum = async (req, res) => {
   const { program, specialization } = req.query;
   try {
@@ -861,24 +862,33 @@ const getCurriculum = async (req, res) => {
     res.status(500).json({ message: "Error fetching curriculum" });
   }
 };
+
 const addSemesterResult = async (req, res) => {
   try {
     const { StudentSmartID, Semester } = req.body;
     const resultPDF = req.file ? req.file.path : null;
 
-    const existingResult = await EndSemesterResult.findOne({ StudentSmartID });
+    let existingResult = await EndSemesterResult.findOne({ StudentSmartID });
 
     if (!existingResult) {
-      return res.status(404).json({ message: "Result not found" });
+      existingResult = new EndSemesterResult({
+        StudentSmartID,
+        Semester,
+        ResultPDF: resultPDF,
+        IssuedDate: new Date(),
+      });
+    } else {
+      existingResult.ResultPDF = resultPDF || existingResult.ResultPDF;
+      existingResult.Semester = Semester || existingResult.Semester;
+      existingResult.IssuedDate = new Date();
     }
 
-    existingResult.ResultPDF = resultPDF || existingResult.ResultPDF;
-    existingResult.IssuedDate = new Date();
-
     await existingResult.save();
-    res
-      .status(201)
-      .json({ message: "Result added successfully", result: existingResult });
+
+    res.status(201).json({
+      message: "Result added successfully",
+      result: existingResult,
+    });
   } catch (error) {
     res
       .status(500)
