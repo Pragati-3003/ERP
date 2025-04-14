@@ -19,6 +19,7 @@ const studentRoutes = require("./routes/studentRoutes.js");
 const teacherRoutes = require("./routes/teacherRoutes.js");
 const attendanceRoutes = require("./routes/attendanceRoutes");
 const curriculumRoutes = require("./routes/curriculumRoutes");
+const eventRoutes = require("./routes/eventRoutes");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 5000;
@@ -44,4 +45,5 @@ app.use("/api/user", userRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/teacher", teacherRoutes);
 app.use("/api/attendance", attendanceRoutes);
+app.use("/api/events", eventRoutes);
 app.use("/api/curriculum", curriculumRoutes);

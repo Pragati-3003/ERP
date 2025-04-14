@@ -10,6 +10,7 @@ import { Routes, Route, Navigate, Link } from "react-router-dom";
 import "./dashboard.css"; // Import the Student Dashboard CSS file
 import ResultChart from "../../Components/Charts/ResultChart";
 import AttendanceChart from "../../Components/Charts/AttendenceChart";
+import AttendanceBarChart from "../../Components/Teacher/AttendanceBar/AttendanceBarChart";
 import Header from "../../Components/Header";
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
@@ -218,6 +219,7 @@ const TeacherDb = () => {
               </Box>
               <Box height="250px" ml="-20px">
                 <AttendanceChart isDashboard={true} />
+                {/* <AttendanceBarChart isDashboard={true} /> */}
               </Box>
             </Box>
             {/* Row 3 */}
