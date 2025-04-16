@@ -2,9 +2,10 @@ const mongoose = require("mongoose");
 
 const TeacherSchema = new mongoose.Schema({
   FirstName: { type: String },
+  ProfilePic: { type: String },
   LastName: { type: String },
   PhoneNumber: { type: String },
-  Address:{type:String},
+  Address: { type: String },
   Email: { type: String },
   UserID: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   Designation: { type: String },
@@ -13,7 +14,7 @@ const TeacherSchema = new mongoose.Schema({
     {
       course: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
       curriculum: { type: mongoose.Schema.Types.ObjectId, ref: "Curriculum" },
-    }
+    },
   ],
   DOB: { type: Date },
   Gender: { type: String, enum: ["Male", "Female", "Other"] },

@@ -145,7 +145,22 @@ const uploadTeacherTimeTable = multer({
     }
   },
 });
-
+// const storage6 = multer.diskStorage({
+//   destination: (req, file, cb) => cb(null, "uploads/assignments"),
+//   filename: (req, file, cb) =>
+//     cb(null, Date.now() + path.extname(file.originalname)),
+// });
+// const uploadAssignment = multer({
+//   storage: storage6,
+//   fileFilter: (req, file, cb) => {
+//     const allowedMimeTypes = ["application/pdf"];
+//     if (allowedMimeTypes.includes(file.mimetype)) {
+//       cb(null, true);
+//     } else {
+//       cb(new Error("Only PDF files are allowed"));
+//     }
+//   },
+// });
 module.exports = {
   upload,
   uploadTeacherTimeTable,

@@ -53,8 +53,9 @@
 // }
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import { useSelector } from "react-redux";
 const Teachertimetable = () => {
+  const email = useSelector((state) => state.auth.user?.userInfo?.Email);
   const [timetable, setTimetable] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -72,6 +73,9 @@ const Teachertimetable = () => {
           {
             headers: {
               Authorization: `Bearer ${token}`,
+            },
+            params: {
+              email,
             },
           }
         );

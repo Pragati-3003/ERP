@@ -12,8 +12,6 @@ const AdminEvents = () => {
     roles: [],
   });
 
-  console.log("Admin ID:", adminId); // Debug log
-
   // Fetch events from the backend
   const fetchEvents = async () => {
     try {
