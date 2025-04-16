@@ -102,8 +102,14 @@ const updateAttendance = async (req, res) => {
 //@route POST /api/teacher/uploadAssignment
 const getTimeTable = async (req, res) => {
   try {
-    const teacherID = req.user.id; // or req.user._id based on your token structure
-    const timeTable = await TeacherTimetable.findOne({ teacherID });
+    const { teacherEmail } = req.query; // or req.user._id based on your token structure
+    const teacher = await Teacher.findOne({ Email: teacherEmail });
+    if (!teacher) return res.status(404).json({ message: "Teacher not found" });
+
+    const teacherID = teacher._id;
+
+    // Check if a timetable already exists for the teacher
+    let timeTable = await TeacherTimetable.findOne({ teacherID });
     if (!timeTable)
       return res.status(400).json({ message: "timeTable not found" });
     console.log("TimeTable found:", timeTable);
