@@ -65,14 +65,18 @@ const uploadAssignments = async (req, res) => {
   }
 };
 const getAssignment = async (req, res) => {
-  const { curriculumID, semester, courseID, TeacherID } = req.body;
+  const { UserID } = req.params;
+
   try {
-    const assignments = await Assignment.find({
-      TeacherID,
-      CurriculumID: curriculumID,
-      Semester: semester,
-      CourseID: courseID,
-    })
+    // Step 1: Find the teacher by userID
+    const teacher = await Teacher.findOne({ UserID });
+
+    if (!teacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    // Step 2: Find all assignments for that teacher
+    const assignments = await Assignment.find({ TeacherID: teacher._id })
       .populate("CurriculumID")
       .populate("CourseID")
       .sort({ CreatedAt: -1 });
@@ -82,6 +86,7 @@ const getAssignment = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 const deleteAssignment = async (req, res) => {
   try {
     await Assignment.findByIdAndDelete(req.params.id);
