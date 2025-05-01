@@ -21,9 +21,12 @@ const getTeacherCurriculums = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch curriculums" });
   }
 };
-
 const uploadAssignments = async (req, res) => {
-  const pdfPath = req.file.path;
+  // 🔍 Debug: Log what's coming in
+  console.log("📂 File received:", req.file);
+  console.log("📝 Body received:", req.body);
+  const userId = req.user.id;
+  const pdfPath = req.file ? req.file.path : null;
   const {
     Title,
     DueDate,
@@ -46,11 +49,12 @@ const uploadAssignments = async (req, res) => {
   ) {
     return res.status(400).json({ message: "All fields are required" });
   }
+
   try {
     const assignment = new Assignment({
       Title,
       DueDate,
-      TeacherID,
+      TeacherID: userId,
       CourseID,
       Semester,
       CurriculumID,
@@ -64,8 +68,51 @@ const uploadAssignments = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// const uploadAssignments = async (req, res) => {
+//   const pdfPath = req.file ? req.file.path : null;
+//   const {
+//     Title,
+//     DueDate,
+//     TeacherID,
+//     AssignmentNumber,
+//     CourseID,
+//     Semester,
+//     CurriculumID,
+//   } = req.body;
+
+//   if (
+//     !Title ||
+//     !DueDate ||
+//     !TeacherID ||
+//     !CourseID ||
+//     !Semester ||
+//     !CurriculumID ||
+//     !AssignmentNumber ||
+//     !pdfPath
+//   ) {
+//     return res.status(400).json({ message: "All fields are required" });
+//   }
+//   try {
+//     const assignment = new Assignment({
+//       Title,
+//       DueDate,
+//       TeacherID,
+//       CourseID,
+//       Semester,
+//       CurriculumID,
+//       AssignmentNumber,
+//       AssignmentPDF: pdfPath,
+//     });
+
+//     await assignment.save();
+//     res.status(201).json({ message: "Assignment uploaded successfully" });
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
 const getAssignment = async (req, res) => {
-  const { UserID } = req.params;
+  const UserID = req.user.id;
 
   try {
     // Step 1: Find the teacher by userID
@@ -75,8 +122,8 @@ const getAssignment = async (req, res) => {
       return res.status(404).json({ message: "Teacher not found" });
     }
 
-    // Step 2: Find all assignments for that teacher
-    const assignments = await Assignment.find({ TeacherID: teacher._id })
+    // Step 2: Use teacher._id to fetch assignments
+    const assignments = await Assignment.find({ TeacherID: req.user.id })
       .populate("CurriculumID")
       .populate("CourseID")
       .sort({ CreatedAt: -1 });
@@ -86,7 +133,6 @@ const getAssignment = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 const deleteAssignment = async (req, res) => {
   try {
     await Assignment.findByIdAndDelete(req.params.id);
@@ -95,25 +141,51 @@ const deleteAssignment = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 const updateAssignment = async (req, res) => {
   try {
+    const {
+      Title,
+      AssignmentNumber,
+      DueDate,
+      curriculumID,
+      semester,
+      courseID,
+    } = req.body;
+
     const updateData = {
-      Title: req.body.Title,
-      AssignmentNumber: req.body.AssignmentNumber,
-      DueDate: req.body.DueDate,
-      CurriculumID: req.body.curriculumID,
-      Semester: req.body.semester,
-      CourseID: req.body.courseID,
+      Title,
+      AssignmentNumber,
+      DueDate,
+      CurriculumID: curriculumID,
+      Semester: semester,
+      CourseID: courseID,
     };
 
-    if (req.file) updateData.AssignmentPDF = req.file.path;
+    if (req.file) {
+      updateData.AssignmentPDF = req.file.path;
+    }
 
-    await Assignment.findByIdAndUpdate(req.params.id, updateData);
-    res.json({ message: "Assignment updated" });
+    const updated = await Assignment.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ message: "Assignment not found" });
+    }
+
+    res.status(200).json({
+      message: "Assignment updated successfully",
+      assignment: updated,
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Update Error:", err);
+    res.status(500).json({ error: "Server error while updating assignment" });
   }
 };
+
 module.exports = {
   getTeacherCourses,
   getTeacherCurriculums,

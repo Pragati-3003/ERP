@@ -115,7 +115,6 @@ Dept. of Computer Science, Banasthali Vidyapith
 
 ## 📎 References
 
-- [ChatGPT](https://chat.openai.com)
 - [draw.io](https://www.draw.io/)
 - [IEEE SRS Guidelines](https://www.computer.org/education/bodies-of-knowledge/software-engineering)
 

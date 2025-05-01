@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import { useSelector } from "react-redux";
 const UploadAssignment = () => {
+  const email = useSelector((state) => state.auth.user?.userInfo?.Email);
   const teacherID = localStorage.getItem("UserID");
   const [curriculums, setCurriculums] = useState([]);
   const [message, setMessage] = useState("");
@@ -38,9 +39,13 @@ const UploadAssignment = () => {
   }, [token]);
 
   const fetchAssignments = () => {
-    if (teacherID) {
+    if (token) {
       axios
-        .get(`/api/assignments/teacher/${teacherID}`)
+        .get(`/api/assignments/teachers`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
         .then((res) => setAssignments(res.data))
         .catch((err) => console.error(err));
     }
@@ -48,7 +53,7 @@ const UploadAssignment = () => {
 
   useEffect(() => {
     fetchAssignments();
-  }, [teacherID]);
+  }, [token]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -107,14 +112,19 @@ const UploadAssignment = () => {
 
     try {
       if (editMode && editAssignmentID) {
-        await axios.put(`/api/assignments/teacher`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        await axios.put(
+          `/api/assignments/teacher/${editAssignmentID}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
         setEditMode(false);
         setEditAssignmentID(null);
+        alert("Assignment updated successfully!");
       } else {
         await axios.post(`/api/assignments/teacher/uploadAss`, formData, {
           headers: {
@@ -122,10 +132,12 @@ const UploadAssignment = () => {
             "Content-Type": "multipart/form-data",
           },
         });
+        alert("Assignment uploaded successfully!");
       }
       setFile(null);
       setTitle("");
       setDueDate("");
+      // alert("Assignment uploaded successfully!");
       setMessage("Assignment uploaded successfully!");
       setAssignmentNumber("");
       fetchAssignments();
@@ -135,7 +147,13 @@ const UploadAssignment = () => {
       );
     }
   };
-
+  // const handleViewAssignment = (pdfUrl) => {
+  //   if (!pdfUrl) {
+  //     alert("No PDF available for this assignment.");
+  //     return;
+  //   }
+  //   window.open(`http://localhost:5000/${pdfUrl}`, "_blank");
+  // };
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Upload Assignments</h2>
@@ -253,7 +271,7 @@ const UploadAssignment = () => {
                 <td className="p-2">{a.AssignmentNumber}</td>
                 <td className="p-2">
                   <a
-                    href={`/${a.AssignmentPDF}`}
+                    href={`http://localhost:5000/${a.AssignmentPDF}`}
                     target="_blank"
                     rel="noreferrer"
                     className="text-blue-500 underline"

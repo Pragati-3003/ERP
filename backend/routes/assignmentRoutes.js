@@ -30,14 +30,9 @@ router.post(
   upload.single("pdfFile"),
   uploadAssignments
 );
-router.get(
-  "/teacher/:teacherId",
-  verifyToken,
-  authorizeRoles("Teacher"),
-  getAssignment
-);
+router.get("/teachers", verifyToken, authorizeRoles("Teacher"), getAssignment);
 router.put(
-  "/:id",
+  "/teacher/:id",
   verifyToken,
   authorizeRoles("Teacher"),
   upload.single("pdfFile"),
