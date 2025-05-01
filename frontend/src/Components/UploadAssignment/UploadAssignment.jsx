@@ -1,8 +1,9 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import { useSelector } from "react-redux";
 const UploadAssignment = () => {
+  const email = useSelector((state) => state.auth.user?.userInfo?.Email);
   const teacherID = localStorage.getItem("UserID");
   const [curriculums, setCurriculums] = useState([]);
   const [message, setMessage] = useState("");
@@ -21,7 +22,6 @@ const UploadAssignment = () => {
   const [editMode, setEditMode] = useState(false);
   const [editAssignmentID, setEditAssignmentID] = useState(null);
 
-  // Fetch teacher-specific curriculum and courses
   useEffect(() => {
     const fetchData = async () => {
       const res1 = await axios.get(
@@ -40,9 +40,13 @@ const UploadAssignment = () => {
   }, [token]);
 
   const fetchAssignments = () => {
-    if (filters.curriculumID && filters.semester && filters.courseID) {
+    if (token) {
       axios
-        .get(`/api/assignments/teacher/${teacherID}`, { params: filters })
+        .get(`/api/assignments/teachers`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
         .then((res) => setAssignments(res.data))
         .catch((err) => console.error(err));
     }
@@ -50,7 +54,7 @@ const UploadAssignment = () => {
 
   useEffect(() => {
     fetchAssignments();
-  }, [filters, teacherID]);
+  }, [token]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -109,14 +113,19 @@ const UploadAssignment = () => {
 
     try {
       if (editMode && editAssignmentID) {
-        let res = await axios.put(`/api/assignments/teacher`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        await axios.put(
+          `/api/assignments/teacher/${editAssignmentID}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
         setEditMode(false);
         setEditAssignmentID(null);
+        alert("Assignment updated successfully!");
       } else {
         await axios.post(`/api/assignments/teacher/uploadAss`, formData, {
           headers: {
@@ -124,21 +133,31 @@ const UploadAssignment = () => {
             "Content-Type": "multipart/form-data",
           },
         });
+        alert("Assignment uploaded successfully!");
       }
       setFile(null);
       setTitle("");
       setDueDate("");
+      // alert("Assignment uploaded successfully!");
       setMessage("Assignment uploaded successfully!");
       setAssignmentNumber("");
       fetchAssignments();
     } catch (error) {
-      setMessage(error.res?.data?.message || "Failed to upload timetable.");
+      setMessage(
+        error.response?.data?.message || "Failed to upload assignment."
+      );
     }
   };
-
+  // const handleViewAssignment = (pdfUrl) => {
+  //   if (!pdfUrl) {
+  //     alert("No PDF available for this assignment.");
+  //     return;
+  //   }
+  //   window.open(`http://localhost:5000/${pdfUrl}`, "_blank");
+  // };
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">My Assignments</h2>
+      <h2 className="text-2xl font-bold mb-4">Upload Assignments</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <select
@@ -253,7 +272,7 @@ const UploadAssignment = () => {
                 <td className="p-2">{a.AssignmentNumber}</td>
                 <td className="p-2">
                   <a
-                    href={`/${a.AssignmentPDF}`}
+                    href={`http://localhost:5000/${a.AssignmentPDF}`}
                     target="_blank"
                     rel="noreferrer"
                     className="text-blue-500 underline"
