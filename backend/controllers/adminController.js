@@ -369,19 +369,41 @@ const addCurriculum = async (req, res) => {
   }
 };
 const updateCurriculum = async (req, res) => {
-  const { program, specialization } = req.body;
   try {
-    const updated = await Curriculum.findOneAndUpdate(
-      { program, specialization },
-      req.body,
-      { new: true }
-    );
+    const { program, specialization, semesters } = req.body;
 
-    if (!updated)
-      return res.status(404).json({ message: "Curriculum not found" });
-    res.json({ message: "Curriculum updated successfully" });
-  } catch (err) {
-    res.status(500).json({ message: "Failed to update curriculum" });
+    // Check if curriculum exists
+    let curriculum = await Curriculum.findOne({ program, specialization });
+
+    if (!curriculum) {
+      return res.status(404).json({ message: "Curriculum not found." });
+    }
+
+    const updatedSemesters = [...curriculum.semesters];
+
+    // Loop through incoming semesters
+    semesters.forEach((incomingSem) => {
+      const index = updatedSemesters.findIndex(
+        (existingSem) => existingSem.semester === incomingSem.semester
+      );
+
+      if (index !== -1) {
+        // Semester exists → replace courses
+        updatedSemesters[index].courses = incomingSem.courses;
+      } else {
+        // Semester doesn't exist → add new semester
+        updatedSemesters.push(incomingSem);
+      }
+    });
+
+    // Save updated semesters to curriculum
+    curriculum.semesters = updatedSemesters;
+    await curriculum.save();
+
+    res.status(200).json({ message: "Curriculum updated successfully", curriculum });
+  } catch (error) {
+    console.error("Error updating curriculum:", error);
+    res.status(500).json({ message: "Server error while updating curriculum." });
   }
 };
 const deleteCurriculum = async (req, res) => {
